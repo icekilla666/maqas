@@ -13,7 +13,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    servers=[{"url": "http://localhost:8000", "description": "Local"}]
+    servers=[{"url": "http://localhost:8000", "description": "Local"}],
+    root_path="/api"
     )
 
 origins = [
