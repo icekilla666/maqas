@@ -13,12 +13,16 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    servers=[{"url": "http://localhost:8000", "description": "Local"}],
+    servers=[
+        {"url": "http://localhost:8000", "description": "Local"},
+        {"url": "http://72.56.250.175", "description": "Server"},
+    ],
     root_path="/api"
     )
 
 origins = [
     "http://localhost:5173",
+    "http://72.56.250.175",
 ]
 
 app.add_middleware(
