@@ -29,7 +29,7 @@ If you did not create an account, you can ignore this email.
             port=settings.SMTP_PORT,
             username=settings.SMTP_USER,
             password=settings.SMTP_PASSWORD,
-            use_tls=True,
+            start_tls=True,
             tls_context=ssl_context,
             timeout=10
         )

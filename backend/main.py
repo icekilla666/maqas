@@ -1,28 +1,36 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
 
 from src.database import engine, Base
 from src.routers import router
+from src.auth.models import UserModel
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-        yield
+    for i in range(10):
+        try:
+            async with engine.begin() as conn:
+                await conn.run_sync(Base.metadata.create_all)
+            print("Database is ready")
+            break
+        except Exception as e:
+            print(f"Database is not ready yet ({i + 1}/10): {e}")
+            await asyncio.sleep(2)
+    else:
+        raise RuntimeError("Could not connect to database")
+
+    yield
 
 app = FastAPI(
     lifespan=lifespan,
-    servers=[
-        {"url": "http://localhost:8000", "description": "Local"},
-        {"url": "http://72.56.250.175", "description": "Server"},
-    ],
+    servers=[{"url": "http://localhost:8000", "description": "Local"}],
     root_path="/api"
     )
 
 origins = [
     "http://localhost:5173",
-    "http://72.56.250.175",
 ]
 
 app.add_middleware(
@@ -35,7 +43,8 @@ app.add_middleware(
 app.include_router(router)
 
 """
+docker-compose up -d db
 cd backend
 source .venv/bin/activate
-uvicorn main:app --reload
+DATABASE_URL="postgresql+asyncpg://myuser:popa2007@localhost:5432/maqas_database" uvicorn main:app --reload
 """
