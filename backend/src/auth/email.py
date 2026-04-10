@@ -33,5 +33,6 @@ If you did not create an account, you can ignore this email.
             tls_context=ssl_context,
             timeout=10
         )
-    except Exception as e:
-        raise ValueError(f"Error sending email: {e}")
+        return True
+    except Exception:
+        return False

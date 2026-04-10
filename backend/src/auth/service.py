@@ -1,10 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status, Response, Request
 from uuid import UUID
+from datetime import datetime, timezone, timedelta
 
-from src.auth.models import UserModel
+from src.auth.models import UserModel, RefreshTokenModel
 from src.auth.schemas import UserRegister, UserLogin, UserStatus
-from src.auth.security import hash_password, verify_password
+from src.auth.security import hash_password, hash_token, verify_password
 from src.auth.repository import AuthRepository
 from src.auth.jwt import create_access_token, create_email_verification_token, create_refresh_token, decode_token
 from src.auth.email import send_verification_email
@@ -17,10 +18,16 @@ class AuthService:
     async def register_user(self, user: UserRegister, session: AsyncSession):
         existing_email = await self.repo.get_by_email(user.email, session)
         if existing_email:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already in use"
-            )
+            if existing_email.email_verified:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email already in use"
+                )
+            else:
+                token = create_email_verification_token({"sub": str(existing_email.id)})
+                email_verification_link = f"{settings.VERIFY_EMAIL_URL}?token={token}"
+                await send_verification_email(existing_email.email, email_verification_link)
+                return {"message": "An account with this email has already been created, but not confirmed. We have sent a new verification link."}
         existing_username = await self.repo.get_by_username(user.username, session)
         if existing_username:
             raise HTTPException(
@@ -102,6 +109,7 @@ class AuthService:
             )
         access_token = create_access_token({"sub": str(existing_user.id)})
         refresh_token = create_refresh_token({"sub": str(existing_user.id)})
+        await self.add_refresh_token(existing_user.id, refresh_token, session)
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
@@ -116,7 +124,17 @@ class AuthService:
             "user_id": str(existing_user.id),
             "email": existing_user.email
         }
-    async def refresh(self, request: Request, session: AsyncSession):
+    
+    async def add_refresh_token(self, user_id: UUID, refresh_token: str, session: AsyncSession):
+        hashed_refresh_token = hash_token(refresh_token)
+        refresh_token = RefreshTokenModel(
+            user_id=user_id,
+            hashed_token=hashed_refresh_token,
+            expires_at=datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+        )
+        await self.repo.add_refresh_token(refresh_token, session)
+
+    async def refresh_access_token(self, request: Request, session: AsyncSession):
         refresh_token = request.cookies.get("refresh_token")
         if not refresh_token:
             raise HTTPException(
@@ -124,18 +142,11 @@ class AuthService:
                 detail="Refresh token not found"
             )
         payload = decode_token(refresh_token)
-        if not payload:
+        if not payload or payload.get("type") != "refresh":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or expired refresh token"
             )
-
-        if payload.get("type") != "refresh":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token type"
-            )
-
         user_id_str = payload.get("sub")
         if not user_id_str:
             raise HTTPException(
@@ -149,22 +160,37 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid user id in token"
             )
-        user = await self.repo.get_by_id(user_uuid, session)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-        if user.status != UserStatus.active:
+        hashed_refresh_token = hash_token(refresh_token)
+        db_refresh_token = await self.repo.get_refresh_token(hashed_refresh_token, session)
+        if not db_refresh_token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Account is not active"
+                detail="Session not found or already logged out"
             )
-        access_token = create_access_token({"sub": str(user.id)})
+        if db_refresh_token.expires_at < datetime.now(timezone.utc):
+            await self.repo.delete_refresh_token(db_refresh_token, session)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Session expired"
+            )
+        user = await self.repo.get_by_id(user_uuid, session)
+        if not user or user.status != UserStatus.active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found or inactive"
+            )
+        new_access_token = create_access_token({"sub": str(user.id)})
         return {
-            "access_token": access_token,
+            "access_token": new_access_token,
             "token_type": "bearer"
         }
-    async def logout(self, response: Response):
+    
+    async def logout(self, request: Request, response: Response, session: AsyncSession):
+        refresh_token = request.cookies.get("refresh_token")
+        if refresh_token:
+            hashed_token = hash_token(refresh_token)
+            db_hashed_token = await self.repo.get_refresh_token(hashed_token, session)
+            if db_hashed_token:
+                await self.repo.delete_refresh_token(db_hashed_token, session)
         response.delete_cookie("refresh_token", path="/auth")
-        return
+        return {"message": "Logged out successfully"}

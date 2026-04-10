@@ -34,19 +34,21 @@ async def login_user(
     login_data = await auth_service.login_user(user, response, session)
     return login_data
 
-@auth_router.post("/refresh", status_code=status.HTTP_201_CREATED)
-async def refresh(
+@auth_router.post("/refresh-access", status_code=status.HTTP_201_CREATED)
+async def refresh_access_token(
     request: Request,
     session: SessionDep,
     auth_service: AuthServiceDep
 ):
-    access_token_data = await auth_service.refresh(request, session)
+    access_token_data = await auth_service.refresh_access_token(request, session)
     return access_token_data
 
 @auth_router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout(
+    request: Request,
     response: Response,
+    session: SessionDep,
     auth_service: AuthServiceDep
 ):
-    await auth_service.logout(response)
+    await auth_service.logout(request, response, session)
     return {"success": True}
