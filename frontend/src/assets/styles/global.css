@@ -33,3 +33,8 @@ body {
   background-color: var(--color-wrapper);
   font-family: "Montserrat", sans-serif;
 }
+
+h1 {
+  color: var(--color-second);
+  font-size: 68px;
+}
