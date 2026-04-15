@@ -1,1 +1,9 @@
-console.log('entities types')
+export type UserData = {
+  id: number;
+  username: string;
+  name: string;
+  email: string;
+  password: string;
+  password_confirm: string;
+  role?: "user" | "admin";
+};
