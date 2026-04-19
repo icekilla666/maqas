@@ -1,5 +1,9 @@
 const Footer = () => {
-  return ( <h1>footer</h1> );
-}
- 
+  return (
+    <footer className="hidden md:block">
+      <h1>footer</h1>
+    </footer>
+  );
+};
+
 export default Footer;

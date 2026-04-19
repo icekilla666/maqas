@@ -10,7 +10,7 @@ import {
 
 const Header = () => {
   return (
-    <header className="w-full py-4 flex justify-center gap-5 text-second">
+    <header className="w-full py-4 hidden justify-center gap-5 text-second md:flex">
       <NavLink to={HOME_PAGE}>Домой, Уолтер</NavLink>
       <NavLink to={ACCOUNT_PAGE}>Аккаунт</NavLink>
       <NavLink to={CHATS_PAGE}>Чаты</NavLink>
