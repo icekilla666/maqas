@@ -1,14 +1,11 @@
-import { useAuthStore } from "../../store/authStore";
-import Login from "./components/Login";
-import Registration from "./components/Registration";
+import AuthForm from "./components/AuthForm";
 
 const AuthPage = () => {
-  const user = useAuthStore((state) => state.user);
   return (
-    <>
-    {user ? <Login /> : <Registration />};
-    </>
-  )
+    <section>
+        <AuthForm />
+    </section>
+  );
 };
 
 export default AuthPage;
