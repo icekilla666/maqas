@@ -3,19 +3,20 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Annotated
 from uuid import UUID
 
-from src.auth.models import UserModel
+from src.auth.models import UsersModel
 from src.database import SessionDep
 from src.auth.jwt import decode_token
 from src.auth.repository import AuthRepository
 from src.auth.schemas import UserStatus
 from src.auth.service import AuthService
+from src.users.repository import UsersRepository
 
 security = HTTPBearer()
 
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: SessionDep
-) -> UserModel:
+) -> UsersModel:
     token = credentials.credentials
     payload = decode_token(token)
 
@@ -46,7 +47,7 @@ async def get_current_user(
             detail="Invalid user id in token"
         )
 
-    repo = AuthRepository()
+    repo = UsersRepository()
     user = await repo.get_by_id(user_uuid, session)
 
     if not user:
@@ -63,15 +64,19 @@ async def get_current_user(
 
     return user
 
-AuthDep = Annotated[UserModel, Depends(get_current_user)]
+AuthDep = Annotated[UsersModel, Depends(get_current_user)]
 
 def get_auth_repository():
     return AuthRepository()
 
 
+def get_users_repository():
+    return UsersRepository()
+
 def get_auth_service(
-    repo: AuthRepository = Depends(get_auth_repository),
+    auth_repo: AuthRepository = Depends(get_auth_repository),
+    users_repo: UsersRepository = Depends(get_users_repository)
 ):
-    return AuthService(repo)
+    return AuthService(auth_repo, users_repo)
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]

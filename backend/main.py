@@ -5,7 +5,7 @@ import asyncio
 
 from src.database import engine, Base
 from src.routers import router
-from src.auth.models import UserModel
+from src.auth.models import UsersModel
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -46,5 +46,5 @@ app.include_router(router)
 docker-compose up -d db
 cd backend
 source .venv/bin/activate
-DATABASE_URL="postgresql+asyncpg://myuser:popa2007@localhost:5432/maqas_database" uvicorn main:app --reload
+uvicorn main:app --reload
 """

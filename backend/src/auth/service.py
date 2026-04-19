@@ -3,32 +3,37 @@ from fastapi import HTTPException, status, Response, Request
 from uuid import UUID
 from datetime import datetime, timezone, timedelta
 
-from src.auth.models import UserModel, RefreshTokenModel
+from src.auth.models import UsersModel, RefreshTokenModel
 from src.auth.schemas import UserRegister, UserLogin, UserStatus
 from src.auth.security import hash_password, hash_token, verify_password
 from src.auth.repository import AuthRepository
 from src.auth.jwt import create_access_token, create_email_verification_token, create_refresh_token, decode_token
 from src.auth.email import send_verification_email
 from src.configs import settings
+from src.users.repository import UsersRepository
 
 class AuthService:
-    def __init__(self, repo: AuthRepository):
-        self.repo = repo
+    def __init__(self, auth_repo: AuthRepository, users_repo: UsersRepository):
+        self.auth_repo = auth_repo
+        self.users_repo = users_repo
+
+    async def create_and_send_verification_email(self, user):
+        token = create_email_verification_token({"sub": str(user.id)})
+        email_verification_link = f"{settings.VERIFY_EMAIL_URL}?token={token}"
+        await send_verification_email(user.email, email_verification_link)
 
     async def register_user(self, user: UserRegister, session: AsyncSession):
-        existing_email = await self.repo.get_by_email(user.email, session)
+        existing_email = await self.users_repo.get_by_email(user.email, session)
         if existing_email:
-            if existing_email.email_verified:
+            if existing_email.status == UserStatus.active or existing_email.status == UserStatus.banned:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Email already in use"
                 )
-            else:
-                token = create_email_verification_token({"sub": str(existing_email.id)})
-                email_verification_link = f"{settings.VERIFY_EMAIL_URL}?token={token}"
-                await send_verification_email(existing_email.email, email_verification_link)
+            elif existing_email.status == UserStatus.pending:
+                await self.create_and_send_verification_email(existing_email)
                 return {"message": "An account with this email has already been created, but not confirmed. We have sent a new verification link."}
-        existing_username = await self.repo.get_by_username(user.username, session)
+        existing_username = await self.users_repo.get_by_username(user.username, session)
         if existing_username:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -36,11 +41,9 @@ class AuthService:
             )
         user_dict = user.model_dump(exclude={"password", "password_confirm"})
         user_dict["hashed_password"] = hash_password(user.password)
-        user = UserModel(**user_dict)
-        created_user = await self.repo.register_user(user, session)
-        token = create_email_verification_token({"sub": str(created_user.id)})
-        email_verification_link = f"{settings.VERIFY_EMAIL_URL}?token={token}"
-        await send_verification_email(created_user.email, email_verification_link)
+        user = UsersModel(**user_dict)
+        created_user = await self.auth_repo.register_user(user, session)
+        await self.create_and_send_verification_email(created_user)
         return {"message": "User created successfully, please check your email to verify your account"}
 
     async def verify_email(self, token: str, session: AsyncSession):
@@ -68,7 +71,7 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid user id in token"
             )
-        user = await self.repo.get_by_id(user_uuid, session)
+        user = await self.users_repo.get_by_id(user_uuid, session)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -86,7 +89,7 @@ class AuthService:
         return {"message": "Account activated successfully"}
 
     async def login_user(self, user: UserLogin, response: Response, session: AsyncSession):
-        existing_user = await self.repo.get_by_email(user.email, session)
+        existing_user = await self.users_repo.get_by_email(user.email, session)
         if not existing_user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -97,15 +100,15 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password"
             )
-        if existing_user.status == UserStatus.deactivated:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Account is not active"
-            )
         if existing_user.status == UserStatus.banned:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Account is banned"
+            )
+        if existing_user.status == UserStatus.pending:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Account is not verified"
             )
         access_token = create_access_token({"sub": str(existing_user.id)})
         refresh_token = create_refresh_token({"sub": str(existing_user.id)})
@@ -132,7 +135,7 @@ class AuthService:
             hashed_token=hashed_refresh_token,
             expires_at=datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
         )
-        await self.repo.add_refresh_token(refresh_token, session)
+        await self.auth_repo.add_refresh_token(refresh_token, session)
 
     async def refresh_access_token(self, request: Request, session: AsyncSession):
         refresh_token = request.cookies.get("refresh_token")
@@ -161,19 +164,19 @@ class AuthService:
                 detail="Invalid user id in token"
             )
         hashed_refresh_token = hash_token(refresh_token)
-        db_refresh_token = await self.repo.get_refresh_token(hashed_refresh_token, session)
+        db_refresh_token = await self.auth_repo.get_refresh_token(hashed_refresh_token, session)
         if not db_refresh_token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Session not found or already logged out"
             )
         if db_refresh_token.expires_at < datetime.now(timezone.utc):
-            await self.repo.delete_refresh_token(db_refresh_token, session)
+            await self.auth_repo.delete_refresh_token(db_refresh_token, session)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Session expired"
             )
-        user = await self.repo.get_by_id(user_uuid, session)
+        user = await self.users_repo.get_by_id(user_uuid, session)
         if not user or user.status != UserStatus.active:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -189,8 +192,18 @@ class AuthService:
         refresh_token = request.cookies.get("refresh_token")
         if refresh_token:
             hashed_token = hash_token(refresh_token)
-            db_hashed_token = await self.repo.get_refresh_token(hashed_token, session)
+            db_hashed_token = await self.auth_repo.get_refresh_token(hashed_token, session)
             if db_hashed_token:
-                await self.repo.delete_refresh_token(db_hashed_token, session)
+                await self.auth_repo.delete_refresh_token(db_hashed_token, session)
         response.delete_cookie("refresh_token", path="/auth")
         return {"message": "Logged out successfully"}
+    
+    async def logout_all_devices(self, response: Response, current_user: UsersModel, session: AsyncSession):
+        response.delete_cookie("refresh_token", path="/auth")
+        await self.auth_repo.delete_all_refresh_tokens(current_user.id, session)
+        return {"message": "Logged out from all devices"}
+    
+    async def resend_verification_email(self, email: str, session: AsyncSession):
+        user = await self.users_repo.get_by_email(email, session)
+        await self.create_and_send_verification_email(user)
+        return{"message": "We have sent a new verification link. Please check your email."}

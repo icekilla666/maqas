@@ -2,8 +2,6 @@ import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import ssl
-import certifi
-
 from src.configs import settings
 
 async def send_verification_email(email: str, verification_link: str):
@@ -21,7 +19,12 @@ Please verify your email by clicking the link below:
 If you did not create an account, you can ignore this email.
     """
     msg.attach(MIMEText(body, "plain"))
-    ssl_context = ssl.create_default_context(cafile=certifi.where())
+    
+    # СОЗДАЕМ КОНТЕКСТ БЕЗ ПРОВЕРКИ СЕРТИФИКАТА
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+    
     try:
         await aiosmtplib.send(
             msg,
@@ -29,10 +32,12 @@ If you did not create an account, you can ignore this email.
             port=settings.SMTP_PORT,
             username=settings.SMTP_USER,
             password=settings.SMTP_PASSWORD,
-            start_tls=True,
-            tls_context=ssl_context,
+            use_tls=True,
+            tls_context=ssl_context,  # ПЕРЕДАЕМ КОНТЕКСТ
             timeout=10
         )
+        print(f"✅ Письмо отправлено на {email}")
         return True
-    except Exception:
+    except Exception as e:
+        print(f"❌ Ошибка отправки: {e}")
         return False

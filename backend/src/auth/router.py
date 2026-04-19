@@ -1,8 +1,8 @@
 from fastapi import APIRouter, status, Response, Request
 
-from src.auth.schemas import UserRegister, UserLogin
+from src.auth.schemas import UserRegister, UserLogin, UserEmail
 from src.database import SessionDep
-from src.auth.dependencies import AuthServiceDep
+from src.auth.dependencies import AuthServiceDep, AuthDep
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -50,5 +50,24 @@ async def logout(
     session: SessionDep,
     auth_service: AuthServiceDep
 ):
-    await auth_service.logout(request, response, session)
-    return {"success": True}
+    logout_data = await auth_service.logout(request, response, session)
+    return logout_data
+
+@auth_router.post("/logout-all", status_code=status.HTTP_200_OK)
+async def logout_all_devices(
+    response: Response,
+    session: SessionDep,
+    current_user: AuthDep,
+    auth_service: AuthServiceDep
+):
+    logout_all_devices_data = await auth_service.logout_all_devices(response, current_user, session)
+    return logout_all_devices_data
+
+@auth_router.post("/resend-verification-email", status_code=status.HTTP_200_OK)
+async def resend_verification_email(
+    user_email: UserEmail,
+    session: SessionDep,
+    auth_service: AuthServiceDep
+):
+    resend_verification_email_data = await auth_service.resend_verification_email(user_email.email, session)
+    return resend_verification_email_data
