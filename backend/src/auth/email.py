@@ -2,7 +2,10 @@ import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import ssl
+import logging
 from src.configs import settings
+
+logger = logging.getLogger(__name__)
 
 async def send_verification_email(email: str, verification_link: str):
     msg = MIMEMultipart()
@@ -20,7 +23,6 @@ If you did not create an account, you can ignore this email.
     """
     msg.attach(MIMEText(body, "plain"))
     
-    # СОЗДАЕМ КОНТЕКСТ БЕЗ ПРОВЕРКИ СЕРТИФИКАТА
     ssl_context = ssl.create_default_context()
     ssl_context.check_hostname = False
     ssl_context.verify_mode = ssl.CERT_NONE
@@ -33,11 +35,11 @@ If you did not create an account, you can ignore this email.
             username=settings.SMTP_USER,
             password=settings.SMTP_PASSWORD,
             use_tls=True,
-            tls_context=ssl_context,  # ПЕРЕДАЕМ КОНТЕКСТ
+            tls_context=ssl_context,
             timeout=10
         )
-        print(f"✅ Письмо отправлено на {email}")
+        logger.info(f"Письмо отправлено на {email}")
         return True
     except Exception as e:
-        print(f"❌ Ошибка отправки: {e}")
+        logger.error(f"Ошибка отправки: {e}")
         return False
