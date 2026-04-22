@@ -17,9 +17,11 @@ const AuthForm = () => {
         </h1>
         <form className="flex flex-col gap-3 max-w-2xl mx-auto">
           {isLogin ? <Login /> : <Registration />}
+
           <MainButton className="mt-3" typesBtn="primary-outline">
             Отправить
           </MainButton>
+
           <p className="text-center font-light mt-1 text-[14px]">
             {isLogin ? "нет аккаунта? " : "уже есть аккаунт?  "}
             <NavLink
