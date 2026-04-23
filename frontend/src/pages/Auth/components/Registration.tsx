@@ -1,43 +1,64 @@
 import MainInput from "../../../components/ui/MainInput";
-// import { authApi } from "../../../services/auth.api";
 
-const Registration = () => {
-  // const fetchAuth = async () => {
-  //   const resp = await authApi.register({
-  //     username,
-  //     name,
-  //     email,
-  //     password,
-  //     password_confirm,
-  //   });
-  //   console.log(resp.data)
-  // };
+interface RegistrationProps {
+  formData: {
+    username: string;
+    name: string;
+    email: string;
+    password: string;
+    password_confirm: string;
+  };
+  updateField: (
+    field: string,
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  getFieldError: (field: string) => string | undefined;
+}
+const Registration = ({
+  formData,
+  updateField,
+  getFieldError,
+}: RegistrationProps) => {
   return (
     <>
       <MainInput
-        name="username"
+        value={formData.name}
+        onChange={updateField("name")}
+        name="name"
         placeholder="имя"
         type="text"
+        error={getFieldError("name")}
       />
       <MainInput
-        name="name"
+        value={formData.username}
+        onChange={updateField("username")}
+        name="username"
         placeholder="юзернейм"
         type="text"
+        error={getFieldError("username")}
       />
       <MainInput
+        value={formData.email}
+        onChange={updateField("email")}
         name="email"
         placeholder="почта"
         type="email"
+        error={getFieldError("email")}
       />
       <MainInput
+        value={formData.password}
+        onChange={updateField("password")}
         name="password"
         placeholder="пароль"
         type="password"
+        error={getFieldError("password")}
       />
       <MainInput
+        value={formData.password_confirm}
+        onChange={updateField("password_confirm")}
         name="password_confirm"
         placeholder="повторите пароль"
         type="password"
+        error={getFieldError("password_confirm")}
       />
     </>
   );

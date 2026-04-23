@@ -2,7 +2,7 @@ import z from "zod";
 
 export const loginSchema = z.object({
   email: z.email("Неверный формат email"),
-  password: z.string().min(8, "Пароль должен быть минимум 6 символов"),
+  password: z.string().min(8, "Пароль должен быть минимум 8 символов"),
 });
 
 export const registerSchema = z
@@ -10,7 +10,7 @@ export const registerSchema = z
     username: z.string().min(3, "Имя пользователя минимум 3 символа"),
     name: z.string().min(2, "Имя минимум 2 символа"),
     email: z.email("Неверный формат email"),
-    password: z.string().min(6, "Пароль должен быть минимум 6 символов"),
+    password: z.string().min(8, "Пароль должен быть минимум 8 символов"),
     password_confirm: z.string(),
   })
   .refine((data) => data.password === data.password_confirm, {
@@ -29,7 +29,7 @@ export const validateRegister = (data: unknown) => {
 };
 
 export const formatZodErrors = (error: z.ZodError) => {
-  return z.treeifyError(error);
+  return error.format();
 };
 
 export const validateEmail = (email: string) => {
