@@ -1,48 +1,64 @@
-import { useState } from "react";
 import MainInput from "../../../components/ui/MainInput";
 
-const Registration = () => {
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [password_confirm, setPasswordConfirm] = useState("");
+interface RegistrationProps {
+  formData: {
+    username: string;
+    name: string;
+    email: string;
+    password: string;
+    password_confirm: string;
+  };
+  updateField: (
+    field: string,
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  getFieldError: (field: string) => string | undefined;
+}
+const Registration = ({
+  formData,
+  updateField,
+  getFieldError,
+}: RegistrationProps) => {
   return (
     <>
       <MainInput
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        name="username"
+        value={formData.name}
+        onChange={updateField("name")}
+        name="name"
         placeholder="имя"
         type="text"
+        error={getFieldError("name")}
       />
       <MainInput
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        name="name"
+        value={formData.username}
+        onChange={updateField("username")}
+        name="username"
         placeholder="юзернейм"
         type="text"
+        error={getFieldError("username")}
       />
       <MainInput
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={formData.email}
+        onChange={updateField("email")}
         name="email"
         placeholder="почта"
         type="email"
+        error={getFieldError("email")}
       />
       <MainInput
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={formData.password}
+        onChange={updateField("password")}
         name="password"
         placeholder="пароль"
         type="password"
+        error={getFieldError("password")}
       />
       <MainInput
-        value={password_confirm}
-        onChange={(e) => setPasswordConfirm(e.target.value)}
+        value={formData.password_confirm}
+        onChange={updateField("password_confirm")}
         name="password_confirm"
         placeholder="повторите пароль"
         type="password"
+        error={getFieldError("password_confirm")}
       />
     </>
   );

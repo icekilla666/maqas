@@ -1,17 +1,5 @@
+import type { LoginData, RegisterData } from "../types/api.types";
 import { api } from "./api";
-
-export interface RegisterData {
-  username: string;
-  name: string;
-  email: string;
-  password: string;
-  password_confirm: string;
-}
-
-export interface LoginData {
-  email: string;
-  password: string;
-}
 
 export const authApi = {
   register: (data: RegisterData) => {

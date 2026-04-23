@@ -7,3 +7,5 @@ export type UserData = {
   password_confirm: string;
   role?: "user" | "admin";
 };
+
+// type FormData = Omit<UserData, 'id' | 'role'>

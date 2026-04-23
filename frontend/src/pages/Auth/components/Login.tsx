@@ -1,25 +1,32 @@
-import { useState } from "react";
 import MainInput from "../../../components/ui/MainInput";
-
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+interface LoginProps {
+  formData: {
+    email: string;
+    password: string;
+  };
+  updateField: (
+    field: string,
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  getFieldError: (field: string) => string | undefined;
+}
+const Login = ({ formData, updateField, getFieldError }: LoginProps) => {
   return (
     <>
       <MainInput
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={formData.email}
+        onChange={updateField("email")}
         name="email"
         placeholder="почта"
         type="email"
+        error={getFieldError("email")}
       />
       <MainInput
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={formData.password}
+        onChange={updateField("password")}
         name="password"
         placeholder="пароль"
         type="password"
+        error={getFieldError("password")}
       />
     </>
   );
