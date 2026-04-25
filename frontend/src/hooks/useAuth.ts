@@ -1,4 +1,4 @@
-import { useCallback, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import {
   formatZodErrors,
   loginSchema,
@@ -16,6 +16,16 @@ export const useAuth = (isLogin: boolean) => {
   const [showErrors, setShowErrors] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState("");
+
+  const clearForm = () => {
+    setFormData({
+      email: "",
+      password: "",
+      username: "",
+      name: "",
+      password_confirm: "",
+    });
+  };
 
   const schema = isLogin ? loginSchema : registerSchema;
 
@@ -50,13 +60,7 @@ export const useAuth = (isLogin: boolean) => {
       setServerError("");
       try {
         await submitFn();
-        setFormData({
-          email: "",
-          password: "",
-          username: "",
-          name: "",
-          password_confirm: "",
-        });
+        clearForm();
         setShowErrors(false);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
@@ -78,6 +82,12 @@ export const useAuth = (isLogin: boolean) => {
     }
     return formData;
   }, [formData, isLogin]);
+
+  useEffect(() => {
+    setShowErrors(false);
+    setServerError("");
+    clearForm();
+  }, [isLogin]);
 
   return {
     formData,
