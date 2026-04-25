@@ -1,4 +1,4 @@
-import MainInput from "../../../components/ui/MainInput";
+import MainInput from "@/components/ui/MainInput";
 
 interface RegistrationProps {
   formData: {

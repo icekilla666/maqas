@@ -3,16 +3,16 @@ import {
   ACCOUNT_PAGE,
   LOGIN_PAGE,
   REGISTRATION_PAGE,
-} from "../../../utils/constants";
+} from "@/utils/constants";
 import Login from "./Login";
 import Registration from "./Registration";
-import Logo from "../../../components/common/Logo";
-import MainButton from "../../../components/ui/MainButton";
-import { useAuth } from "../../../hooks/useAuth";
+import Logo from "@/components/common/Logo";
+import MainButton from "@/components/ui/MainButton";
+import { useAuth } from "@/hooks/useAuth";
 import type { SubmitEvent } from "react";
-import Loader from "../../../components/ui/Loader";
-import { authApi } from "../../../services/auth.api";
-import type { LoginData, RegisterData } from "../../../types/api.types";
+import Loader from "@/components/ui/Loader";
+import { authApi } from "@/services/auth.api";
+import type { LoginData, RegisterData } from "@/types/api.types";
 
 const AuthForm = () => {
   const navigate = useNavigate();
@@ -86,9 +86,7 @@ const AuthForm = () => {
             </NavLink>
           </p>
           {serverError && (
-            <div className="text-red text-center text-sm">
-              {serverError}
-            </div>
+            <div className="text-red text-center text-sm">{serverError}</div>
           )}
         </form>
       </div>
