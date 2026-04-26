@@ -4,26 +4,34 @@ import { LOGIN_PAGE } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import { authApi } from "@/services/auth.api";
 import axios from "axios";
+import Loader from "@/components/ui/Loader";
 
 const VerifyEmailPage = () => {
-  const [status, setStatus] = useState<"error" | "success" | null>(null);
+  const [status, setStatus] = useState<"error" | "success" | "loading">(
+    "loading",
+  );
   const [error, setError] = useState("");
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
   useEffect(() => {
-    if (!token) return;
+    let navigateTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const checkedToken = async () => {
+      if (!token) {
+        setStatus("error");
+        setError("Ссылка подтверждения некорректна");
+        return;
+      }
       try {
         await authApi.verifyEmail(token);
         setStatus("success");
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-          setError(
-            error.response?.data?.detail ||
-              "Неизвестная ошибка! Попробуйте позже",
-          );
+        navigateTimeout = setTimeout(() => {
+          navigate(LOGIN_PAGE);
+        }, 3000);
+      } catch (error) {
+        if (axios.isAxiosError(error) && typeof error.response?.data?.detail === "string") {
+          setError(error.response?.data?.detail);
         } else {
           setError("Неизвестная ошибка! Попробуйте позже");
         }
@@ -31,14 +39,15 @@ const VerifyEmailPage = () => {
       }
     };
     checkedToken();
-    const navigateTimeout = setTimeout(() => {
-      navigate(LOGIN_PAGE);
-    }, 3000);
-    return () => clearTimeout(navigateTimeout);
+    return () => {
+      if (navigateTimeout) {
+        clearTimeout(navigateTimeout);
+      }
+    };
   }, [navigate, token]);
-  console.log(error);
   return (
     <section className="h-svh flex justify-center items-center px-7">
+      {status === "loading" && <Loader />}
       {status === "success" && (
         <VerifyEmailWrapper
           title="Регистрация прошла успешно!"
@@ -49,7 +58,7 @@ const VerifyEmailPage = () => {
       {status === "error" && (
         <VerifyEmailWrapper
           title="Возникла ошибка!"
-          text={"error"}
+          text={error}
           button="отправить сообщение повторно"
           variant="error"
         />

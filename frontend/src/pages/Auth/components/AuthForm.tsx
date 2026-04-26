@@ -32,9 +32,7 @@ const AuthForm = () => {
       setUser(true, response.data.access_token);
       navigate(ACCOUNT_PAGE);
     } else {
-      const response = await authApi.register(submitData as RegisterData);
-      console.log(response);
-      console.log(response.data);
+      await authApi.register(submitData as RegisterData);
       navigate(VERIFY_EMAIL_PENDING_PAGE);
     }
   };
