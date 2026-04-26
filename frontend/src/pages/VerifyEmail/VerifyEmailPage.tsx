@@ -8,7 +8,7 @@ const VerifyEmailPage = () => {
   const token = searchParams.get("token");
   const navigate = useNavigate();
   useEffect(() => {
-    if (!token) {
+    if (token) {
       const navigateTimeout = setTimeout(() => {
         navigate(LOGIN_PAGE);
       }, 3000);
