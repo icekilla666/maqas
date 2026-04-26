@@ -1,16 +1,15 @@
 import { create } from "zustand";
-import type { UserData } from "../types/entities";
 
 interface AuthState {
-  user: UserData | null;
+  isAuth: boolean;
   accessToken: string | null;
-  setUser: (user: UserData | null, accessToken: string | null) => void;
+  setUser: (isAuth: boolean, accessToken: string | null) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  isAuth: false,
   accessToken: null,
-  setUser: (user, accessToken) => set({ user, accessToken }),
-  logout: () => set({ user: null, accessToken: null }),
+  setUser: (isAuth, accessToken) => set({ isAuth, accessToken }),
+  logout: () => set({ isAuth: false, accessToken: null }),
 }));
