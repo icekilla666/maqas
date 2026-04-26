@@ -161,4 +161,16 @@ h1 {
     outline: transparent;
     border-color: var(--color-main);
   }
+
+  .verify-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 62px 4px 48px;
+    background-color: var(--color-primary);
+    border-radius: 20px;
+  }
 }

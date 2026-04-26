@@ -5,6 +5,9 @@ export const authApi = {
   refreshAccess: () => {
     return api.post("/api/auth/refresh-access");
   },
+  resendEmail: (email: string) => {
+    return api.post("/api/auth/resend-verification-email", email);
+  },
   register: (data: RegisterData) => {
     return api.post("/api/auth/register", data);
   },

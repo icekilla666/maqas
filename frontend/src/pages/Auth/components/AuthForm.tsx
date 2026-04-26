@@ -1,9 +1,9 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ACCOUNT_PAGE, LOGIN_PAGE, REGISTRATION_PAGE } from "@/utils/constants";
+import { ACCOUNT_PAGE, LOGIN_PAGE, REGISTRATION_PAGE, VERIFY_EMAIL_PENDING_PAGE } from "@/utils/constants";
 import Login from "./Login";
 import Registration from "./Registration";
 import Logo from "@/components/common/Logo";
-import MainButton from "@/components/ui/MainButton";
+import MainButton from "@/components/ui/Buttons/MainButton";
 import { useAuth } from "@/hooks/useAuth";
 import { type SubmitEvent } from "react";
 import Loader from "@/components/ui/Loader";
@@ -33,8 +33,9 @@ const AuthForm = () => {
       navigate(ACCOUNT_PAGE);
     } else {
       const response = await authApi.register(submitData as RegisterData);
+      console.log(response);
       console.log(response.data);
-      navigate(LOGIN_PAGE);
+      navigate(VERIFY_EMAIL_PENDING_PAGE);
     }
   };
   const onSumbitForm = (e: SubmitEvent) => {

@@ -1,4 +1,4 @@
-import MainButton from "@/components/ui/MainButton";
+import MainButton from "@/components/ui/Buttons/MainButton";
 import { authApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/authStore";
 

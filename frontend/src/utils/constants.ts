@@ -5,3 +5,4 @@ export const REGISTRATION_PAGE = "/registration";
 export const CHATS_PAGE = "/chats";
 export const SETTINGS_PAGE = "/setting";
 export const VERIFY_EMAIL_PAGE = "/verify-email";
+export const VERIFY_EMAIL_PENDING_PAGE = "/verify-email/pending";

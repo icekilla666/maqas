@@ -1,5 +1,5 @@
-import logoLight from "../../assets/images/logo-light.svg";
-import logoDark from "../../assets/images/logo-dark.svg";
+import logoLight from "@/assets/images/logo-light.svg";
+import logoDark from "@/assets/images/logo-dark.svg";
 
 const Logo = () => {
   return (
