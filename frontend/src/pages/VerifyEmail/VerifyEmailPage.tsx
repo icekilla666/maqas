@@ -36,7 +36,7 @@ const VerifyEmailPage = () => {
     }, 3000);
     return () => clearTimeout(navigateTimeout);
   }, [navigate, token]);
-
+  console.log(error);
   return (
     <section className="h-svh flex justify-center items-center px-7">
       {status === "success" && (
@@ -49,7 +49,7 @@ const VerifyEmailPage = () => {
       {status === "error" && (
         <VerifyEmailWrapper
           title="Возникла ошибка!"
-          text={error}
+          text={"error"}
           button="отправить сообщение повторно"
           variant="error"
         />
