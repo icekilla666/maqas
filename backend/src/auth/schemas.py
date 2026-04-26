@@ -1,12 +1,9 @@
 from pydantic import BaseModel, Field, EmailStr, model_validator
-from enum import Enum
 
-class User(BaseModel):
+class UserRegister(BaseModel):
     username: str = Field(min_length=1, max_length=20)
     name: str = Field(min_length=1, max_length=50)
     email: EmailStr
-
-class UserRegister(User):
     password: str = Field(min_length=8, max_length=72)
     password_confirm: str
     @model_validator(mode="after")
@@ -19,11 +16,5 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=72)
 
-class UserStatus(str, Enum):
-    active = "active"
-    deactivated = "deactivated"
-    banned = "banned"
-    pending = "pending"
-    
 class UserEmail(BaseModel):
     email: EmailStr

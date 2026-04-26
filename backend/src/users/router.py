@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Response
+from fastapi import APIRouter, status, Response, UploadFile
 
 from src.users.schemas import UserOutMe, UserUpdateMe
 from src.auth.dependencies import AuthDep
@@ -32,3 +32,22 @@ async def delete_me(
 ):
     delete_data = await users_service.delete_me(response, current_user, session)
     return delete_data
+
+@users_router.post("/me/avatar", status_code=status.HTTP_200_OK)
+async def upload_avatar(
+    file: UploadFile,
+    current_user: AuthDep,
+    session: SessionDep,
+    users_service: UsersServiceDep
+):
+    file_url = await users_service.upload_avatar(file, current_user, session)
+    return file_url
+
+@users_router.delete("/me/avatar", status_code=status.HTTP_200_OK)
+async def delete_avatar(
+    current_user: AuthDep,
+    session: SessionDep,
+    users_service: UsersServiceDep
+):
+    delete_avatar_data = await users_service.delete_avatar(current_user, session)
+    return delete_avatar_data

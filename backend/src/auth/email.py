@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import ssl
 import logging
+
 from src.configs import settings
 
 logger = logging.getLogger(__name__)
@@ -11,15 +12,15 @@ async def send_verification_email(email: str, verification_link: str):
     msg = MIMEMultipart()
     msg["From"] = settings.SMTP_USER
     msg["To"] = email
-    msg["Subject"] = "Verify your email"
+    msg["Subject"] = "Подтверждение электронной почты"  
     body = f"""
-Hello!
+Здравствуйте!
 
-Please verify your email by clicking the link below:
+Пожалуйста, подтвердите ваш адрес электронной почты, перейдя по ссылке ниже:
 
 {verification_link}
 
-If you did not create an account, you can ignore this email.
+Если вы не создавали аккаунт, просто проигнорируйте это письмо.
     """
     msg.attach(MIMEText(body, "plain"))
     
@@ -38,8 +39,8 @@ If you did not create an account, you can ignore this email.
             tls_context=ssl_context,
             timeout=10
         )
-        logger.info(f"Письмо отправлено на {email}")
+        logger.info(f"Email sent to {email}")
         return True
     except Exception as e:
-        logger.error(f"Ошибка отправки: {e}")
+        logger.error(f"Email sending error: {e}")
         return False

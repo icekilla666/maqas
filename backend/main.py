@@ -5,7 +5,6 @@ import asyncio
 
 from src.database import engine, Base
 from src.routers import router
-from src.auth.models import UsersModel
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

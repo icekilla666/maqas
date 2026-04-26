@@ -3,11 +3,11 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from typing import Annotated
 from uuid import UUID
 
-from src.auth.models import UsersModel
+from src.users.models import UsersModel
 from src.database import SessionDep
 from src.auth.jwt import decode_token
 from src.auth.repository import AuthRepository
-from src.auth.schemas import UserStatus
+from src.users.schemas import UserStatus
 from src.auth.service import AuthService
 from src.users.repository import UsersRepository
 
@@ -23,20 +23,20 @@ async def get_current_user(
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired access token"
+            detail="Недействительный или просроченный токен доступа"
         )
 
     if payload.get("type") != "access":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token type"
+            detail="Неверный тип токена"
         )
 
     user_id_str = payload.get("sub")
     if not user_id_str:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token payload"
+            detail="Неверная структура токена"
         )
 
     try:
@@ -44,7 +44,7 @@ async def get_current_user(
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid user id in token"
+            detail="Неверный идентификатор пользователя в токене"
         )
 
     repo = UsersRepository()
@@ -53,13 +53,13 @@ async def get_current_user(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            detail="Пользователь не найден"
         )
 
     if user.status != UserStatus.active:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Account is deactivated"
+            detail="Аккаунт деактивирован"
         )
 
     return user
@@ -68,7 +68,6 @@ AuthDep = Annotated[UsersModel, Depends(get_current_user)]
 
 def get_auth_repository():
     return AuthRepository()
-
 
 def get_users_repository():
     return UsersRepository()

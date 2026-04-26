@@ -71,3 +71,4 @@ async def resend_verification_email(
 ):
     resend_verification_email_data = await auth_service.resend_verification_email(user_email.email, session)
     return resend_verification_email_data
+

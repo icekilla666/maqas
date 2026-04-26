@@ -2,7 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from uuid import UUID
 
-from src.auth.models import UsersModel, RefreshTokenModel
+from src.auth.models import RefreshTokenModel
+from src.users.models import UsersModel
 
 class AuthRepository:
     async def register_user(self, user: UsersModel, session: AsyncSession):

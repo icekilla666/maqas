@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from src.auth.models import UsersModel
+from src.users.models import UsersModel
 
 class UsersRepository:
     async def get_by_email(self, email: str, session: AsyncSession):
@@ -22,3 +22,4 @@ class UsersRepository:
         result = await session.execute(query)
         user = result.scalar_one_or_none()
         return user
+    
