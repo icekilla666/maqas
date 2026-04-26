@@ -2,6 +2,9 @@ import type { LoginData, RegisterData } from "../types/api.types";
 import { api } from "./api";
 
 export const authApi = {
+  refreshAccess: () => {
+    return api.post("/api/auth/refresh-access");
+  },
   register: (data: RegisterData) => {
     return api.post("/api/auth/register", data);
   },
@@ -10,5 +13,8 @@ export const authApi = {
   },
   login: (data: LoginData) => {
     return api.post("/api/auth/login", data);
+  },
+  logout: () => {
+    return api.post("/api/auth/logout");
   },
 };
