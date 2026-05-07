@@ -5,13 +5,23 @@ from datetime import datetime, timezone
 from fastapi import HTTPException, status, UploadFile
 from src.configs import settings
 import cloudinary
+from cloudinary import uploader
 
 logger = logging.getLogger(__name__)
+
+def configure_cloudinary():
+    cloudinary.config(
+        cloud_name=settings.CLOUDINARY_CLOUD_NAME,
+        api_key=settings.CLOUDINARY_API_KEY,
+        api_secret=settings.CLOUDINARY_API_SECRET,
+        secure=True
+    )
 
 ALLOWED_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"}
 MAX_SIZE = 5 * 1024 * 1024  
 
 async def upload_image(file: UploadFile, folder: str, owner_id: UUID):
+    configure_cloudinary()
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -49,6 +59,7 @@ async def upload_image(file: UploadFile, folder: str, owner_id: UUID):
     }
 
 async def delete_image(file_id: str):
+    configure_cloudinary()
     if not file_id:
         return False
     try:

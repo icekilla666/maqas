@@ -1,8 +1,9 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func, update
+from sqlalchemy.orm import selectinload, contains_eager
 
-from src.users.models import UsersModel
+from src.users.models import UsersModel, FollowsModel
 
 class UsersRepository:
     async def get_by_email(self, email: str, session: AsyncSession):
@@ -23,3 +24,43 @@ class UsersRepository:
         user = result.scalar_one_or_none()
         return user
     
+    async def get_by_similar_username(self, username: str, skip: int, limit: int, session: AsyncSession):
+        query = select(UsersModel).where(func.similarity(UsersModel.username, username) > 0.3).order_by(func.similarity(UsersModel.username, username).desc()).offset(skip).limit(limit)
+        result = await session.execute(query)
+        users = result.scalars().all()
+        return users
+    
+    async def get_follow(self, follower_id: UUID, following_id: UUID, session: AsyncSession):
+        query = select(FollowsModel).where(FollowsModel.follower_id == follower_id, FollowsModel.following_id == following_id)
+        result = await session.execute(query)
+        follow = result.scalar_one_or_none()
+        return follow
+    
+    async def follow_user(self, follow: FollowsModel, session: AsyncSession):
+        follower_query = update(UsersModel).where(UsersModel.id == follow.follower_id).values(followings_count=UsersModel.followings_count + 1)
+        await session.execute(follower_query)
+        following_query = update(UsersModel).where(UsersModel.id == follow.following_id).values(followers_count=UsersModel.followers_count + 1)
+        await session.execute(following_query)
+        session.add(follow)
+        await session.commit()
+        await session.refresh(follow)
+
+    async def unfollow_user(self, follow: FollowsModel, session: AsyncSession):
+        follower_query = update(UsersModel).where(UsersModel.id == follow.follower_id).values(followings_count=UsersModel.followings_count - 1)
+        await session.execute(follower_query)
+        following_query = update(UsersModel).where(UsersModel.id == follow.following_id).values(followers_count=UsersModel.followers_count - 1)
+        await session.execute(following_query)
+        await session.delete(follow)
+        await session.commit()
+
+    async def get_followers(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        query = select(UsersModel).join(FollowsModel, UsersModel.id == FollowsModel.follower_id).where(FollowsModel.following_id == user_id).options(contains_eager(UsersModel.followers)).offset(skip).limit(limit)
+        result = await session.execute(query)
+        followers = result.unique().scalars().all()
+        return followers
+    
+    async def get_followings(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        query = select(UsersModel).join(FollowsModel, UsersModel.id == FollowsModel.following_id).where(FollowsModel.follower_id == user_id).options(contains_eager(UsersModel.followings)).offset(skip).limit(limit)
+        result = await session.execute(query)
+        followings = result.unique().scalars().all()
+        return followings

@@ -23,20 +23,32 @@ async def get_current_user(
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Недействительный или просроченный токен доступа"
+            detail={
+                "success": False,
+                "message": "Не выполнен вход в аккаунт",
+                "error": "INVALID_TOKEN"
+            }
         )
 
     if payload.get("type") != "access":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный тип токена"
+            detail={
+                "success": False,
+                "message": "Не выполнен вход в аккаунт",
+                "error": "WRONG_TOKEN_TYPE"
+            }
         )
 
     user_id_str = payload.get("sub")
     if not user_id_str:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверная структура токена"
+            detail={
+                "success": False,
+                "message": "Не выполнен вход в аккаунт",
+                "error": "INVALID_TOKEN_STRUCTURE"
+            }
         )
 
     try:
@@ -44,7 +56,11 @@ async def get_current_user(
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный идентификатор пользователя в токене"
+            detail={
+                "success": False,
+                "message": "Не выполнен вход в аккаунт",
+                "error": "INVALID_ID_IN_TOKEN"
+            }
         )
 
     repo = UsersRepository()
@@ -53,15 +69,33 @@ async def get_current_user(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Пользователь не найден"
+            detail={
+                "success": False,
+                "message": "Не выполнен вход в аккаунт",
+                "error": "USER_NOT_FOUND"
+            }
         )
 
-    if user.status != UserStatus.active:
+    if user.status == UserStatus.banned:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Аккаунт деактивирован"
+            detail={
+                "success": False,
+                "message": "Аккаунт заблокирован",
+                "error": "ACCOUNT_BANNED"
+            }
         )
-
+    
+    if user.status == UserStatus.pending:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "success": False,
+                "message": "Аккаунт не подтвержден",
+                "error": "ACCOUNT_PENDING"
+            }
+        )
+    
     return user
 
 AuthDep = Annotated[UsersModel, Depends(get_current_user)]

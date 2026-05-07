@@ -1,10 +1,10 @@
 from jose import JWTError, jwt
-from typing import Optional
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from datetime import datetime, timedelta, timezone
 
 from src.configs import settings
 
-def create_access_token(data: dict) -> str:
+def create_access_token(data: dict):
     to_encode = data.copy()
     if "sub" in to_encode:
         to_encode["sub"] = str(to_encode["sub"])
@@ -13,7 +13,7 @@ def create_access_token(data: dict) -> str:
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-def create_refresh_token(data: dict) -> str:
+def create_refresh_token(data: dict):
     to_encode = data.copy()
     if "sub" in to_encode:
         to_encode["sub"] = str(to_encode["sub"])
@@ -22,7 +22,7 @@ def create_refresh_token(data: dict) -> str:
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-def create_email_verification_token(data: dict) -> str:
+def create_email_verification_token(data: dict):
     to_encode = data.copy()
     if "sub" in to_encode:
         to_encode["sub"] = str(to_encode["sub"])
@@ -31,7 +31,29 @@ def create_email_verification_token(data: dict) -> str:
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-def decode_token(token: str) -> Optional[dict]:
+def decode_email_verification_token(token: str):
+    try:
+        payload = jwt.decode(
+            token, 
+            settings.SECRET_KEY, 
+            algorithms=[settings.ALGORITHM]
+        )
+        return {"status": "valid", "payload": payload}
+    except ExpiredSignatureError:
+        try:
+            payload = jwt.decode(
+                token, 
+                settings.SECRET_KEY, 
+                algorithms=[settings.ALGORITHM],
+                options={"verify_exp": False}
+            )
+            return {"status": "expired", "payload": payload}
+        except InvalidTokenError:
+            return {"status": "invalid", "payload": None}
+    except InvalidTokenError:
+        return {"status": "invalid", "payload": None}
+    
+def decode_token(token: str):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         return payload

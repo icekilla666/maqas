@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status, HTTPException, Response, UploadFile
+from uuid import UUID
 
-from src.users.models import UsersModel
+from src.users.models import UsersModel, FollowsModel
 from src.users.repository import UsersRepository
 from src.users.schemas import UserUpdateMe, UserStatus
 from src.auth.repository import AuthRepository
@@ -17,13 +18,20 @@ class UsersService:
         if existing_username and existing_username.username != current_user.username:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Имя пользователя уже используется"
+                detail={
+                    "success": False,
+                    "message": "Имя пользователя уже используется",
+                    "error": "USERNAME_IN_USE"
+                }
             )
         update_dict = update_data.model_dump(exclude_unset=True)
         for k, v in update_dict.items():
             setattr(current_user, k, v)
         await session.commit()
-        return current_user
+        return {
+            "success": True,
+            "data": current_user
+        }
     
     async def delete_me(self, response: Response, current_user: UsersModel, session: AsyncSession):
         response.delete_cookie("refresh_token", path="/auth")
@@ -32,14 +40,20 @@ class UsersService:
         current_user.username = f"deleted_{current_user.id}"
         current_user.status = UserStatus.deactivated
         await session.commit()
-        return {"message": "Аккаунт успешно удалён"}
+        return {
+            "success": True,
+            "message": "Аккаунт успешно удалён"
+        }
     
     async def delete_avatar(self, current_user: UsersModel, session: AsyncSession):
         await delete_image(current_user.avatar_file_id)
         current_user.avatar_url = None
         current_user.avatar_file_id = None
         await session.commit()
-        return {"message": "Аватар успешно удалён"}
+        return {
+            "success": True,
+            "message": "Аватар успешно удалён"
+        }
     
     async def upload_avatar(self, file: UploadFile, current_user: UsersModel, session: AsyncSession):
         if current_user.avatar_url:
@@ -48,4 +62,159 @@ class UsersService:
         current_user.avatar_url = uploaded_file["url"]
         current_user.avatar_file_id = uploaded_file["file_id"]
         await session.commit()
-        return current_user.avatar_url
+        return {
+            "success": True,
+            "data": current_user.avatar_url
+        }
+    
+    async def get_by_id(self, user_id: UUID, session: AsyncSession):
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        return {
+            "success": True,
+            "data": user
+        }
+    
+    async def get_by_similar_username(self, username: str, skip: int, limit: int, session: AsyncSession):
+        users = await self.users_repo.get_by_similar_username(username, skip, limit, session)
+        return {
+            "success": True,
+            "data": users
+        }
+    
+    async def follow_user(self, follower_user: UsersModel, following_user_id: UUID, session: AsyncSession):
+        if follower_user.id == following_user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "success": False,
+                    "message": "Нельзя подписаться на себя ;(",
+                    "error": "CANNOT_FOLLOW_SELF"
+                }
+            )
+        following_user = await self.users_repo.get_by_id(following_user_id, session)
+        if not following_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        existing_follow = await self.users_repo.get_follow(follower_user.id, following_user.id, session)
+        if existing_follow:
+            raise HTTPException(
+                status_code = status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "success": False,
+                    "message": "Вы уже подписаны",
+                    "error": "FOLLOW_ALREADY_EXISTS"
+                }
+            )
+        follow = FollowsModel(
+            follower_id = follower_user.id,
+            following_id = following_user.id
+        )
+        await self.users_repo.follow_user(follow, session)
+        return {
+            "success": True
+        }
+    
+    async def unfollow_user(self, follower_user: UsersModel, following_user_id: UUID, session: AsyncSession):
+        following_user = await self.users_repo.get_by_id(following_user_id, session)
+        if not following_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        existing_follow = await self.users_repo.get_follow(follower_user.id, following_user_id, session)
+        if not existing_follow:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "success": False,
+                    "message": "Вы уже отписаны",
+                    "error": "ALREADY_UNFOLLOWED"
+                }
+            )
+        follow = FollowsModel(
+            follower_id = follower_user.id,
+            following_id = following_user.id
+        )
+        await self.users_repo.unfollow_user(follow, session)
+        return {
+            "success": True
+        }
+    
+    async def get_my_followers(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
+        followers = await self.users_repo.get_followers(current_user.id, skip, limit, session)
+        return {
+            "success": True,
+            "data": followers,
+            "total": current_user.followers_count,
+            "skip": skip,
+            "limit": limit
+        }
+        
+    async def get_followers(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        followers = await self.users_repo.get_followers(user_id, skip, limit, session)
+        return {
+            "success": True,
+            "data": followers,
+            "total": user.followers_count,
+            "skip": skip,
+            "limit": limit
+        }
+        
+    async def get_my_followings(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
+        followings = await self.users_repo.get_followings(current_user.id, skip, limit, session)
+        return {
+            "success": True,
+            "data": followings,
+            "total": current_user.followings_count,
+            "skip": skip,
+            "limit": limit
+        }
+        
+    async def get_followings(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        followings = await self.users_repo.get_followings(user_id, skip, limit, session)
+        return {
+            "success": True,
+            "data": followings,
+            "total": user.followings_count,
+            "skip": skip,
+            "limit": limit
+        }

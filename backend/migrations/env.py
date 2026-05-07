@@ -7,22 +7,18 @@ from sqlalchemy import engine_from_config, pool
 from dotenv import load_dotenv
 from src.database import Base
 import src.auth.models
+import src.users.models
 
-# Загружаем .env
 load_dotenv()
 
-# Alembic Config object
 config = context.config
 
-# Настройка логирования
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Метаданные твоих моделей
 target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode."""
     DB_URL = os.getenv("DATABASE_URL")
     if not DB_URL:
         raise ValueError("DATABASE_URL environment variable not set")
@@ -41,7 +37,6 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode."""
     DB_URL = os.getenv("DATABASE_URL")
     if not DB_URL:
         raise ValueError("DATABASE_URL environment variable not set")

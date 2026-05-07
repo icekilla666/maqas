@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 from enum import Enum
+from uuid import UUID
 
 class UserStatus(str, Enum):
     active = "active"
@@ -8,17 +9,31 @@ class UserStatus(str, Enum):
     banned = "banned"
     pending = "pending"
     
-class UserOut(BaseModel):
-    display_username: str = Field(min_length=1, max_length=20)
+class UserOutShort(BaseModel):
+    id: UUID
+    username: str = Field(min_length=1, max_length=20)
     name: str = Field(min_length=1, max_length=50)
-    bio: None | str = Field(default=None, max_length=200)
     avatar_url: None | str = Field(default=None, max_length=500)
+    status: UserStatus
+
+class UserOutMe(UserOutShort):
+    email: EmailStr
+    bio: None | str = Field(default=None, max_length=200)
+    followers_count: int
+    followings_count: int
     class Config:
         from_attributes = True
 
-class UserOutMe(UserOut):
-    email: EmailStr
+class UserOutFull(UserOutShort):
+    bio: None | str = Field(default=None, max_length=200)
+    followers_count: int
+    followings_count: int
+    class Config:
+        from_attributes = True
 
+class UserOutList(UserOutShort):
+    total: int = Field(default=0, ge=0)
+    
 class UserUpdateMe(BaseModel):
     username: Optional[str] = Field(default=None, min_length=1, max_length=20)
     name: Optional[str] = Field(default=None, min_length=1, max_length=50)

@@ -1,6 +1,6 @@
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy.orm import mapped_column, Mapped, relationship, column_property
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import String, Enum
+from sqlalchemy import String, Enum, Integer, ForeignKey, UniqueConstraint
 from uuid import uuid4
 
 from src.database import Base
@@ -15,16 +15,25 @@ class UsersModel(Base):
     avatar_file_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=True)
     email: Mapped[str] = mapped_column(String(254), unique=True, nullable=False)
     bio: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    followers_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    followings_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    followers: Mapped[list["FollowsModel"]] = relationship("FollowsModel", foreign_keys="FollowsModel.following_id", back_populates="following_user")
+    followings: Mapped[list["FollowsModel"]] = relationship("FollowsModel", foreign_keys="FollowsModel.follower_id", back_populates="follower_user")
     hashed_password: Mapped[str] = mapped_column(String(255))
     status: Mapped[Enum] = mapped_column(Enum(UserStatus, name="user_status_enum", native_enum=False), nullable=False, default=UserStatus.pending)
     refresh_tokens: Mapped[list["RefreshTokenModel"]] = relationship("RefreshTokenModel", back_populates="user", cascade="all, delete-orphan")
     @property
-    def display_username(self) -> str:
-        if self.status == UserStatus.deactivated:
-            return "[deleted]"
-        return self.username
-    @property
-    def is_banned(self) -> bool:
+    def is_banned(self):
         if self.status == UserStatus.banned:
             return True
         return False
+    
+
+class FollowsModel(Base):
+    __tablename__ = "follows"
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    follower_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
+    following_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
+    follower_user: Mapped["UsersModel"] = relationship("UsersModel", foreign_keys=[follower_id], back_populates="followings")
+    following_user: Mapped["UsersModel"] = relationship("UsersModel", foreign_keys=[following_id], back_populates="followers")
+    __table_args__ = (UniqueConstraint('follower_id', 'following_id', name='unique_follow'),)

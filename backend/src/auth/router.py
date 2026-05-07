@@ -3,10 +3,11 @@ from fastapi import APIRouter, status, Response, Request
 from src.auth.schemas import UserRegister, UserLogin, UserEmail
 from src.database import SessionDep
 from src.auth.dependencies import AuthServiceDep, AuthDep
+from src.common.schemas import ResponseSchema
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
-@auth_router.post("/register", status_code=status.HTTP_201_CREATED)
+@auth_router.post("/register", response_model=ResponseSchema, status_code=status.HTTP_201_CREATED)
 async def register_user(
     user: UserRegister,
     session: SessionDep,
@@ -15,7 +16,7 @@ async def register_user(
     register_data = await auth_service.register_user(user, session)
     return register_data
 
-@auth_router.get("/verify-email", status_code=status.HTTP_200_OK)
+@auth_router.get("/verify-email", response_model=ResponseSchema, status_code=status.HTTP_200_OK)
 async def verify_email(
     token: str,
     session: SessionDep,
@@ -24,7 +25,7 @@ async def verify_email(
     verification_data = await auth_service.verify_email(token, session)
     return verification_data
 
-@auth_router.post("/login", status_code=status.HTTP_200_OK)
+@auth_router.post("/login", response_model=ResponseSchema, status_code=status.HTTP_200_OK)
 async def login_user(
     user: UserLogin,
     response: Response,
@@ -34,7 +35,7 @@ async def login_user(
     login_data = await auth_service.login_user(user, response, session)
     return login_data
 
-@auth_router.post("/refresh-access", status_code=status.HTTP_201_CREATED)
+@auth_router.post("/refresh-access", response_model=ResponseSchema, status_code=status.HTTP_201_CREATED)
 async def refresh_access_token(
     request: Request,
     session: SessionDep,
@@ -43,7 +44,7 @@ async def refresh_access_token(
     access_token_data = await auth_service.refresh_access_token(request, session)
     return access_token_data
 
-@auth_router.post("/logout", status_code=status.HTTP_200_OK)
+@auth_router.post("/logout", response_model=ResponseSchema, status_code=status.HTTP_200_OK)
 async def logout(
     request: Request,
     response: Response,
@@ -53,7 +54,7 @@ async def logout(
     logout_data = await auth_service.logout(request, response, session)
     return logout_data
 
-@auth_router.post("/logout-all", status_code=status.HTTP_200_OK)
+@auth_router.post("/logout-all", response_model=ResponseSchema, status_code=status.HTTP_200_OK)
 async def logout_all_devices(
     response: Response,
     session: SessionDep,
@@ -63,7 +64,7 @@ async def logout_all_devices(
     logout_all_devices_data = await auth_service.logout_all_devices(response, current_user, session)
     return logout_all_devices_data
 
-@auth_router.post("/resend-verification-email", status_code=status.HTTP_200_OK)
+@auth_router.post("/resend-verification-email", response_model=ResponseSchema, status_code=status.HTTP_200_OK)
 async def resend_verification_email(
     user_email: UserEmail,
     session: SessionDep,
