@@ -28,12 +28,13 @@ class UserOutFull(UserOutShort):
     bio: None | str = Field(default=None, max_length=200)
     followers_count: int
     followings_count: int
+    is_blocked: bool = Field(default=False)
     class Config:
         from_attributes = True
 
 class UserOutList(UserOutShort):
     total: int = Field(default=0, ge=0)
-    
+
 class UserUpdateMe(BaseModel):
     username: Optional[str] = Field(default=None, min_length=1, max_length=20)
     name: Optional[str] = Field(default=None, min_length=1, max_length=50)

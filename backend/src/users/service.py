@@ -2,9 +2,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status, HTTPException, Response, UploadFile
 from uuid import UUID
 
-from src.users.models import UsersModel, FollowsModel
+from src.users.models import UsersModel, FollowsModel, BlackListModel
 from src.users.repository import UsersRepository
-from src.users.schemas import UserUpdateMe, UserStatus
+from src.users.schemas import UserUpdateMe, UserStatus, UserOutFull
 from src.auth.repository import AuthRepository
 from src.common.images import upload_image, delete_image
 
@@ -67,7 +67,7 @@ class UsersService:
             "data": current_user.avatar_url
         }
     
-    async def get_by_id(self, user_id: UUID, session: AsyncSession):
+    async def get_by_id(self, current_user, user_id: UUID, session: AsyncSession):
         user = await self.users_repo.get_by_id(user_id, session)
         if not user:
             raise HTTPException(
@@ -78,6 +78,14 @@ class UsersService:
                     "error": "USER_NOT_FOUND"
                 }
             )
+        is_blocked = await self.users_repo.get_block(user.id, current_user.id, session)
+        if is_blocked:
+            user_data = UserOutFull.model_validate(user)
+            user_data.is_blocked = True
+            return {
+                "success": True,
+                "data": user_data
+            }
         return {
             "success": True,
             "data": user
@@ -118,6 +126,26 @@ class UsersService:
                     "success": False,
                     "message": "Вы уже подписаны",
                     "error": "FOLLOW_ALREADY_EXISTS"
+                }
+            )
+        is_blocked = await self.users_repo.get_block(following_user.id, follower_user.id, session)
+        if is_blocked:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "success": False,
+                    "message": "Пользователь заблокировал вас",
+                    "error": "BLOCKED"
+                }
+            )
+        is_blocking = await self.users_repo.get_block(follower_user.id, following_user.id, session)
+        if is_blocking:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "success": False,
+                    "message": "Вы заблокировали этого пользователя",
+                    "error": "BLOCKING"
                 }
             )
         follow = FollowsModel(
@@ -215,6 +243,85 @@ class UsersService:
             "success": True,
             "data": followings,
             "total": user.followings_count,
+            "skip": skip,
+            "limit": limit
+        }
+    async def block_user(self, current_user: UsersModel, user_id: UUID, session: AsyncSession):
+        if current_user.id == user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "success": False,
+                    "message": "Нельзя заблокировать себя",
+                    "error": "CANNOT_BLOCK_SELF"
+                }
+            )
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        existing_block = await self.users_repo.get_block(current_user.id, user.id, session)
+        if existing_block:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "success": False,
+                    "message": "Этот пользователь уже заблокирован",
+                    "error": "ALREADY_BLOCKED"
+                }
+            )
+        block = BlackListModel(
+            blocker_id = current_user.id,
+            blocking_id = user.id
+        )
+        await self.users_repo.block_user(block, session)
+        is_follower = await self.users_repo.get_follow(current_user.id, user.id, session)
+        if is_follower:
+            await self.users_repo.unfollow_user(is_follower, session)
+        is_followed = await self.users_repo.get_follow(user.id, current_user.id, session)
+        if is_followed:
+            await self.users_repo.unfollow_user(is_followed, session)
+        return {
+            "success": True
+        }
+    async def unblock_user(self, current_user: UsersModel, user_id: UUID, session: AsyncSession):
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        block = await self.users_repo.get_block(current_user.id, user.id, session)
+        if not block:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "success": False,
+                    "message": "Этот пользователь уже разблокирован",
+                    "error": "ALREADY_UNBLOCKED"
+                }
+            )
+        await self.users_repo.unblock_user(block, session)
+        return {
+            "success": True
+        }
+    
+    async def get_my_blacklist(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
+        blacklist, total = await self.users_repo.get_my_blacklist(current_user.id, skip, limit, session)
+        return {
+            "success": True,
+            "data": blacklist,
+            "total": total,
             "skip": skip,
             "limit": limit
         }

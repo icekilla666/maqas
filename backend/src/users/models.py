@@ -20,6 +20,8 @@ class UsersModel(Base):
     followers: Mapped[list["FollowsModel"]] = relationship("FollowsModel", foreign_keys="FollowsModel.following_id", back_populates="following_user")
     followings: Mapped[list["FollowsModel"]] = relationship("FollowsModel", foreign_keys="FollowsModel.follower_id", back_populates="follower_user")
     hashed_password: Mapped[str] = mapped_column(String(255))
+    blocking: Mapped[list["BlackListModel"]] = relationship("BlackListModel", foreign_keys="BlackListModel.blocker_id", back_populates="blocker_user")
+    blocked: Mapped[list["BlackListModel"]] = relationship("BlackListModel", foreign_keys="BlackListModel.blocking_id", back_populates="blocked_user")
     status: Mapped[Enum] = mapped_column(Enum(UserStatus, name="user_status_enum", native_enum=False), nullable=False, default=UserStatus.pending)
     refresh_tokens: Mapped[list["RefreshTokenModel"]] = relationship("RefreshTokenModel", back_populates="user", cascade="all, delete-orphan")
     @property
@@ -37,3 +39,12 @@ class FollowsModel(Base):
     follower_user: Mapped["UsersModel"] = relationship("UsersModel", foreign_keys=[follower_id], back_populates="followings")
     following_user: Mapped["UsersModel"] = relationship("UsersModel", foreign_keys=[following_id], back_populates="followers")
     __table_args__ = (UniqueConstraint('follower_id', 'following_id', name='unique_follow'),)
+
+class BlackListModel(Base):
+    __tablename__ = "black_list"
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    blocker_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), nullable=False)  
+    blocking_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), nullable=False) 
+    blocker_user: Mapped["UsersModel"] = relationship("UsersModel", foreign_keys=[blocker_id], back_populates="blocking")
+    blocked_user: Mapped["UsersModel"] = relationship("UsersModel", foreign_keys=[blocking_id], back_populates="blocked")
+    __table_args__ = (UniqueConstraint('blocker_id', 'blocking_id', name='unique_black_list'),)

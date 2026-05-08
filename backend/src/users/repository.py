@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, update
 from sqlalchemy.orm import selectinload, contains_eager
 
-from src.users.models import UsersModel, FollowsModel
+from src.users.models import UsersModel, FollowsModel, BlackListModel
 
 class UsersRepository:
     async def get_by_email(self, email: str, session: AsyncSession):
@@ -64,3 +64,27 @@ class UsersRepository:
         result = await session.execute(query)
         followings = result.unique().scalars().all()
         return followings
+    
+    async def get_block(self, blocker_id: UUID, blocking_id: UUID, session):
+        query = select(BlackListModel).where(BlackListModel.blocker_id == blocker_id, BlackListModel.blocking_id == blocking_id)
+        result = await session.execute(query)
+        block = result.scalar_one_or_none()
+        return block
+    
+    async def block_user(self, block: BlackListModel, session: AsyncSession):
+        session.add(block)
+        await session.commit()
+        await session.refresh(block)
+
+    async def unblock_user(self, block: BlackListModel, session: AsyncSession):
+        await session.delete(block)
+        await session.commit()
+
+    async def get_my_blacklist(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        query = select(UsersModel).join(BlackListModel, UsersModel.id == BlackListModel.blocking_id).where(BlackListModel.blocker_id == user_id).options(contains_eager(UsersModel.blocked)).offset(skip).limit(limit)
+        result = await session.execute(query)
+        blacklist = result.unique().scalars()
+        total_query = select(func.count()).select_from(BlackListModel).where(BlackListModel.blocker_id == user_id)
+        total_result = await session.execute(total_query)
+        total = total_result.scalar()
+        return blacklist, total
