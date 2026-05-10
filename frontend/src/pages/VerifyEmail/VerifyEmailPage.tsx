@@ -4,7 +4,7 @@ import { LOGIN_PAGE } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import { authApi } from "@/services/auth.api";
 import axios from "axios";
-import Loader from "@/components/ui/Loader";
+import { useAuthStore } from "@/store/auth.store";
 
 const VerifyEmailPage = () => {
   const [status, setStatus] = useState<"error" | "success" | "loading">(
@@ -13,6 +13,8 @@ const VerifyEmailPage = () => {
   const [error, setError] = useState("");
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const setPendingEmail = useAuthStore((state) => state.setPendingEmail);
+  const pendingEmail = useAuthStore((state) => state.pendingEmail);
   const navigate = useNavigate();
   useEffect(() => {
     let navigateTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -24,14 +26,23 @@ const VerifyEmailPage = () => {
         return;
       }
       try {
-        await authApi.verifyEmail(token);
-        setStatus("success");
-        navigateTimeout = setTimeout(() => {
-          navigate(LOGIN_PAGE);
-        }, 3000);
+        const response = await authApi.verifyEmail(token);
+        if (response.success) {
+          setStatus("success");
+          navigateTimeout = setTimeout(() => {
+            navigate(LOGIN_PAGE);
+          }, 3000);
+        } else {
+          setStatus("error");
+          setPendingEmail(response.data)
+          setError(response.message);
+        }
       } catch (error) {
-        if (axios.isAxiosError(error) && typeof error.response?.data?.detail === "string") {
-          setError(error.response?.data?.detail);
+        if (
+          axios.isAxiosError(error) &&
+          typeof error.response?.data?.detail.message === "string"
+        ) {
+          setError(error.response?.data?.detail.message);
         } else {
           setError("Неизвестная ошибка! Попробуйте позже");
         }
@@ -44,10 +55,9 @@ const VerifyEmailPage = () => {
         clearTimeout(navigateTimeout);
       }
     };
-  }, [navigate, token]);
+  }, [navigate, token, setPendingEmail]);
   return (
     <section className="h-svh flex justify-center items-center px-7">
-      {status === "loading" && <Loader />}
       {status === "success" && (
         <VerifyEmailWrapper
           title="Регистрация прошла успешно!"
@@ -59,8 +69,9 @@ const VerifyEmailPage = () => {
         <VerifyEmailWrapper
           title="Возникла ошибка!"
           text={error}
-          button="отправить сообщение повторно"
+          button={true}
           variant="error"
+          email={pendingEmail!}
         />
       )}
     </section>

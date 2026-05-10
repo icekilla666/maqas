@@ -11,7 +11,7 @@ const StrokeButton = ({
   ...props
 }: StrokeButtonProps) => {
   return (
-    <button className={`qwe ${className}`.trim()} {...props}>
+    <button className={`${className} disabled:text-grey`.trim()} {...props}>
       {children}
     </button>
   );

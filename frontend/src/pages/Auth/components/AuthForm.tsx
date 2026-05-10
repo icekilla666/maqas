@@ -1,5 +1,10 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ACCOUNT_PAGE, LOGIN_PAGE, REGISTRATION_PAGE, VERIFY_EMAIL_PENDING_PAGE } from "@/utils/constants";
+import {
+  ACCOUNT_PAGE,
+  LOGIN_PAGE,
+  REGISTRATION_PAGE,
+  VERIFY_EMAIL_PENDING_PAGE,
+} from "@/utils/constants";
 import Login from "./Login";
 import Registration from "./Registration";
 import Logo from "@/components/common/Logo";
@@ -9,11 +14,12 @@ import { type SubmitEvent } from "react";
 import Loader from "@/components/ui/Loader";
 import { authApi } from "@/services/auth.api";
 import type { LoginData, RegisterData } from "@/types/api.types";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth.store";
 
 const AuthForm = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
+  const setPendingEmail = useAuthStore((state) => state.setPendingEmail);
   const location = useLocation();
   const isLogin = location.pathname == LOGIN_PAGE;
   const {
@@ -29,10 +35,11 @@ const AuthForm = () => {
     const submitData = getSubmitData();
     if (isLogin) {
       const response = await authApi.login(submitData as LoginData);
-      setUser(true, response.data.access_token);
+      setUser(true, response.access_token);
       navigate(ACCOUNT_PAGE);
     } else {
-      await authApi.register(submitData as RegisterData);
+      const response = await authApi.register(submitData as RegisterData);
+      setPendingEmail(response.data);
       navigate(VERIFY_EMAIL_PENDING_PAGE);
     }
   };

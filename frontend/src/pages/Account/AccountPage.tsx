@@ -1,6 +1,6 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import { authApi } from "@/services/auth.api";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth.store";
 
 const AccountPage = () => {
   const isAuth = useAuthStore((state) => state.isAuth);

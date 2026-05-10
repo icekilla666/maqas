@@ -2,22 +2,30 @@ import type { LoginData, RegisterData } from "../types/api.types";
 import { api } from "./api";
 
 export const authApi = {
-  refreshAccess: () => {
-    return api.post("/api/auth/refresh-access");
+  refreshAccess: async () => {
+    const response = await api.post("/api/auth/refresh-access");
+    return response.data;
   },
-  resendEmail: (email: string) => {
-    return api.post("/api/auth/resend-verification-email", email);
+  resendEmail: async (email: string) => {
+    const response = await api.post("/api/auth/resend-verification-email", {
+      email,
+    });
+    return response.data;
   },
-  register: (data: RegisterData) => {
-    return api.post("/api/auth/register", data);
+  register: async (data: RegisterData) => {
+    const response = await api.post("/api/auth/register", data);
+    return response.data;
   },
-  verifyEmail: (token: string) => {
-    return api.get(`/api/auth/verify-email?token=${token}`);
+  verifyEmail: async (token: string) => {
+    const response = await api.get(`/api/auth/verify-email?token=${token}`);
+    return response.data;
   },
-  login: (data: LoginData) => {
-    return api.post("/api/auth/login", data);
+  login: async (data: LoginData) => {
+    const response = await api.post("/api/auth/login", data);
+    return response.data;
   },
-  logout: () => {
-    return api.post("/api/auth/logout");
+  logout: async () => {
+    const response = await api.post("/api/auth/logout");
+    return response.data;
   },
 };

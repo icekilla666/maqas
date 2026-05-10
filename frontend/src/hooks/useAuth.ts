@@ -65,7 +65,7 @@ export const useAuth = (isLogin: boolean) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error) {
-          setServerError(error.response?.data?.detail);
+          setServerError(error.response?.data?.detail.message);
         } else {
           setServerError("Неизвестная ошибка");
         }

@@ -1,5 +1,5 @@
 import { authApi } from "@/services/auth.api";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth.store.ts";
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "../router.tsx";
@@ -14,7 +14,7 @@ const App = () => {
     const initAuth = async () => {
       try {
         const response = await authApi.refreshAccess();
-        setUser(true, response.data.access_token);
+        setUser(true, response.access_token);
       } catch {
         setUser(false, null);
       } finally {
@@ -33,10 +33,10 @@ const App = () => {
 
   return (
     <>
-      <RouterProvider router={router} />
       <h1 className="hidden text-6xl uppercase text-center md:block">
         компьютерная версия недоступна, переходи на мобилку лошок
       </h1>
+      <RouterProvider router={router} />
     </>
   );
 };

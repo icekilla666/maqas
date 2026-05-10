@@ -169,7 +169,7 @@ h1 {
     align-items: center;
     gap: 20px;
     width: 100%;
-    padding: 62px 4px 48px;
+    padding: 62px 36px 48px;
     background-color: var(--color-primary);
     border-radius: 20px;
   }
