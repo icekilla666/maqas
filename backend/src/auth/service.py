@@ -49,7 +49,8 @@ class AuthService:
                 await self.create_and_send_verification_email(existing_email)
                 return {
                     "success": True,
-                    "message": "Учётная запись с таким email уже существует, но не подтверждена. Новая ссылка для подтверждения отправлена"
+                    "message": "Учётная запись с таким email уже существует, но не подтверждена. Новая ссылка для подтверждения отправлена",
+                    "data": existing_email.email
                     }
         existing_username = await self.users_repo.get_by_username(user.username, session)
         if existing_username:
