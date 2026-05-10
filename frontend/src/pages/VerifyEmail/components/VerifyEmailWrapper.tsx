@@ -25,7 +25,7 @@ const VerifyEmailWrapper = ({
 }: VerifyEmailProps) => {
   const [message, setMessage] = useState(text);
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
+  const [cooldown, setCooldown] = useState(60);
 
   useEffect(() => {
     if (cooldown > 0) {
