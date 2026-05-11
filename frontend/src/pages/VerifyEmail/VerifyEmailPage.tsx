@@ -29,12 +29,13 @@ const VerifyEmailPage = () => {
         const response = await authApi.verifyEmail(token);
         if (response.success) {
           setStatus("success");
+          setPendingEmail(null);
           navigateTimeout = setTimeout(() => {
             navigate(LOGIN_PAGE);
           }, 3000);
         } else {
           setStatus("error");
-          setPendingEmail(response.data)
+          setPendingEmail(response.data);
           setError(response.message);
         }
       } catch (error) {
@@ -46,6 +47,7 @@ const VerifyEmailPage = () => {
         } else {
           setError("Неизвестная ошибка! Попробуйте позже");
         }
+        setPendingEmail(null);
         setStatus("error");
       }
     };

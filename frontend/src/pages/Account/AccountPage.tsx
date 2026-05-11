@@ -1,14 +1,27 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import { authApi } from "@/services/auth.api";
+import { usersApi } from "@/services/users.api";
 import { useAuthStore } from "@/store/auth.store";
+import { useEffect } from "react";
 
 const AccountPage = () => {
   const isAuth = useAuthStore((state) => state.isAuth);
   const setUser = useAuthStore((state) => state.setUser);
-
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!isAuth) return;
+      try {
+        const response = await usersApi.getMe();
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+        console.log('error')
+      }
+    };
+    fetchProfile();
+  }, [isAuth]);
   const handleLogout = async () => {
-    const resp = await authApi.logout();
-    console.log(resp);
+    await authApi.logout();
     setUser(false, null);
   };
   return (
