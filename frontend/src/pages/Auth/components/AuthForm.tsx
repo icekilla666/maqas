@@ -35,7 +35,7 @@ const AuthForm = () => {
     const submitData = getSubmitData();
     if (isLogin) {
       const response = await authApi.login(submitData as LoginData);
-      setUser(true, response.access_token);
+      setUser(true, response.data.access_token);
       navigate(ACCOUNT_PAGE);
     } else {
       const response = await authApi.register(submitData as RegisterData);

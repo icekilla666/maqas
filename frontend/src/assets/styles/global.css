@@ -10,7 +10,7 @@
 }
 
 :root {
-  --color-main: #da7415;
+  --color-main: #FFA64C;
   --color-red: #de2b3f;
   --color-primary: #ffffff;
   --color-wrapper: #f0f5fd;
@@ -20,7 +20,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-main: #da7415;
+    --color-main: #FFA64C;
     --color-red: #de2b3f;
     --color-primary: #1f2125;
     --color-wrapper: #121416;
@@ -43,7 +43,7 @@ h1 {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 2.5rem 1.5rem 1.5rem;
 }
 
 /* ---ИНПУТЫ--- */

@@ -8,18 +8,18 @@ export const usersApi = {
   },
   deleteMe: async () => {
     const response = await api.post("/api/users/me");
-    return response;
+    return response.data;
   },
   updateMe: async ({ username, name, bio }: ProfileProps) => {
     const response = await api.patch("/api/users/me", { username, name, bio });
-    return response;
+    return response.data;
   },
   uploadAvatar: async (file: string) => {
     const response = await api.post("/api/users/me/avatar", file);
-    return response;
+    return response.data;
   },
   deleteAvatar: async () => {
     const response = await api.delete("/api/users/me/avatar");
-    return response;
+    return response.data;
   },
 };

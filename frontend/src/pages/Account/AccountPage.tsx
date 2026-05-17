@@ -2,20 +2,22 @@ import MainButton from "@/components/ui/Buttons/MainButton";
 import { authApi } from "@/services/auth.api";
 import { usersApi } from "@/services/users.api";
 import { useAuthStore } from "@/store/auth.store";
-import { useEffect } from "react";
+import type { AccountData } from "@/types/entities";
+import { useEffect, useState } from "react";
+import AccountHeader from "./components/AccountHeader";
 
 const AccountPage = () => {
   const isAuth = useAuthStore((state) => state.isAuth);
   const setUser = useAuthStore((state) => state.setUser);
+  const [profile, setProfile] = useState<AccountData | null>(null);
   useEffect(() => {
     const fetchProfile = async () => {
       if (!isAuth) return;
       try {
         const response = await usersApi.getMe();
-        console.log(response);
+        setProfile(response.data);
       } catch (error) {
         console.log(error);
-        console.log('error')
       }
     };
     fetchProfile();
@@ -24,18 +26,20 @@ const AccountPage = () => {
     await authApi.logout();
     setUser(false, null);
   };
+
   return (
-    <div>
-      <h1>Account page</h1>
-      {isAuth ? (
-        <div className="flex flex-col gap-2 max-w-3xs mx-auto">
-          <h1>добро пожаловать</h1>
-          <MainButton onClick={handleLogout}>Выйти</MainButton>
-        </div>
-      ) : (
-        <h1>ты не зареган лалка</h1>
-      )}
-    </div>
+    <section>
+      <div className="container">
+        {isAuth && profile ? (
+          <>
+            <AccountHeader {...profile} lvl="лошок" />
+            <MainButton onClick={handleLogout}>Выйти</MainButton>
+          </>
+        ) : (
+          <h1>ты не зареган лалка</h1>
+        )}
+      </div>
+    </section>
   );
 };
 
