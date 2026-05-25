@@ -1,17 +1,17 @@
 import { Outlet } from "react-router-dom";
-import Footer from "./Footer";
-import Header from "./Header";
+import { Navigation } from "../common/navigation/Navigation";
+import { useAuthStore } from "@/store/auth.store";
 
 const Layout = () => {
-  return ( 
+  const isAuth = useAuthStore((s) => s.isAuth);
+  return (
     <>
-    <Header />
-    <main>
-      <Outlet />
-    </main>
-    <Footer />
+      <main>
+        <Outlet />
+      </main>
+      {isAuth && <Navigation />}
     </>
   );
-}
- 
+};
+
 export default Layout;

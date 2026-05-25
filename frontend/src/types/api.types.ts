@@ -12,7 +12,7 @@ export interface LoginData {
 }
 
 export interface ProfileProps {
-  username: string;
-  name: string;
-  bio: string;
+  username?: string;
+  name?: string;
+  bio?: string;
 }

@@ -2,14 +2,15 @@ import { authApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store.ts";
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
-import { router } from "../router.tsx";
+import { router } from "../routes/router.tsx";
 import Loader from "@/components/ui/Loader.tsx";
 
 const App = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
   const setIsAuthCheked = useAuthStore((state) => state.setIsAuthChecked);
-
+  const isAuth = useAuthStore((s) => s.isAuth);
+  console.log(isAuth);
   useEffect(() => {
     const initAuth = async () => {
       try {
