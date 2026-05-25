@@ -9,8 +9,6 @@ const App = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
   const setIsAuthCheked = useAuthStore((state) => state.setIsAuthChecked);
-  const isAuth = useAuthStore((s) => s.isAuth);
-  console.log(isAuth);
   useEffect(() => {
     const initAuth = async () => {
       try {
