@@ -5,6 +5,7 @@ import asyncio
 
 from src.database import engine, Base
 from src.routers import router
+import src.models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -46,4 +47,6 @@ docker-compose up -d db
 cd backend
 source .venv/bin/activate
 uvicorn main:app --reload
+alembic revision --autogenerate -m ""
+alembic upgrade head
 """

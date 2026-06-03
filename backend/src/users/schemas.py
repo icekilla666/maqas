@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, EmailStr
-from typing import Optional
 from enum import Enum
 from uuid import UUID
 
@@ -36,6 +35,6 @@ class UserOutList(UserOutShort):
     total: int = Field(default=0, ge=0)
 
 class UserUpdateMe(BaseModel):
-    username: Optional[str] = Field(default=None, min_length=1, max_length=20)
-    name: Optional[str] = Field(default=None, min_length=1, max_length=50)
-    bio: Optional[str] = Field(default=None, max_length=200)
+    username: None | str = Field(default=None, min_length=1, max_length=20)
+    name: None | str= Field(default=None, min_length=1, max_length=50)
+    bio: None | str = Field(default=None, max_length=200)
