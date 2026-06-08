@@ -4,14 +4,16 @@ import re
 from uuid import UUID
 
 from src.posts.repository import PostsRepository
-from src.posts.schemas import PostCreate, PostUpdate
+from src.posts.schemas import PostCreate, PostUpdate, PostOutShort
 from src.users.models import UsersModel
 from src.common.images import upload_image, delete_image
 from src.posts.models import PostsModel, HashtagsModel, TagsModel
+from src.users.repository import UsersRepository
 
 class PostsService:
-    def __init__(self, posts_repo: PostsRepository):
+    def __init__(self, posts_repo: PostsRepository, users_repo: UsersRepository):
         self.posts_repo = posts_repo
+        self.users_repo = users_repo
 
     async def create_post(self, post: PostCreate, image: None | UploadFile, current_user: UsersModel, session: AsyncSession):
         hashtags = re.findall(r"#([a-zA-Zа-яА-ЯёЁ0-9_]+)", post.content)
@@ -105,4 +107,103 @@ class PostsService:
         return {
             "success": True,
             "data": post
+        }
+    
+    async def get_by_id(self, post_id: UUID, session: AsyncSession):
+        post = await self.posts_repo.get_by_id(post_id, session)
+        if not post:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Пост не найден",
+                    "error": "POST_NOT_FOUND"
+                }
+            )
+        return {
+            "success": True,
+            "data": post
+        }
+    
+    async def delete_post(self, post_id: UUID, current_user: UsersModel, session: AsyncSession):
+        post = await self.posts_repo.get_by_id(post_id, session)
+        if not post:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Пост не найден",
+                    "error": "POST_NOT_FOUND"
+                }
+            )
+        if post.user_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "success": False,
+                    "message": "Нет прав на действие",
+                    "error": "NOT_ALLOWED"
+                }
+            )
+        await self.posts_repo.delete_post(post, session)
+        return {
+            "success": True,
+            "message": "Пост удален"
+        }
+    
+    async def get_users_posts(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден"
+                }
+            )
+        rows, count = await self.posts_repo.get_users_posts(user_id, skip, limit, session)
+        posts = []
+        for post, preview in rows:
+            posts.append(
+                PostOutShort(
+                    id=post.id,
+                    title=post.title,
+                    preview=preview,
+                    tags=post.tags,
+                    hashtags=post.hashtags,
+                    image_url=post.image_url,
+                    created_at=post.created_at,
+                    user=post.user
+                )
+            )
+        return {
+            "success": True,
+            "data": posts,
+            "total": count,
+            "skip": skip,
+            "limit": limit
+        }
+    
+    async def get_my_posts(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
+        rows, count = await self.posts_repo.get_users_posts(current_user.id, skip, limit, session)
+        posts = []
+        for post, preview in rows:
+            posts.append(
+                PostOutShort(
+                    id=post.id,
+                    title=post.title,
+                    preview=preview,
+                    tags=post.tags,
+                    hashtags=post.hashtags,
+                    image_url=post.image_url,
+                    created_at=post.created_at,
+                    user=post.user
+                )
+            )
+        return {
+            "success": True,
+            "data": posts,
+            "total": count,
+            "skip": skip,
+            "limit": limit
         }

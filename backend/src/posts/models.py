@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey, Enum
+from sqlalchemy import String, ForeignKey, Enum, TIMESTAMP
 from uuid import uuid4
 from sqlalchemy.dialects.postgresql import UUID
+from datetime import datetime, timezone
 
 from src.database import Base
 from src.posts.schemas import PostTags
@@ -15,6 +16,7 @@ class PostsModel(Base):
     image_file_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=True)
     tags: Mapped[list["TagsModel"]] = relationship(secondary="post_tag", back_populates="posts")
     hashtags: Mapped[list["HashtagsModel"]] = relationship(secondary="post_hashtag", back_populates="posts")
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     user: Mapped["UsersModel"] = relationship("UsersModel", back_populates="posts")
 

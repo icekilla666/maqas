@@ -1,6 +1,6 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 
 from src.posts.models import PostsModel, HashtagsModel, TagsModel
@@ -39,4 +39,15 @@ class PostsRepository:
         post = result.scalar_one_or_none()
         return post
     
-    
+    async def delete_post(self, post: PostsModel, session: AsyncSession):
+        await session.delete(post)
+        await session.commit()
+
+    async def get_users_posts(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview")).where(PostsModel.user_id == user_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
+        result = await session.execute(query)
+        posts = result.all()
+        count_query = select(func.count(PostsModel.id)).where(PostsModel.user_id == user_id)
+        count_result = await session.execute(count_query)
+        count = count_result.scalar_one()
+        return posts, count

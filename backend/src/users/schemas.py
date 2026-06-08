@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from enum import Enum
 from uuid import UUID
 
@@ -14,6 +14,7 @@ class UserOutShort(BaseModel):
     name: str = Field(min_length=1, max_length=50)
     avatar_url: None | str = Field(default=None, max_length=500)
     status: UserStatus
+    model_config = ConfigDict(from_attributes=True)
 
 class UserOutMe(UserOutShort):
     email: EmailStr
