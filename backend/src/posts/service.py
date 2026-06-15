@@ -4,7 +4,7 @@ import re
 from uuid import UUID
 
 from src.posts.repository import PostsRepository
-from src.posts.schemas import PostCreate, PostUpdate, PostOutShort
+from src.posts.schemas import PostCreate, PostUpdate, PostOutShort, FeedType, FeedSort, PostTags
 from src.users.models import UsersModel
 from src.common.images import upload_image, delete_image
 from src.posts.models import PostsModel, HashtagsModel, TagsModel
@@ -151,17 +151,7 @@ class PostsService:
             "message": "Пост удален"
         }
     
-    async def get_users_posts(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
-        user = await self.users_repo.get_by_id(user_id, session)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={
-                    "success": False,
-                    "message": "Аккаунт не найден"
-                }
-            )
-        rows, count = await self.posts_repo.get_users_posts(user_id, skip, limit, session)
+    def _convert_rows_to_posts(self, rows: None | list[tuple[PostsModel, str]]):
         posts = []
         for post, preview in rows:
             posts.append(
@@ -176,6 +166,21 @@ class PostsService:
                     user=post.user
                 )
             )
+        return posts
+    
+    async def get_users_posts(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+        user = await self.users_repo.get_by_id(user_id, session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Аккаунт не найден",
+                    "error": "USER_NOT_FOUND"
+                }
+            )
+        rows, count = await self.posts_repo.get_users_posts(user_id, skip, limit, session)
+        posts = self._convert_rows_to_posts(rows)
         return {
             "success": True,
             "data": posts,
@@ -186,20 +191,32 @@ class PostsService:
     
     async def get_my_posts(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
         rows, count = await self.posts_repo.get_users_posts(current_user.id, skip, limit, session)
-        posts = []
-        for post, preview in rows:
-            posts.append(
-                PostOutShort(
-                    id=post.id,
-                    title=post.title,
-                    preview=preview,
-                    tags=post.tags,
-                    hashtags=post.hashtags,
-                    image_url=post.image_url,
-                    created_at=post.created_at,
-                    user=post.user
-                )
+        posts = self._convert_rows_to_posts(rows)
+        return {
+            "success": True,
+            "data": posts,
+            "total": count,
+            "skip": skip,
+            "limit": limit
+        }
+    
+    async def get_feed(self, feed_type: FeedType, search_query: None | str, tags: None | list[PostTags], sort: FeedSort, skip: int, limit: int, optional_user: None | UsersModel, session: AsyncSession):
+        if feed_type == FeedType.following and not optional_user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "success": False,
+                    "message": "Не выполнен вход в аккаунт",
+                    "error": "UNAUTHORIZED"
+                }
             )
+        hashtag = None
+        if search_query:
+            hashtag = re.search(r"#([a-zA-Zа-яА-ЯёЁ0-9_]+)", search_query)
+            if hashtag:
+                search_query = None
+        rows, count = await self.posts_repo.get_feed(feed_type, search_query, hashtag, tags, sort, skip, limit, optional_user, session)
+        posts = self._convert_rows_to_posts(rows)
         return {
             "success": True,
             "data": posts,

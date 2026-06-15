@@ -67,3 +67,14 @@ class PostUpdate(BaseModel):
     title: None | str= Field(default=None, min_length=1, max_length=100)
     content: None | str= Field(default=None, min_length=1, max_length=5000)
     tags: None | list[PostTags] = Field(default=None)
+
+class FeedType(Enum):
+    all = "all"
+    following = "following"
+
+class FeedSort(Enum):
+    old = "old"
+    new = "new"
+    popular = "popular"
+
+

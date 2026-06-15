@@ -1,9 +1,11 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, exists
 from sqlalchemy.orm import selectinload
 
-from src.posts.models import PostsModel, HashtagsModel, TagsModel
+from src.posts.models import PostsModel, HashtagsModel, TagsModel, PostHashtagModel
+from src.posts.schemas import FeedSort, FeedType, PostTags
+from src.users.models import UsersModel, FollowsModel
 
 class PostsRepository:
     async def create_post(self, post: PostsModel, session: AsyncSession):
@@ -51,3 +53,31 @@ class PostsRepository:
         count_result = await session.execute(count_query)
         count = count_result.scalar_one()
         return posts, count
+    
+    async def _filter_feed(self, query, feed_type: FeedType, search_query: None | str, hashtag: None | str, tags: None | list[PostTags], sort: FeedSort, optional_user: None | UsersModel, session: AsyncSession):
+        if feed_type == FeedType.following:
+            query = query.where(exists().where(FollowsModel.following_id == PostsModel.user_id).where(FollowsModel.follower_id == optional_user.id))
+        if hashtag:
+            query = query.where(PostsModel.hashtags.any(HashtagsModel.hashtag.ilike(f"%{hashtag}%")))
+        if tags:
+            query = query.where(PostsModel.tags.any(TagsModel.tag.in_(tags)))
+        if search_query:
+            query = query.where(func.similarity(PostsModel.title, search_query) > 0.2).order_by(func.similarity(PostsModel.title, search_query).desc())
+        return query
+    
+    async def get_feed(self, feed_type: FeedType, search_query: None | str, hashtag: None | str, tags: None | list[PostTags], sort: FeedSort, skip: int, limit: int, optional_user: None | UsersModel, session: AsyncSession):
+        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"))
+        query = await self._filter_feed(query, feed_type, search_query, hashtag, tags, sort, optional_user, session)
+        if sort == FeedSort.new:
+            query = query.order_by(PostsModel.created_at.desc())
+        elif sort == FeedSort.old:
+            query = query.order_by(PostsModel.created_at.asc())
+        query = query.options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
+        result = await session.execute(query)
+        feed = result.all()
+        count_query = select(func.count(PostsModel.id))
+        count_query = await self._filter_feed(count_query, feed_type, search_query, hashtag, tags, sort, optional_user, session)
+        count_query = count_query.order_by(None)
+        count_result = await session.execute(count_query)
+        count = count_result.scalar_one()
+        return feed, count

@@ -11,12 +11,12 @@ from src.users.schemas import UserStatus
 from src.auth.service import AuthService
 from src.users.repository import UsersRepository
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
-async def get_current_user(
+async def get_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: SessionDep
-) -> UsersModel:
+):
     token = credentials.credentials
     payload = decode_token(token)
 
@@ -98,7 +98,36 @@ async def get_current_user(
     
     return user
 
+async def get_current_user(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    session: SessionDep
+):
+    current_user = await get_user(credentials, session)
+    return current_user
+
 AuthDep = Annotated[UsersModel, Depends(get_current_user)]
+
+async def get_optional_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
+    session: SessionDep
+):
+    print("1. get_optional_user вызван")
+    print("2. credentials:", credentials)
+    
+    if not credentials:
+        print("3. Нет credentials, возвращаю None")
+        return None
+    
+    try:
+        optional_user = await get_user(credentials, session)
+        print("4. Пользователь получен:", optional_user.id if optional_user else None)
+        return optional_user
+    except HTTPException as e:
+        print("5. Ошибка:", e.status_code, e.detail)
+        return None
+    
+
+OptionalAuthDep = Annotated[UsersModel | None, Depends(get_optional_user)]
 
 def get_auth_repository():
     return AuthRepository()
