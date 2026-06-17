@@ -8,8 +8,8 @@ import { useEffect } from "react";
 
 const AccountPage = () => {
   const setUser = useAuthStore((state) => state.setUser);
-  const { profile, isLoading, error, fetchProfile, clearProfile } = useProfileStore();
-
+  const { profile, isLoading, error, fetchProfile, clearProfile } =
+    useProfileStore();
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);

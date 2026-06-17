@@ -16,3 +16,8 @@ export interface ProfileProps {
   name?: string;
   bio?: string;
 }
+
+export interface FollowProps {
+  skip?: number;
+  limit?: number;
+}

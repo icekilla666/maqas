@@ -1,4 +1,4 @@
-import type { ProfileProps } from "@/types/api.types";
+import type { FollowProps, ProfileProps } from "@/types/api.types";
 import { api } from "./api";
 
 export const usersApi = {
@@ -21,5 +21,18 @@ export const usersApi = {
   deleteAvatar: async () => {
     const response = await api.delete("/api/users/me/avatar");
     return response.data;
+  },
+
+  getFollowers: async ({ skip, limit }: FollowProps) => {
+    const response = await api.get("/api/users/me/followers", {
+      params: { skip, limit },
+    });
+    return response.data.data;
+  },
+  getFollowings: async ({ skip, limit }: FollowProps) => {
+    const response = await api.get("/api/users/me/followings", {
+      params: { skip, limit },
+    });
+    return response.data.data;
   },
 };

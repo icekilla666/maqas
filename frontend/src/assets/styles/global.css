@@ -43,6 +43,10 @@ h1 {
   color: var(--color-second);
 }
 
+p {
+  line-height: 1;
+}
+
 .lucide {
   stroke-width: 0.7px;
 }
@@ -152,6 +156,187 @@ h1 {
   width: 90px;
   height: 90px;
   overflow: hidden;
+}
+
+.follow-list {
+  width: 100%;
+  padding-bottom: 112px;
+}
+
+.follow-list__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.follow-list__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  color: var(--color-second);
+  background-color: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+.follow-list__page-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-second);
+  font-size: 18px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.follow-list__tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--color-grey);
+}
+
+.follow-list__tab {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  gap: 4px;
+  padding: 13px 4px 12px;
+  color: color-mix(in oklab, var(--color-second) 54%, transparent);
+  font-size: 13px;
+  font-family: inherit;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.follow-list__tab.active {
+  color: var(--color-second);
+}
+
+.follow-list__tab.active::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  bottom: -1px;
+  left: 18px;
+  height: 2px;
+  background-color: var(--color-second);
+  border-radius: 999px;
+}
+
+.follow-list__tab-count {
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
+.follow-list__items {
+  display: flex;
+  flex-direction: column;
+}
+
+.follow-list__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 9px 0;
+}
+
+.follow-list__item--inactive {
+  opacity: 0.72;
+}
+
+.follow-list__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  overflow: hidden;
+  color: var(--color-second);
+  background-color: var(--color-wrapper);
+  border-radius: 50%;
+}
+
+.follow-list__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.follow-list__avatar span {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.follow-list__user {
+  min-width: 0;
+  flex: 1;
+}
+
+.follow-list__user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.follow-list__username {
+  overflow: hidden;
+  color: var(--color-second);
+  font-size: 15px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.follow-list__name {
+  margin-top: 5px;
+  overflow: hidden;
+  color: color-mix(in oklab, var(--color-second) 58%, transparent);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.follow-list__status {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  color: var(--color-red);
+  font-size: 10px;
+  font-weight: 500;
+  background-color: color-mix(in oklab, var(--color-red) 12%, transparent);
+  border-radius: 999px;
+}
+
+.follow-list__state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+  margin-top: 48px;
+  color: color-mix(in oklab, var(--color-second) 62%, transparent);
+  text-align: center;
+}
+
+.follow-list__state--error {
+  color: var(--color-red);
+}
+
+.follow-list__empty {
+  margin-top: 92px;
+  color: color-mix(in oklab, var(--color-second) 62%, transparent);
+  font-size: 14px;
+  text-align: center;
 }
 
 /* ---МОБИЛКА--- */

@@ -2,7 +2,7 @@ import type { CountType } from "@/types/entities";
 import AvatarPlaceholder from "./AvatarPlaceholder";
 import CountInfo from "./CountInfo";
 import { useNavigate } from "react-router-dom";
-import { FOLLOWERS_PAGE, FOLLOWINGS_PAGE } from "@/utils/constants";
+import { FOLLOW_PAGE } from "@/utils/constants";
 import { anchor } from "@/utils/anchor";
 
 interface AccountHeaderProps {
@@ -31,10 +31,10 @@ const AccountHeader = ({
   const switchCount = (type: CountType) => {
     switch (type) {
       case "followers":
-        navigate(FOLLOWERS_PAGE);
+        navigate(FOLLOW_PAGE, { state: { tab: "followers" } });
         break;
       case "followings":
-        navigate(FOLLOWINGS_PAGE);
+        navigate(FOLLOW_PAGE, { state: { tab: "followings" } });
         break;
       case "publications":
         anchor("publications");
@@ -56,14 +56,20 @@ const AccountHeader = ({
             <AvatarPlaceholder username={username} />
           )}
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <p className="account__username text-second text-xl">{username}</p>
-            <span className="account__lvl w-fit px-1.5 py-0.5 bg-main/50 text-second text-xs font-light rounded-[40px]">
-              {lvl}
-            </span>
+        <div className="min-w-0 flex flex-1 flex-col justify-between">
+          <div className="flex gap-2 flex-col">
+            <div className="flex items-center gap-1.5">
+              <p className="account__username text-second text-xl">
+                {username}
+              </p>
+              <span className="account__lvl w-fit px-1.5 py-0.5 bg-main/50 text-second text-xs font-light rounded-[40px]">
+                {lvl}
+              </span>
+            </div>
+            <p className="account__name color-second text-[14px] text-second/60">
+              {name}
+            </p>
           </div>
-          <p className="account__name color-second text-[14px] mb-5 text-second/60">{name}</p>
           <div className="account__count-wrapper flex items-center gap-3">
             <CountInfo
               followers={followers_count}

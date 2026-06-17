@@ -22,4 +22,11 @@ export type AccountData = {
 
 export type CountType = "followers" | "followings" | "publications";
 
+export type FollowUser = {
+  id: string;
+  username: string;
+  name: string;
+  avatar_url: string | null;
+  status: "active" | "banned" | "deactivated";
+};
 // type FormData = Omit<UserData, 'id' | 'role'>

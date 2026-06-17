@@ -4,8 +4,7 @@ import HomePage from "../pages/Home/HomePage";
 import {
   ACCOUNT_PAGE,
   CHATS_PAGE,
-  FOLLOWERS_PAGE,
-  FOLLOWINGS_PAGE,
+  FOLLOW_PAGE,
   LOGIN_PAGE,
   REGISTRATION_PAGE,
   SETTINGS_PAGE,
@@ -42,8 +41,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: relativePath(ACCOUNT_PAGE), element: <AccountPage /> },
 
-      { path: relativePath(FOLLOWERS_PAGE), element: <FollowPage /> },
-      { path: relativePath(FOLLOWINGS_PAGE), element: <FollowPage /> },
+      { path: relativePath(FOLLOW_PAGE), element: <FollowPage /> },
 
       { path: relativePath(CHATS_PAGE), element: <ChatsPage /> },
       { path: relativePath(SETTINGS_PAGE), element: <SettingPage /> },

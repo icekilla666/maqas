@@ -1,7 +1,6 @@
 export const HOME_PAGE = "/";
 export const ACCOUNT_PAGE = "/account";
-export const FOLLOWERS_PAGE = `${ACCOUNT_PAGE}/followers`;
-export const FOLLOWINGS_PAGE = `${ACCOUNT_PAGE}/followings`;
+export const FOLLOW_PAGE = `${ACCOUNT_PAGE}/follow`;
 export const LOGIN_PAGE = "/login";
 export const REGISTRATION_PAGE = "/registration";
 export const CHATS_PAGE = "/chats";
