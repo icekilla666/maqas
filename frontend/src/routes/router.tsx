@@ -4,6 +4,8 @@ import HomePage from "../pages/Home/HomePage";
 import {
   ACCOUNT_PAGE,
   CHATS_PAGE,
+  FOLLOWERS_PAGE,
+  FOLLOWINGS_PAGE,
   LOGIN_PAGE,
   REGISTRATION_PAGE,
   SETTINGS_PAGE,
@@ -17,6 +19,7 @@ import SettingPage from "../pages/Settings/SettingPage";
 import VerifyEmailPage from "../pages/VerifyEmail/VerifyEmailPage";
 import VerifyEmailPendingPage from "../pages/VerifyEmail/VerifyEmailPendingPage";
 import ProtectedRoute from "./ProtectedRoute";
+import FollowPage from "@/pages/Account/FollowPage";
 
 const relativePath = (path: string) => path.slice(1);
 export const router = createBrowserRouter([
@@ -38,6 +41,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: relativePath(ACCOUNT_PAGE), element: <AccountPage /> },
+
+      { path: relativePath(FOLLOWERS_PAGE), element: <FollowPage /> },
+      { path: relativePath(FOLLOWINGS_PAGE), element: <FollowPage /> },
+
       { path: relativePath(CHATS_PAGE), element: <ChatsPage /> },
       { path: relativePath(SETTINGS_PAGE), element: <SettingPage /> },
     ],

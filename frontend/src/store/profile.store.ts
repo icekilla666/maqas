@@ -13,7 +13,6 @@ interface ProfileState {
   updateProfile: (data: ProfileProps) => Promise<void>;
   clearProfile: () => void;
 }
-
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set, get) => ({

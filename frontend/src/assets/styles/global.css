@@ -35,6 +35,10 @@ body {
   color: var(--color-second);
 }
 
+main {
+  padding-top: 40px;
+}
+
 h1 {
   color: var(--color-second);
 }
@@ -135,6 +139,21 @@ h1 {
   }
 }
 
+.account-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.account__avatar {
+  flex: 0 0 90px;
+  width: 90px;
+  height: 90px;
+  overflow: hidden;
+}
+
 /* ---МОБИЛКА--- */
 @media screen and (max-width: 640px) {
   .mobile-nav {
@@ -162,7 +181,7 @@ h1 {
   }
 
   .nav__wrapper.active svg {
-    transition: all .3s;
+    transition: all 0.3s;
     stroke: var(--color-main);
   }
 
@@ -204,5 +223,31 @@ h1 {
     padding: 62px 36px 48px;
     background-color: var(--color-primary);
     border-radius: 20px;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .nav__wrapper {
+    width: 68px;
+    height: 68px;
+  }
+  .account__username {
+    font-size: 16px;
+  }
+  .account__name {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .account__count-wrapper {
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  .account__count-label {
+    font-size: 10px;
   }
 }

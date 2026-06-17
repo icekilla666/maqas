@@ -25,12 +25,12 @@ const AccountPage = () => {
       <div className="container">
         {profile ? (
           <>
-            <AccountHeader {...profile} lvl="лошок" />
-            <MainButton onClick={handleLogout}>Выйти</MainButton>
+            <AccountHeader {...profile} publications={0} lvl="лошок" />
           </>
         ) : (
           <h1 className="text-red text-center">{error}</h1>
         )}
+        <MainButton onClick={handleLogout}>Выйти</MainButton>
       </div>
     </section>
   );

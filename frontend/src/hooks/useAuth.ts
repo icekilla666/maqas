@@ -64,6 +64,11 @@ export const useAuth = (isLogin: boolean) => {
         setShowErrors(false);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
+        setFormData((prev) => ({
+          ...prev,
+          password: "",
+          password_confirm: "",
+        }));
         if (error) {
           setServerError(error.response?.data?.detail.message);
         } else {

@@ -20,4 +20,6 @@ export type AccountData = {
   followings_count: number;
 };
 
+export type CountType = "followers" | "followings" | "publications";
+
 // type FormData = Omit<UserData, 'id' | 'role'>

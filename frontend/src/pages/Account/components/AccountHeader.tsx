@@ -1,4 +1,9 @@
+import type { CountType } from "@/types/entities";
 import AvatarPlaceholder from "./AvatarPlaceholder";
+import CountInfo from "./CountInfo";
+import { useNavigate } from "react-router-dom";
+import { FOLLOWERS_PAGE, FOLLOWINGS_PAGE } from "@/utils/constants";
+import { anchor } from "@/utils/anchor";
 
 interface AccountHeaderProps {
   avatar?: string;
@@ -8,7 +13,7 @@ interface AccountHeaderProps {
   lvl: string;
   followers_count: number;
   followings_count: number;
-  publications?: number;
+  publications: number;
 }
 
 const AccountHeader = ({
@@ -21,27 +26,29 @@ const AccountHeader = ({
   followings_count,
   publications,
 }: AccountHeaderProps) => {
-  const rowCounts = [
-    {
-      label: "подписчики",
-      value: followers_count ?? 0,
-    },
-    {
-      label: "подписок",
-      value: followings_count ?? 0,
-    },
-    {
-      label: "публикации",
-      value: publications ?? 0,
-    },
-  ];
+  const navigate = useNavigate();
+
+  const switchCount = (type: CountType) => {
+    switch (type) {
+      case "followers":
+        navigate(FOLLOWERS_PAGE);
+        break;
+      case "followings":
+        navigate(FOLLOWINGS_PAGE);
+        break;
+      case "publications":
+        anchor("publications");
+        break;
+    }
+  };
+
   return (
     <header className="account-header">
       <div className="mb-3 flex gap-3.5">
-        <div className="w-22.5 h-22.5 rounded-full">
+        <div className="account__avatar rounded-full">
           {avatar ? (
             <img
-              className="w-full h-full rounded-full"
+              className="w-full h-full rounded-full object-cover"
               src={avatar}
               alt="avatar"
             />
@@ -49,21 +56,21 @@ const AccountHeader = ({
             <AvatarPlaceholder username={username} />
           )}
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <p className="text-second text-xl">{username}</p>
-            <span className="w-fit px-1.5 py-0.5 bg-main/50 text-second text-xs font-light rounded-[40px]">
+            <p className="account__username text-second text-xl">{username}</p>
+            <span className="account__lvl w-fit px-1.5 py-0.5 bg-main/50 text-second text-xs font-light rounded-[40px]">
               {lvl}
             </span>
           </div>
-          <p className="color-second text-[14px] mb-5 text-second/60">{name}</p>
-          <div className="flex justify-center items-center gap-3">
-            {rowCounts.map((row) => (
-              <div key={row.label} className="flex flex-col items-start">
-                <p className="text-xs text-second font-medium">{row.label}</p>
-                <p className="text-xs text-second">{row.value}</p>
-              </div>
-            ))}
+          <p className="account__name color-second text-[14px] mb-5 text-second/60">{name}</p>
+          <div className="account__count-wrapper flex items-center gap-3">
+            <CountInfo
+              followers={followers_count}
+              followings={followings_count}
+              publications={publications}
+              onClick={(type) => switchCount(type)}
+            />
           </div>
         </div>
       </div>
