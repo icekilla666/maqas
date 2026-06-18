@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey, Enum, TIMESTAMP
+from sqlalchemy import String, ForeignKey, Enum, TIMESTAMP, Integer
 from uuid import uuid4
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
@@ -19,6 +19,8 @@ class PostsModel(Base):
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     user: Mapped["UsersModel"] = relationship("UsersModel", back_populates="posts")
+    likes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    likes: Mapped[list["LikesModel"]] = relationship("LikesModel", back_populates="post", cascade="all, delete-orphan")
 
 class PostTagModel(Base):
     __tablename__ = "post_tag"

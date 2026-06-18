@@ -26,6 +26,7 @@ class UsersModel(Base):
     blocked: Mapped[list["BlackListModel"]] = relationship("BlackListModel", foreign_keys="BlackListModel.blocking_id", back_populates="blocked_user")
     status: Mapped[Enum] = mapped_column(Enum(UserStatus, name="user_status_enum", native_enum=False), nullable=False, default=UserStatus.pending)
     refresh_tokens: Mapped[list["RefreshTokenModel"]] = relationship("RefreshTokenModel", back_populates="user", cascade="all, delete-orphan")
+    likes: Mapped[list["LikesModel"]] = relationship("LikesModel", back_populates="user")
     @property
     def is_banned(self):
         if self.status == UserStatus.banned:

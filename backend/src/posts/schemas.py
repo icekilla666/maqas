@@ -50,6 +50,8 @@ class PostOutFull(BaseModel):
     image_url: None | str = Field(default=None)
     created_at: datetime
     user: UserOutShort
+    likes_count: int = Field(default=0, ge=0)
+    is_liked: bool = Field(default=False)
     model_config = ConfigDict(from_attributes=True)
 
 class PostOutShort(BaseModel):
@@ -61,6 +63,8 @@ class PostOutShort(BaseModel):
     image_url: None | str = Field(default=None)
     created_at: datetime
     user: UserOutShort
+    likes_count: int = Field(default=0, ge=0)
+    is_liked: bool = Field(default=False)
     model_config = ConfigDict(from_attributes=True)
 
 class PostUpdate(BaseModel):

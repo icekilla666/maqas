@@ -1,14 +1,17 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, exists
+from sqlalchemy import select, func, exists, update, literal
 from sqlalchemy.orm import selectinload
 
-from src.posts.models import PostsModel, HashtagsModel, TagsModel, PostHashtagModel
+from src.posts.models import PostsModel, HashtagsModel, TagsModel
 from src.posts.schemas import FeedSort, FeedType, PostTags
 from src.users.models import UsersModel, FollowsModel
+from src.likes.models import LikesModel
 
 class PostsRepository:
-    async def create_post(self, post: PostsModel, session: AsyncSession):
+    async def create_post(self, post: PostsModel, current_user_id: UUID, session: AsyncSession):
+        user_query = update(UsersModel).where(UsersModel.id == current_user_id).values(posts_count=UsersModel.posts_count + 1)
+        await session.execute(user_query)
         session.add(post)
         await session.flush()
         return post 
@@ -35,18 +38,28 @@ class PostsRepository:
         await session.flush()
         return tag
     
-    async def get_by_id(self, post_id: UUID, session: AsyncSession):
-        query = select(PostsModel).where(PostsModel.id == post_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user))
+    async def get_by_id(self, post_id: UUID, optional_user: None | UsersModel, session: AsyncSession):
+        if optional_user:
+            is_liked = exists().where(LikesModel.post_id == PostsModel.id, LikesModel.user_id == optional_user.id).label("is_liked")
+        else:
+            is_liked = literal(False).label("is_liked")
+        query = select(PostsModel, is_liked).where(PostsModel.id == post_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user))
         result = await session.execute(query)
-        post = result.scalar_one_or_none()
+        post = result.one_or_none()
         return post
     
-    async def delete_post(self, post: PostsModel, session: AsyncSession):
+    async def delete_post(self, post: PostsModel, current_user_id: UUID, session: AsyncSession):
+        user_query = update(UsersModel).where(UsersModel.id == current_user_id).values(posts_count=UsersModel.posts_count - 1)
+        await session.execute(user_query)
         await session.delete(post)
         await session.commit()
 
-    async def get_users_posts(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
-        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview")).where(PostsModel.user_id == user_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
+    async def get_users_posts(self, user_id: UUID, optional_user: None | UsersModel, skip: int, limit: int, session: AsyncSession):
+        if optional_user:
+            is_liked = exists().where(LikesModel.post_id == PostsModel.id, LikesModel.user_id == optional_user.id).label("is_liked")
+        else:
+            is_liked = literal(False).label("is_liked")
+        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"), is_liked).where(PostsModel.user_id == user_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
         result = await session.execute(query)
         posts = result.all()
         count_query = select(func.count(PostsModel.id)).where(PostsModel.user_id == user_id)
@@ -66,12 +79,18 @@ class PostsRepository:
         return query
     
     async def get_feed(self, feed_type: FeedType, search_query: None | str, hashtag: None | str, tags: None | list[PostTags], sort: FeedSort, skip: int, limit: int, optional_user: None | UsersModel, session: AsyncSession):
-        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"))
+        if optional_user:
+            is_liked = exists().where(LikesModel.post_id == PostsModel.id, LikesModel.user_id == optional_user.id).label("is_liked")
+        else:
+            is_liked = literal(False).label("is_liked")
+        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"), is_liked)
         query = await self._filter_feed(query, feed_type, search_query, hashtag, tags, sort, optional_user, session)
         if sort == FeedSort.new:
             query = query.order_by(PostsModel.created_at.desc())
         elif sort == FeedSort.old:
             query = query.order_by(PostsModel.created_at.asc())
+        elif sort == FeedSort.popular:
+            query = query.order_by(PostsModel.likes_count.desc())
         query = query.options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
         result = await session.execute(query)
         feed = result.all()

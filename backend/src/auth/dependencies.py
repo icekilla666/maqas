@@ -102,6 +102,15 @@ async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: SessionDep
 ):
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "success": False,
+                "message": "Не выполнен вход в аккаунт",
+                "error": "UNAUTHORIZED"
+            }
+        )
     current_user = await get_user(credentials, session)
     return current_user
 
@@ -111,19 +120,12 @@ async def get_optional_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     session: SessionDep
 ):
-    print("1. get_optional_user вызван")
-    print("2. credentials:", credentials)
-    
     if not credentials:
-        print("3. Нет credentials, возвращаю None")
         return None
-    
     try:
         optional_user = await get_user(credentials, session)
-        print("4. Пользователь получен:", optional_user.id if optional_user else None)
         return optional_user
-    except HTTPException as e:
-        print("5. Ошибка:", e.status_code, e.detail)
+    except HTTPException:
         return None
     
 

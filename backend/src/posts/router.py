@@ -54,12 +54,13 @@ async def get_my_posts(
 @posts_router.get("/users/{user_id}", response_model=PaginatedResponseSchema[list[PostOutShort]], status_code=status.HTTP_200_OK)
 async def get_users_posts(
     user_id: UUID,
+    optional_user: OptionalAuthDep,
     session: SessionDep,
     posts_service: PostsServiceDep,
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=20, ge=1)
 ):
-    posts = await posts_service.get_users_posts(user_id, skip, limit, session)
+    posts = await posts_service.get_users_posts(user_id, optional_user, skip, limit, session)
     return posts
 
 @posts_router.patch("/{post_id}", response_model=ResponseSchema[PostOutFull], status_code=status.HTTP_200_OK)
@@ -83,10 +84,11 @@ async def update_post(
 @posts_router.get("/{post_id}", response_model=ResponseSchema[PostOutFull], status_code=status.HTTP_200_OK)
 async def get_by_id(
     post_id: UUID,
+    optional_user: OptionalAuthDep,
     session: SessionDep,
     posts_service: PostsServiceDep
 ):
-    post = await posts_service.get_by_id(post_id, session)
+    post = await posts_service.get_by_id(post_id, optional_user, session)
     return post
 
 @posts_router.delete("/{post_id}", response_model=ResponseSchema, status_code=status.HTTP_200_OK)

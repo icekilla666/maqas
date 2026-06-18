@@ -9,6 +9,7 @@ from src.database import Base
 import src.auth.models
 import src.users.models
 import src.posts.models
+import src.likes.models
 
 load_dotenv()
 

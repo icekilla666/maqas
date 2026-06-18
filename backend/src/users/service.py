@@ -67,7 +67,7 @@ class UsersService:
             "data": current_user.avatar_url
         }
     
-    async def get_by_id(self, current_user, user_id: UUID, session: AsyncSession):
+    async def get_by_id(self, optional_user: None | UsersModel, user_id: UUID, session: AsyncSession):
         user = await self.users_repo.get_by_id(user_id, session)
         if not user:
             raise HTTPException(
@@ -78,21 +78,40 @@ class UsersService:
                     "error": "USER_NOT_FOUND"
                 }
             )
-        is_blocked = await self.users_repo.get_block(user.id, current_user.id, session)
-        if is_blocked:
-            user_data = UserOutFull.model_validate(user)
-            user_data.is_blocked = True
+        if optional_user:
+            is_blocked = await self.users_repo.get_block(user.id, optional_user.id, session)
+            if is_blocked:
+                user_data = UserOutFull.model_validate(user)
+                user_data.is_blocked = True
+                return {
+                    "success": True,
+                    "data": user_data
+                }
+            user_data, status = await self.users_repo.get_by_id_with_follow_status(user_id, optional_user.id, session)
+            user_with_follow_status = UserOutFull.model_validate(user_data)
+            user_with_follow_status.is_following = status
             return {
                 "success": True,
-                "data": user_data
+                "data": user_with_follow_status
             }
         return {
-            "success": True,
-            "data": user
-        }
+                "success": True,
+                "data": user
+            }
     
-    async def get_by_similar_username(self, username: str, skip: int, limit: int, session: AsyncSession):
+    async def get_by_similar_username(self, username: str, optional_user: None | UsersModel, skip: int, limit: int, session: AsyncSession):
         users = await self.users_repo.get_by_similar_username(username, skip, limit, session)
+        if optional_user:
+            users_with_follow_status = []
+            for user in users:
+                user_data, status = await self.users_repo.get_by_id_with_follow_status(user.id, optional_user.id, session)
+                user_with_follow_status = UserOutFull.model_validate(user_data)
+                user_with_follow_status.is_following = status
+                users_with_follow_status.append(user_with_follow_status)
+            return {
+            "success": True,
+            "data": users_with_follow_status
+            }
         return {
             "success": True,
             "data": users
@@ -178,11 +197,7 @@ class UsersService:
                     "error": "ALREADY_UNFOLLOWED"
                 }
             )
-        follow = FollowsModel(
-            follower_id = follower_user.id,
-            following_id = following_user.id
-        )
-        await self.users_repo.unfollow_user(follow, session)
+        await self.users_repo.unfollow_user(existing_follow, session)
         return {
             "success": True
         }
@@ -325,3 +340,4 @@ class UsersService:
             "skip": skip,
             "limit": limit
         }
+    

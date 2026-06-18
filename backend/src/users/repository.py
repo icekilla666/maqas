@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, update
-from sqlalchemy.orm import selectinload, contains_eager
+from sqlalchemy import select, func, update, exists, literal
+from sqlalchemy.orm import contains_eager
 
 from src.users.models import UsersModel, FollowsModel, BlackListModel
 
@@ -88,3 +88,9 @@ class UsersRepository:
         total_result = await session.execute(total_query)
         total = total_result.scalar()
         return blacklist, total
+    
+    async def get_by_id_with_follow_status(self, user_id: UUID, current_user_id: UUID, session: AsyncSession):
+        is_following = exists().where(FollowsModel.follower_id == current_user_id, FollowsModel.following_id == UsersModel.id).label("is_following")
+        query = select(UsersModel, is_following).where(UsersModel.id == user_id)
+        result = await session.execute(query)
+        return result.one_or_none()

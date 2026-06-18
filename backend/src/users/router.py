@@ -1,8 +1,8 @@
 from fastapi import APIRouter, status, Response, UploadFile, Query
 from uuid import UUID
 
-from src.users.schemas import UserOutMe, UserUpdateMe, UserOutShort, UserOutFull
-from src.auth.dependencies import AuthDep
+from src.users.schemas import UserOutMe, UserUpdateMe, UserOutShort, UserOutFull, UserOutShortSearch
+from src.auth.dependencies import AuthDep, OptionalAuthDep
 from src.database import SessionDep
 from src.users.dependencies import UsersServiceDep
 from src.common.schemas import ResponseSchema, PaginatedResponseSchema
@@ -57,15 +57,16 @@ async def delete_avatar(
     delete_avatar_data = await users_service.delete_avatar(current_user, session)
     return delete_avatar_data
 
-@users_router.get("/", response_model=PaginatedResponseSchema[list[UserOutShort]], status_code=status.HTTP_200_OK)
+@users_router.get("/", response_model=PaginatedResponseSchema[list[UserOutShortSearch]], status_code=status.HTTP_200_OK)
 async def get_by_similar_username(
     username: str,
+    optional_user: OptionalAuthDep,
     session: SessionDep,
     users_service: UsersServiceDep,
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=20, ge=1)
 ):
-    users = await users_service.get_by_similar_username(username, skip, limit, session)
+    users = await users_service.get_by_similar_username(username, optional_user, skip, limit, session)
     return users
 
 @users_router.get("/me/followers", response_model=PaginatedResponseSchema[list[UserOutShort]], status_code=status.HTTP_200_OK)
@@ -103,12 +104,12 @@ async def get_my_blacklist(
 
 @users_router.get("/{user_id}", response_model=ResponseSchema[UserOutFull], status_code=status.HTTP_200_OK)
 async def get_by_id(
-    current_user: AuthDep,
+    optional_user: OptionalAuthDep,
     user_id: UUID,
     session: SessionDep,
     users_service: UsersServiceDep
 ):
-    user = await users_service.get_by_id(current_user, user_id, session)
+    user = await users_service.get_by_id(optional_user, user_id, session)
     return user
 
 @users_router.post("/{user_id}/follow", response_model=ResponseSchema, status_code=status.HTTP_200_OK)

@@ -4,7 +4,7 @@ import re
 from uuid import UUID
 
 from src.posts.repository import PostsRepository
-from src.posts.schemas import PostCreate, PostUpdate, PostOutShort, FeedType, FeedSort, PostTags
+from src.posts.schemas import PostCreate, PostUpdate, PostOutShort, FeedType, FeedSort, PostTags, PostOutFull
 from src.users.models import UsersModel
 from src.common.images import upload_image, delete_image
 from src.posts.models import PostsModel, HashtagsModel, TagsModel
@@ -42,7 +42,7 @@ class PostsService:
             hashtags = hashtags_models,
             user = current_user
         )
-        post_entity = await self.posts_repo.create_post(post_model, session)
+        post_entity = await self.posts_repo.create_post(post_model, current_user.id, session)
         if image and image.filename:
             try: 
                 uploaded_image = await upload_image(image, "post", post_entity.id)
@@ -58,8 +58,8 @@ class PostsService:
         }
     
     async def update_post(self, post_id: UUID, update_data: PostUpdate, image_removed, image: None | UploadFile, current_user: UsersModel, session: AsyncSession):
-        post = await self.posts_repo.get_by_id(post_id, session)
-        if not post:
+        rows = await self.posts_repo.get_by_id(post_id, current_user, session)
+        if not rows:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
@@ -68,6 +68,7 @@ class PostsService:
                     "error": "POST_NOT_FOUND"
                 }
             )
+        post, is_liked = rows
         if image_removed:
             await delete_image(post.image_file_id)
             if image:
@@ -104,14 +105,16 @@ class PostsService:
                     tags_models.append(created_tag)
             post.tags = tags_models
         await session.commit()
+        post = PostOutFull.model_validate(post)
+        post.is_liked = is_liked
         return {
             "success": True,
             "data": post
         }
     
-    async def get_by_id(self, post_id: UUID, session: AsyncSession):
-        post = await self.posts_repo.get_by_id(post_id, session)
-        if not post:
+    async def get_by_id(self, post_id: UUID, optional_user: None | UsersModel, session: AsyncSession):
+        rows = await self.posts_repo.get_by_id(post_id, optional_user, session)
+        if not rows:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
@@ -120,14 +123,17 @@ class PostsService:
                     "error": "POST_NOT_FOUND"
                 }
             )
+        post, is_liked = rows
+        post = PostOutFull.model_validate(post)
+        post.is_liked = is_liked
         return {
             "success": True,
             "data": post
         }
     
     async def delete_post(self, post_id: UUID, current_user: UsersModel, session: AsyncSession):
-        post = await self.posts_repo.get_by_id(post_id, session)
-        if not post:
+        rows = await self.posts_repo.get_by_id(post_id, session)
+        if not rows:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
@@ -136,6 +142,7 @@ class PostsService:
                     "error": "POST_NOT_FOUND"
                 }
             )
+        post, is_liked = rows
         if post.user_id != current_user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -145,7 +152,7 @@ class PostsService:
                     "error": "NOT_ALLOWED"
                 }
             )
-        await self.posts_repo.delete_post(post, session)
+        await self.posts_repo.delete_post(post, current_user.id, session)
         return {
             "success": True,
             "message": "Пост удален"
@@ -153,7 +160,7 @@ class PostsService:
     
     def _convert_rows_to_posts(self, rows: None | list[tuple[PostsModel, str]]):
         posts = []
-        for post, preview in rows:
+        for post, preview, is_liked in rows:
             posts.append(
                 PostOutShort(
                     id=post.id,
@@ -163,12 +170,14 @@ class PostsService:
                     hashtags=post.hashtags,
                     image_url=post.image_url,
                     created_at=post.created_at,
-                    user=post.user
+                    user=post.user,
+                    likes_count=post.likes_count,
+                    is_liked=is_liked
                 )
             )
         return posts
     
-    async def get_users_posts(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
+    async def get_users_posts(self, user_id: UUID, optional_user: None | UsersModel, skip: int, limit: int, session: AsyncSession):
         user = await self.users_repo.get_by_id(user_id, session)
         if not user:
             raise HTTPException(
@@ -179,7 +188,7 @@ class PostsService:
                     "error": "USER_NOT_FOUND"
                 }
             )
-        rows, count = await self.posts_repo.get_users_posts(user_id, skip, limit, session)
+        rows, count = await self.posts_repo.get_users_posts(user_id, optional_user, skip, limit, session)
         posts = self._convert_rows_to_posts(rows)
         return {
             "success": True,
@@ -190,7 +199,7 @@ class PostsService:
         }
     
     async def get_my_posts(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
-        rows, count = await self.posts_repo.get_users_posts(current_user.id, skip, limit, session)
+        rows, count = await self.posts_repo.get_users_posts(current_user.id, current_user, skip, limit, session)
         posts = self._convert_rows_to_posts(rows)
         return {
             "success": True,

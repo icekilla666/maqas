@@ -16,11 +16,15 @@ class UserOutShort(BaseModel):
     status: UserStatus
     model_config = ConfigDict(from_attributes=True)
 
+class UserOutShortSearch(UserOutShort):
+    is_following: bool = Field(default=False)
+
 class UserOutMe(UserOutShort):
     email: EmailStr
     bio: None | str = Field(default=None, max_length=200)
     followers_count: int
     followings_count: int
+    posts_count: int
     class Config:
         from_attributes = True
 
@@ -29,11 +33,10 @@ class UserOutFull(UserOutShort):
     followers_count: int
     followings_count: int
     is_blocked: bool = Field(default=False)
+    is_following: bool = Field(default=False)
+    posts_count: int
     class Config:
         from_attributes = True
-
-class UserOutList(UserOutShort):
-    total: int = Field(default=0, ge=0)
 
 class UserUpdateMe(BaseModel):
     username: None | str = Field(default=None, min_length=1, max_length=20)
