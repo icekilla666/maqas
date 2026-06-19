@@ -51,6 +51,7 @@ class PostOutFull(BaseModel):
     created_at: datetime
     user: UserOutShort
     likes_count: int = Field(default=0, ge=0)
+    comments_count: int = Field(default=0, ge=0)
     is_liked: bool = Field(default=False)
     model_config = ConfigDict(from_attributes=True)
 
@@ -64,6 +65,7 @@ class PostOutShort(BaseModel):
     created_at: datetime
     user: UserOutShort
     likes_count: int = Field(default=0, ge=0)
+    comments_count: int = Field(default=0, ge=0)
     is_liked: bool = Field(default=False)
     model_config = ConfigDict(from_attributes=True)
 

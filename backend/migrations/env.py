@@ -10,6 +10,7 @@ import src.auth.models
 import src.users.models
 import src.posts.models
 import src.likes.models
+import src.comments.models
 
 load_dotenv()
 

@@ -20,13 +20,14 @@ class UsersModel(Base):
     followings_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     followers: Mapped[list["FollowsModel"]] = relationship("FollowsModel", foreign_keys="FollowsModel.following_id", back_populates="following_user")
     followings: Mapped[list["FollowsModel"]] = relationship("FollowsModel", foreign_keys="FollowsModel.follower_id", back_populates="follower_user")
-    posts_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    posts_count: Mapped[int] = mapped_column(Integer, server_default="0", nullable=False, default=0)
     posts: Mapped[list["PostsModel"]] = relationship("PostsModel", back_populates="user")
     blocking: Mapped[list["BlackListModel"]] = relationship("BlackListModel", foreign_keys="BlackListModel.blocker_id", back_populates="blocker_user")
     blocked: Mapped[list["BlackListModel"]] = relationship("BlackListModel", foreign_keys="BlackListModel.blocking_id", back_populates="blocked_user")
     status: Mapped[Enum] = mapped_column(Enum(UserStatus, name="user_status_enum", native_enum=False), nullable=False, default=UserStatus.pending)
     refresh_tokens: Mapped[list["RefreshTokenModel"]] = relationship("RefreshTokenModel", back_populates="user", cascade="all, delete-orphan")
     likes: Mapped[list["LikesModel"]] = relationship("LikesModel", back_populates="user")
+    comments: Mapped[list["CommentsModel"]] = relationship("CommentsModel", back_populates="user")
     @property
     def is_banned(self):
         if self.status == UserStatus.banned:

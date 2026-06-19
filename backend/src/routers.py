@@ -4,6 +4,7 @@ from src.auth.router import auth_router
 from src.users.router import users_router
 from src.posts.router import posts_router
 from src.likes.router import likes_router
+from src.comments.router import comments_router
 
 router = APIRouter()
 
@@ -11,3 +12,4 @@ router.include_router(auth_router)
 router.include_router(users_router)
 router.include_router(posts_router)
 router.include_router(likes_router)
+router.include_router(comments_router)
