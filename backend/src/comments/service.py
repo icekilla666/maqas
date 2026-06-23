@@ -4,7 +4,7 @@ from fastapi import status, HTTPException
 
 from src.comments.repository import CommentsRepository
 from src.posts.repository import PostsRepository
-from src.comments.schemas import CommentCreate, CommentOutFull, CommentUpdate
+from src.comments.schemas import CommentCreate, CommentOutFull, CommentUpdate, CommentOutShort
 from src.users.models import UsersModel
 from src.comments.models import CommentsModel
 from src.users.repository import UsersRepository
@@ -104,7 +104,7 @@ class CommentsService:
                     }
                 )
             parent.replies_count -= 1
-            if parent.replies_count == 0:
+            if parent.replies_count == 0 and parent.is_deleted:
                 await self.comments_repo.delete_comment(parent, session)
         if comment.replies_count == 0:
             await self.comments_repo.delete_comment(comment, session)
@@ -147,4 +147,74 @@ class CommentsService:
         return {
             "success": True,
             "data": comment_full
+        }
+    def _convert_rows_to_comments(self, rows: None | list[tuple[CommentsModel, str, str]]):
+        comments = []
+        for comment, preview, is_owner in rows:
+            comment_complete = CommentOutShort.model_validate(comment)
+            comment_complete.preview = preview
+            comment_complete.is_owner = is_owner
+            comments.append(comment_complete)
+        return comments
+
+    async def get_post_comments(self, post_id: UUID, optional_user: None | UsersModel, skip: int, limit: int, session: AsyncSession):
+        post_rows = await self.posts_repo.get_by_id(post_id, optional_user, session)
+        if not post_rows:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Пост не найден",
+                    "error": "POST_NOT_FOUND"
+                }
+            )
+        post, is_liked = post_rows
+        comments_rows, count = await self.comments_repo.get_post_comments(post_id, optional_user, skip, limit, session)
+        comments = self._convert_rows_to_comments(comments_rows)
+        return {
+            "success": True,
+            "data": comments,
+            "total": count,
+            "skip": skip,
+            "limit": limit
+        }
+    
+    async def get_full_comment(self, comment_id: UUID, optional_user: None | UsersModel, session: AsyncSession):
+        comment_rows = await self.comments_repo.get_by_id_with_owner(comment_id, optional_user, session)
+        if not comment_rows:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Комментарий не найден",
+                    "error": "COMMENT_NOT_FOUND"
+                }
+            )
+        comment, is_owner = comment_rows
+        comment = CommentOutFull.model_validate(comment)
+        comment.is_owner = is_owner
+        return {
+            "success": True,
+            "data": comment
+        }
+
+    async def get_comment_replies(self, comment_id: UUID, optional_user: None | UsersModel, skip: int, limit: int, session: AsyncSession):
+        comment = await self.comments_repo.get_by_id(comment_id, session)
+        if not comment:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "success": False,
+                    "message": "Комментарий не найден",
+                    "error": "COMMENT_NOT_FOUND"
+                }
+            )
+        replies_rows = await self.comments_repo.get_comment_replies(comment_id, optional_user, skip, limit, session)
+        replies = self._convert_rows_to_comments(replies_rows)
+        return {
+            "success": True,
+            "data": replies,
+            "total": comment.replies_count,
+            "skip": skip,
+            "limit": limit
         }
