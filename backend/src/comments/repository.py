@@ -13,7 +13,7 @@ class CommentsRepository:
         comment = result.scalar_one_or_none()
         return comment
     
-    async def get_by_id_full(self, comment_id: UUID, optional_user: None | UsersModel, session: AsyncSession):
+    async def get_by_id_with_owner(self, comment_id: UUID, optional_user: None | UsersModel, session: AsyncSession):
         if optional_user:
             is_owner = exists().where(UsersModel.id == CommentsModel.user_id, UsersModel.id == optional_user.id).label("is_owner")
         else:
@@ -28,3 +28,13 @@ class CommentsRepository:
         await session.commit()
         await session.refresh(comment)
         return comment
+    
+    async def get_by_id_with_post(self, comment_id: UUID, session: AsyncSession):
+        query = select(CommentsModel).where(CommentsModel.id == comment_id).options(selectinload(CommentsModel.post))
+        result = await session.execute(query)
+        comment = result.scalar_one_or_none()
+        return comment
+    
+    async def delete_comment(self, comment: CommentsModel, session: AsyncSession):
+        await session.delete(comment)
+        await session.commit()
