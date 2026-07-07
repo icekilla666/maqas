@@ -8,8 +8,11 @@ import { useEffect } from "react";
 
 const AccountPage = () => {
   const setUser = useAuthStore((state) => state.setUser);
-  const { profile, isLoading, error, fetchProfile, clearProfile } =
-    useProfileStore();
+  const profile = useProfileStore((state) => state.profile);
+  const isLoading = useProfileStore((state) => state.isLoading);
+  const error = useProfileStore((state) => state.error);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
+  const clearProfile = useProfileStore((state) => state.clearProfile);
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
@@ -24,9 +27,7 @@ const AccountPage = () => {
     <section>
       <div className="container">
         {profile ? (
-          <>
-            <AccountHeader {...profile} publications={0} lvl="лошок" />
-          </>
+          <AccountHeader {...profile} publications={0} lvl="лошок" />
         ) : (
           <h1 className="text-red text-center">{error}</h1>
         )}

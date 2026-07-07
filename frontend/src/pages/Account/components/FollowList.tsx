@@ -52,7 +52,9 @@ const FollowList = () => {
         >
           <ChevronLeft size={22} />
         </button>
-        <p className="follow-list__page-title">{profile?.username ?? "Профиль"}</p>
+        <p className="follow-list__page-title">
+          {profile?.username ?? "Профиль"}
+        </p>
       </header>
 
       <nav className="follow-list__tabs">
@@ -104,6 +106,7 @@ const FollowList = () => {
                 className={`follow-list__item ${
                   isActive ? "" : "follow-list__item--inactive"
                 }`.trim()}
+                onClick={() => navigate(`/${user.id}`)}
                 key={user.id}
               >
                 <div className="follow-list__avatar">

@@ -4,24 +4,27 @@ import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "../routes/router.tsx";
 import Loader from "@/components/ui/Loader.tsx";
+import { useProfileStore } from "@/store/profile.store.ts";
 
 const App = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
   const setIsAuthCheked = useAuthStore((state) => state.setIsAuthChecked);
+  const clearProfile = useProfileStore((state) => state.clearProfile);
   useEffect(() => {
     const initAuth = async () => {
       try {
         const response = await authApi.refreshAccess();
         setUser(true, response.access_token);
       } catch {
+        clearProfile();
         setUser(false, null);
       } finally {
         setIsAuthCheked(true);
       }
     };
     initAuth();
-  }, [setUser, setIsAuthCheked]);
+  }, [clearProfile, setUser, setIsAuthCheked]);
 
   if (!isAuthCheked)
     return (

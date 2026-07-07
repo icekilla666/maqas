@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-interface MainButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface MainButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
-  typesBtn?: "default" | "primary" | "default-outline" | "primary-outline";
+  typesBtn?: "default" | "primary" | "default-outline" | "primary-outline" | "list";
   children: ReactNode;
 }
 

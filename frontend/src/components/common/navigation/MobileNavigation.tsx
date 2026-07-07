@@ -27,7 +27,7 @@ const MobileNavigation = () => {
     },
   ];
   return (
-    <div className="container fixed bottom-6">
+    <div className="container fixed bottom-6 flex justify-center items-center">
       <nav className="mobile-nav">
         {navs.map((nav) => (
           <NavLink

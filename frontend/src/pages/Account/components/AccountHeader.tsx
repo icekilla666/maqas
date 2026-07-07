@@ -1,9 +1,10 @@
 import type { CountType } from "@/types/entities";
-import AvatarPlaceholder from "./AvatarPlaceholder";
 import CountInfo from "./CountInfo";
 import { useNavigate } from "react-router-dom";
 import { FOLLOW_PAGE } from "@/utils/constants";
 import { anchor } from "@/utils/anchor";
+import AccountAvatar from "./AccountAvatar";
+import AccountInfo from "./AccountInfo";
 
 interface AccountHeaderProps {
   avatar?: string;
@@ -45,31 +46,9 @@ const AccountHeader = ({
   return (
     <header className="account-header">
       <div className="mb-3 flex gap-3.5">
-        <div className="account__avatar rounded-full">
-          {avatar ? (
-            <img
-              className="w-full h-full rounded-full object-cover"
-              src={avatar}
-              alt="avatar"
-            />
-          ) : (
-            <AvatarPlaceholder username={username} />
-          )}
-        </div>
+        <AccountAvatar username={username} avatar={avatar} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
-          <div className="flex gap-2 flex-col">
-            <div className="flex items-center gap-1.5">
-              <p className="account__username text-second text-xl">
-                {username}
-              </p>
-              <span className="account__lvl w-fit px-1.5 py-0.5 bg-main/50 text-second text-xs font-light rounded-[40px]">
-                {lvl}
-              </span>
-            </div>
-            <p className="account__name color-second text-[14px] text-second/60">
-              {name}
-            </p>
-          </div>
+          <AccountInfo name={name} username={username} lvl={lvl} />
           <div className="account__count-wrapper flex items-center gap-3">
             <CountInfo
               followers={followers_count}

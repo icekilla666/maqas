@@ -6,6 +6,10 @@ export const usersApi = {
     const response = await api.get("/api/users/me");
     return response.data;
   },
+  getUser: async (id: string) => {
+    const response = await api.get(`/api/users/${id}`);
+    return response.data.data;
+  },
   deleteMe: async () => {
     const response = await api.post("/api/users/me");
     return response.data;

@@ -15,11 +15,13 @@ import Loader from "@/components/ui/Loader";
 import { authApi } from "@/services/auth.api";
 import type { LoginData, RegisterData } from "@/types/api.types";
 import { useAuthStore } from "@/store/auth.store";
+import { useProfileStore } from "@/store/profile.store";
 
 const AuthForm = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
   const setPendingEmail = useAuthStore((state) => state.setPendingEmail);
+  const clearProfile = useProfileStore((state) => state.clearProfile);
   const location = useLocation();
   const isLogin = location.pathname == LOGIN_PAGE;
   const {
@@ -35,6 +37,7 @@ const AuthForm = () => {
     const submitData = getSubmitData();
     if (isLogin) {
       const response = await authApi.login(submitData as LoginData);
+      clearProfile();
       setUser(true, response.data.access_token);
       navigate(ACCOUNT_PAGE);
     } else {
