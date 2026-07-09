@@ -4,7 +4,7 @@ from sqlalchemy import String, Enum, Integer, ForeignKey, UniqueConstraint
 from uuid import uuid4
 
 from src.database import Base
-from src.users.schemas import UserStatus
+from src.users.schemas import UserStatus, Level
 
 class UsersModel(Base):
     __tablename__ = "users"
@@ -28,12 +28,20 @@ class UsersModel(Base):
     refresh_tokens: Mapped[list["RefreshTokenModel"]] = relationship("RefreshTokenModel", back_populates="user", cascade="all, delete-orphan")
     likes: Mapped[list["LikesModel"]] = relationship("LikesModel", back_populates="user")
     comments: Mapped[list["CommentsModel"]] = relationship("CommentsModel", back_populates="user")
+    chats_as_user1: Mapped[list["ChatsModel"]] = relationship("ChatsModel", foreign_keys="ChatsModel.user1_id", back_populates="user1")
+    chats_as_user2: Mapped[list["ChatsModel"]] = relationship("ChatsModel", foreign_keys="ChatsModel.user2_id", back_populates="user2")
+    messages: Mapped[list["MessagesModel"]] = relationship("MessagesModel", back_populates="sender")
     @property
     def is_banned(self):
         if self.status == UserStatus.banned:
             return True
         return False
-    
+    @property
+    def level(self):
+        if self.followers_count == 0:
+            return Level.loshok_0
+        elif self.followers_count <= 1:
+            return Level.loshok_1
 
 class FollowsModel(Base):
     __tablename__ = "follows"

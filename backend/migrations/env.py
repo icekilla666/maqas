@@ -11,6 +11,7 @@ import src.users.models
 import src.posts.models
 import src.likes.models
 import src.comments.models
+import src.chats.models
 
 load_dotenv()
 

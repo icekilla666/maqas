@@ -42,6 +42,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(router)
+for route in app.routes:
+    print(route.path)
 
 """
 docker-compose up -d db

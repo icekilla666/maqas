@@ -152,6 +152,7 @@ class PostsService:
                     "error": "NOT_ALLOWED"
                 }
             )
+        await delete_image(post.image_file_id)
         await self.posts_repo.delete_post(post, current_user.id, session)
         return {
             "success": True,

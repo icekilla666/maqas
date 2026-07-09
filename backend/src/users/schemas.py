@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
-from enum import Enum
+from enum import Enum, IntEnum
 from uuid import UUID
 
 class UserStatus(str, Enum):
@@ -8,11 +8,16 @@ class UserStatus(str, Enum):
     banned = "banned"
     pending = "pending"
     
+class Level(str, Enum):
+    loshok_0 = "лошок 0"
+    loshok_1 = "лошок 1"
+
 class UserOutShort(BaseModel):
     id: UUID
     username: str = Field(min_length=1, max_length=20)
     name: str = Field(min_length=1, max_length=50)
     avatar_url: None | str = Field(default=None, max_length=500)
+    level: Level
     status: UserStatus
     model_config = ConfigDict(from_attributes=True)
 
@@ -42,3 +47,4 @@ class UserUpdateMe(BaseModel):
     username: None | str = Field(default=None, min_length=1, max_length=20)
     name: None | str= Field(default=None, min_length=1, max_length=50)
     bio: None | str = Field(default=None, max_length=200)
+

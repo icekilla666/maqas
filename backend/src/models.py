@@ -3,3 +3,4 @@ from src.posts.models import PostsModel
 from src.auth.models import RefreshTokenModel
 from src.likes.models import LikesModel
 from src.comments.models import CommentsModel
+from src.chats.models import ChatsModel, MessagesModel

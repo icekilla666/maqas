@@ -1,7 +1,6 @@
 from jose import JWTError, jwt
-from jwt.exceptions import ExpiredSignatureError
 from datetime import datetime, timedelta, timezone
-from jose.exceptions import ExpiredSignatureError, JWTError
+from jose import ExpiredSignatureError, JWTError
 
 from src.configs import settings
 
