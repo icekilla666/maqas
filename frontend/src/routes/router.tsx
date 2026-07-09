@@ -3,7 +3,10 @@ import Layout from "../components/layout/Layout";
 import HomePage from "../pages/Home/HomePage";
 import {
   ACCOUNT_PAGE,
+  BLACKLIST_PAGE,
   CHATS_PAGE,
+  EDIT_PAGE,
+  FAQ_PAGE,
   FOLLOW_PAGE,
   LOGIN_PAGE,
   REGISTRATION_PAGE,
@@ -21,6 +24,9 @@ import VerifyEmailPendingPage from "../pages/VerifyEmail/VerifyEmailPendingPage"
 import ProtectedRoute from "./ProtectedRoute";
 import FollowPage from "@/pages/Account/FollowPage";
 import UserPage from "@/pages/Account/UserPage";
+import EditPage from "@/pages/Settings/EditPage";
+import FaqPage from "@/pages/Settings/FaqPage";
+import BlackListPage from "@/pages/Settings/BlackListPage";
 
 const relativePath = (path: string) => path.slice(1);
 export const router = createBrowserRouter([
@@ -44,7 +50,9 @@ export const router = createBrowserRouter([
       { path: relativePath(ACCOUNT_PAGE), element: <AccountPage /> },
       { path: relativePath(FOLLOW_PAGE), element: <FollowPage /> },
       { path: relativePath(USER_ACCOUNT), element: <UserPage /> },
-
+      { path: relativePath(FAQ_PAGE), element: <FaqPage /> },
+      { path: relativePath(EDIT_PAGE), element: <EditPage /> },
+      { path: relativePath(BLACKLIST_PAGE), element: <BlackListPage /> },
       { path: relativePath(CHATS_PAGE), element: <ChatsPage /> },
       { path: relativePath(SETTINGS_PAGE), element: <SettingPage /> },
     ],

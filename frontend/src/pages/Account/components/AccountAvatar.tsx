@@ -1,12 +1,28 @@
+import type { CSSProperties } from "react";
 import AvatarPlaceholder from "./AvatarPlaceholder";
 
 interface AvatarProps {
   avatar?: string;
   username: string;
+  className?: string;
+  width?: number;
+  size?: number;
 }
-const AccountAvatar = ({ avatar, username }: AvatarProps) => {
+const AccountAvatar = ({
+  avatar,
+  username,
+  width,
+  className,
+  size = 42,
+}: AvatarProps) => {
+  console.log(avatar)
   return (
-    <div className="account__avatar rounded-full">
+    <div
+      className={`account__avatar rounded-full ${className}`.trim()}
+      style={
+        { "--avatar-width": width ? `${width}px` : width } as CSSProperties
+      }
+    >
       {avatar ? (
         <img
           className="w-full h-full rounded-full object-cover"
@@ -14,7 +30,7 @@ const AccountAvatar = ({ avatar, username }: AvatarProps) => {
           alt="avatar"
         />
       ) : (
-        <AvatarPlaceholder username={username} />
+        <AvatarPlaceholder username={username} size={size} />
       )}
     </div>
   );

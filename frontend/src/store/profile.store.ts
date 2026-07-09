@@ -10,6 +10,7 @@ interface ProfileState {
 
   fetchProfile: () => Promise<void>;
   updateProfile: (data: ProfileProps) => Promise<void>;
+  uploadAvatar: (file: File) => Promise<void>;
   clearProfile: () => void;
 }
 export const useProfileStore = create<ProfileState>()((set, get) => ({
@@ -37,6 +38,22 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
       set({ profile: response.data, isLoading: false });
     } catch (error) {
       set({ error: "Не удалось обновить профиль", isLoading: false });
+      throw error;
+    }
+  },
+
+  uploadAvatar: async (file) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await usersApi.uploadAvatar(file);
+      set((state) => ({
+        profile: state.profile
+          ? { ...state.profile, avatar_url: response.data }
+          : state.profile,
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({ error: "Не удалось обновить аватар", isLoading: false });
       throw error;
     }
   },

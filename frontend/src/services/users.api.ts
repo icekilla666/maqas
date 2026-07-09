@@ -18,8 +18,15 @@ export const usersApi = {
     const response = await api.patch("/api/users/me", { username, name, bio });
     return response.data;
   },
-  uploadAvatar: async (file: string) => {
-    const response = await api.post("/api/users/me/avatar", file);
+  uploadAvatar: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await api.post("/api/users/me/avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
   deleteAvatar: async () => {

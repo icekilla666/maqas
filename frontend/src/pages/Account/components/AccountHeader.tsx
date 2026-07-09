@@ -7,7 +7,7 @@ import AccountAvatar from "./AccountAvatar";
 import AccountInfo from "./AccountInfo";
 
 interface AccountHeaderProps {
-  avatar?: string;
+  avatar_url?: string;
   username: string;
   name: string;
   bio?: string;
@@ -18,7 +18,7 @@ interface AccountHeaderProps {
 }
 
 const AccountHeader = ({
-  avatar,
+  avatar_url,
   username,
   name,
   bio,
@@ -42,11 +42,11 @@ const AccountHeader = ({
         break;
     }
   };
-
+  console.log(avatar_url)
   return (
     <header className="account-header">
       <div className="mb-3 flex gap-3.5">
-        <AccountAvatar username={username} avatar={avatar} />
+        <AccountAvatar username={username} avatar={avatar_url} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <AccountInfo name={name} username={username} lvl={lvl} />
           <div className="account__count-wrapper flex items-center gap-3">

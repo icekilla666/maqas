@@ -5,22 +5,21 @@ import TitlePage from "@/components/common/TitlePage";
 import MainButton from "@/components/ui/Buttons/MainButton";
 import ListButtons from "./components/ListButtons";
 import ThemeSettings from "./components/ThemeSettings";
+import { useNavigate } from "react-router-dom";
+import { BLACKLIST_PAGE, EDIT_PAGE, FAQ_PAGE } from "@/utils/constants";
 
 const SettingPage = () => {
   const profile = useProfileStore((s) => s.profile);
   const error = useProfileStore((state) => state.error);
+  const navigate = useNavigate();
   const actionBtns = [
     {
       children: "часто задаваемые вопросы",
-      onClick: () => console.log("qwe"),
+      onClick: () => navigate(FAQ_PAGE),
     },
     {
       children: "посмотреть черный список",
-      onClick: () => console.log("qwwqe"),
-    },
-    {
-      children: "выйти со всех устройств",
-      onClick: () => console.log("qwwqvfdfde"),
+      onClick: () => navigate(BLACKLIST_PAGE),
     },
   ];
   const exitBtns = [
@@ -29,14 +28,19 @@ const SettingPage = () => {
       onClick: () => console.log("qwe"),
     },
     {
+      children: "выйти со всех устройств",
+      onClick: () => console.log("qwwqvfdfde"),
+    },
+    {
       children: "удаление аккаунта",
+      className: "text-red",
       onClick: () => console.log("qwwqe"),
     },
   ];
   return (
     <section>
       <div className="container">
-        <TitlePage title="настройки" />
+        <TitlePage title="Настройки" />
         {profile ? (
           <div className="mb-6 flex gap-3.5 items-center">
             <AccountAvatar
@@ -54,7 +58,7 @@ const SettingPage = () => {
           <h1 className="text-red text-center">{error}</h1>
         )}
         <div className="flex flex-col gap-3">
-          <MainButton onClick={() => console.log("wqe")}>
+          <MainButton onClick={() => navigate(EDIT_PAGE)}>
             редактировать профиль
           </MainButton>
           <ListButtons btns={actionBtns} />
