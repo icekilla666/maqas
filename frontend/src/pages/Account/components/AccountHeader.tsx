@@ -42,7 +42,6 @@ const AccountHeader = ({
         break;
     }
   };
-  console.log(avatar_url)
   return (
     <header className="account-header">
       <div className="mb-3 flex gap-3.5">

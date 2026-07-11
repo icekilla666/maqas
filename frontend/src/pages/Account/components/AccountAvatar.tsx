@@ -15,7 +15,6 @@ const AccountAvatar = ({
   className,
   size = 42,
 }: AvatarProps) => {
-  console.log(avatar)
   return (
     <div
       className={`account__avatar rounded-full ${className}`.trim()}

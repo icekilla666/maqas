@@ -22,11 +22,7 @@ export const usersApi = {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await api.post("/api/users/me/avatar", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await api.post("/api/users/me/avatar", formData);
     return response.data;
   },
   deleteAvatar: async () => {
