@@ -7,6 +7,7 @@ import AccountAvatar from "./AccountAvatar";
 import AccountInfo from "./AccountInfo";
 
 interface AccountHeaderProps {
+  id: string;
   avatar_url?: string;
   username: string;
   name: string;
@@ -18,6 +19,7 @@ interface AccountHeaderProps {
 }
 
 const AccountHeader = ({
+  id,
   avatar_url,
   username,
   name,
@@ -30,12 +32,21 @@ const AccountHeader = ({
   const navigate = useNavigate();
 
   const switchCount = (type: CountType) => {
+    const followState = {
+      userId: id,
+      username,
+      followersCount: followers_count,
+      followingsCount: followings_count,
+    };
+
     switch (type) {
       case "followers":
-        navigate(FOLLOW_PAGE, { state: { tab: "followers" } });
+        navigate(FOLLOW_PAGE, { state: { ...followState, tab: "followers" } });
         break;
       case "followings":
-        navigate(FOLLOW_PAGE, { state: { tab: "followings" } });
+        navigate(FOLLOW_PAGE, {
+          state: { ...followState, tab: "followings" },
+        });
         break;
       case "publications":
         anchor("publications");

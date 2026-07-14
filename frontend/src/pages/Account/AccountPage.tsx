@@ -1,27 +1,17 @@
-import MainButton from "@/components/ui/Buttons/MainButton";
-import { authApi } from "@/services/auth.api";
-import { useAuthStore } from "@/store/auth.store";
 import AccountHeader from "./components/AccountHeader";
 import Loader from "@/components/ui/Loader";
 import { useProfileStore } from "@/store/profile.store";
 import { useEffect } from "react";
 
 const AccountPage = () => {
-  const setUser = useAuthStore((state) => state.setUser);
   const profile = useProfileStore((state) => state.profile);
   const isLoading = useProfileStore((state) => state.isLoading);
   const error = useProfileStore((state) => state.error);
   const fetchProfile = useProfileStore((state) => state.fetchProfile);
-  const clearProfile = useProfileStore((state) => state.clearProfile);
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
-  const handleLogout = async () => {
-    await authApi.logout();
-    setUser(false, null);
-    clearProfile();
-  };
   if (isLoading) return <Loader />; // в будущем здесь будет skeletonview
   return (
     <section>
@@ -31,7 +21,6 @@ const AccountPage = () => {
         ) : (
           <h1 className="text-red text-center">{error}</h1>
         )}
-        <MainButton onClick={handleLogout}>Выйти</MainButton>
       </div>
     </section>
   );

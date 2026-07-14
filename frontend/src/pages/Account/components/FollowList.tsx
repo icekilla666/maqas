@@ -10,15 +10,28 @@ const getInitial = (username: string) => username.slice(0, 1).toUpperCase();
 const getStatusLabel = (status: FollowUser["status"]) =>
   status === "banned" ? "заблокирован" : "не активен";
 
+interface FollowLocationState {
+  tab?: FollowTab;
+  userId?: string;
+  username?: string;
+  followersCount?: number;
+  followingsCount?: number;
+}
+
 const FollowList = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const locationState = location.state as FollowLocationState | null;
   const profile = useProfileStore((state) => state.profile);
   const fetchProfile = useProfileStore((state) => state.fetchProfile);
   const initialTab: FollowTab =
-    (location.state as { tab?: FollowTab } | null)?.tab === "followings"
+    locationState?.tab === "followings"
       ? "followings"
       : "followers";
+  const targetUserId =
+    locationState?.userId && locationState.userId !== profile?.id
+      ? locationState.userId
+      : undefined;
   const {
     activeTab,
     setActiveTab,
@@ -27,11 +40,16 @@ const FollowList = () => {
     followings,
     isLoading,
     serverError,
-  } = useFollow(initialTab);
+  } = useFollow(initialTab, targetUserId);
   const isFollowings = activeTab === "followings";
   const emptyText = isFollowings ? "Подписок пока нет" : "Подписчиков пока нет";
-  const followersCount = profile?.followers_count ?? followers.length;
-  const followingsCount = profile?.followings_count ?? followings.length;
+  console.log(followers, followings)
+  const followersCount =
+    locationState?.followersCount ?? profile?.followers_count ?? followers.length;
+  const followingsCount =
+    locationState?.followingsCount ??
+    profile?.followings_count ??
+    followings.length;
 
   useEffect(() => {
     if (!profile) void fetchProfile();
@@ -53,7 +71,7 @@ const FollowList = () => {
           <ChevronLeft size={22} />
         </button>
         <p className="follow-list__page-title">
-          {profile?.username ?? "Профиль"}
+          {locationState?.username ?? profile?.username ?? "Профиль"}
         </p>
       </header>
 

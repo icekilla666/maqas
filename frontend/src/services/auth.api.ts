@@ -28,4 +28,8 @@ export const authApi = {
     const response = await api.post("/api/auth/logout");
     return response.data;
   },
+  logoutAll: async () => {
+    const response = await api.post("api/auth/logout-all");
+    return response.data;
+  },
 };

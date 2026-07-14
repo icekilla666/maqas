@@ -42,4 +42,16 @@ export const usersApi = {
     });
     return response.data.data;
   },
+  getUserFollowers: async (id: string, { skip, limit }: FollowProps) => {
+    const response = await api.get(`/api/users/${id}/followers`, {
+      params: { skip, limit },
+    });
+    return response.data.data;
+  },
+  getUserFollowings: async (id: string, { skip, limit }: FollowProps) => {
+    const response = await api.get(`/api/users/${id}/followings`, {
+      params: { skip, limit },
+    });
+    return response.data.data;
+  },
 };

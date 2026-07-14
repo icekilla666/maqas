@@ -19,7 +19,10 @@ const emptyErrors: Record<FollowTab, string> = {
   followings: "",
 };
 
-export const useFollow = (initialTab: FollowTab = "followers") => {
+export const useFollow = (
+  initialTab: FollowTab = "followers",
+  userId?: string,
+) => {
   const [activeTab, setActiveTab] = useState<FollowTab>(initialTab);
   const [usersByTab, setUsersByTab] = useState<Record<FollowTab, FollowUser[]>>(emptyUsers);
   const [loadedTabs, setLoadedTabs] = useState<Record<FollowTab, boolean>>(emptyFlags);
@@ -37,8 +40,12 @@ export const useFollow = (initialTab: FollowTab = "followers") => {
         const params = { skip: 0, limit: 20 };
         const users =
           activeTab === "followers"
-            ? await usersApi.getFollowers(params)
-            : await usersApi.getFollowings(params);
+            ? userId
+              ? await usersApi.getUserFollowers(userId, params)
+              : await usersApi.getFollowers(params)
+            : userId
+              ? await usersApi.getUserFollowings(userId, params)
+              : await usersApi.getFollowings(params);
 
         setUsersByTab((prev) => ({ ...prev, [activeTab]: users }));
         setLoadedTabs((prev) => ({ ...prev, [activeTab]: true }));
@@ -55,7 +62,7 @@ export const useFollow = (initialTab: FollowTab = "followers") => {
     };
 
     void fetchFollow();
-  }, [activeTab, loadedTabs, loadingTabs]);
+  }, [activeTab, loadedTabs, loadingTabs, userId]);
 
   return {
     activeTab,

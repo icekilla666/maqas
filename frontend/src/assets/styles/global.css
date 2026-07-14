@@ -244,7 +244,7 @@ p {
 .modal__window {
   width: 100%;
   max-height: calc(100dvh - 32px);
-  overflow-y: auto;
+  overflow: visible;
   color: var(--color-second);
   background-color: var(--color-primary);
   border: 1px solid color-mix(in oklab, var(--color-second) 10%, transparent);
@@ -266,6 +266,110 @@ p {
   max-height: 100dvh;
   border: 0;
   border-radius: 0;
+}
+
+.modal--actions {
+  width: min(360px, calc(100% - 32px));
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.modal-actions__content {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal-actions__text {
+  min-width: 0;
+  color: var(--color-second);
+  font-size: 16px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.modal-actions__info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  margin-top: -4px;
+  color: color-mix(in oklab, var(--color-second) 70%, transparent);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modal-actions__info .lucide {
+  stroke-width: 1px;
+}
+
+.modal-actions__tooltip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 1;
+  width: max-content;
+  max-width: min(240px, calc(100vw - 64px));
+  padding: 10px 12px;
+  color: var(--color-primary);
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+  background-color: var(--color-second);
+  border-radius: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.modal-actions__info.active .modal-actions__tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-actions__buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.modal-actions__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 22px;
+  cursor: pointer;
+}
+
+.modal-actions__button--cancel {
+  color: var(--color-second);
+  background-color: var(--color-wrapper);
+  border: 0;
+}
+
+.modal-actions__button--confirm {
+  color: var(--color-primary);
+  background-color: var(--color-second);
+  border: 0;
 }
 
 @keyframes modal-fade-in {
