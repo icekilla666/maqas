@@ -14,7 +14,7 @@ class Level(str, Enum):
 
 class UserOutShort(BaseModel):
     id: UUID
-    username: str = Field(min_length=1, max_length=20)
+    username: str = Field(min_length=1, max_length=100)
     name: str = Field(min_length=1, max_length=50)
     avatar_url: None | str = Field(default=None, max_length=500)
     level: Level
