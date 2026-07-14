@@ -15,7 +15,7 @@ const App = () => {
     const initAuth = async () => {
       try {
         const response = await authApi.refreshAccess();
-        setUser(true, response.access_token);
+        setUser(true, response.data.access_token);
       } catch {
         clearProfile();
         setUser(false, null);

@@ -44,7 +44,7 @@ const AccountHeader = ({
   };
   return (
     <header className="account-header">
-      <div className="mb-3 flex gap-3.5">
+      <div className="flex gap-3.5">
         <AccountAvatar username={username} avatar={avatar_url} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <AccountInfo name={name} username={username} lvl={lvl} />
@@ -58,7 +58,11 @@ const AccountHeader = ({
           </div>
         </div>
       </div>
-      {bio && <p className="text-xs text-second">{bio}</p>}
+      {bio && (
+        <div className="w-full">
+          <p className="w-full text-xs text-second break-all">{bio}</p>
+        </div>
+      )}
     </header>
   );
 };

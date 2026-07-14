@@ -107,7 +107,7 @@ const EditPage = () => {
                 />
                 <Input
                   disabled={isLoading}
-                  maxLength={200}
+                  maxLength={170}
                   name="bio"
                   label="статус"
                   onChange={updateField("bio")}
