@@ -15,9 +15,11 @@ export type AccountData = {
   avatar_url: string;
   status: string;
   email: string;
+  level: string;
   bio: string;
   followers_count: number;
   followings_count: number;
+  posts_count: number;
 };
 
 export type CountType = "followers" | "followings" | "publications";

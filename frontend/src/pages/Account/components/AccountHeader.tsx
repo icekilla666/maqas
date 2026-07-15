@@ -12,10 +12,10 @@ interface AccountHeaderProps {
   username: string;
   name: string;
   bio?: string;
-  lvl: string;
+  level: string;
   followers_count: number;
   followings_count: number;
-  publications: number;
+  posts_count: number;
 }
 
 const AccountHeader = ({
@@ -24,10 +24,10 @@ const AccountHeader = ({
   username,
   name,
   bio,
-  lvl,
+  level,
   followers_count,
   followings_count,
-  publications,
+  posts_count,
 }: AccountHeaderProps) => {
   const navigate = useNavigate();
 
@@ -58,12 +58,12 @@ const AccountHeader = ({
       <div className="flex gap-3.5">
         <AccountAvatar username={username} avatar={avatar_url} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
-          <AccountInfo name={name} username={username} lvl={lvl} />
+          <AccountInfo name={name} username={username} lvl={level} />
           <div className="account__count-wrapper flex items-center gap-3">
             <CountInfo
               followers={followers_count}
               followings={followings_count}
-              publications={publications}
+              posts={posts_count}
               onClick={(type) => switchCount(type)}
             />
           </div>
@@ -71,7 +71,7 @@ const AccountHeader = ({
       </div>
       {bio && (
         <div className="w-full">
-          <p className="w-full text-xs text-second break-all">{bio}</p>
+          <p className="w-full text-[14px] text-second break-all">{bio}</p>
         </div>
       )}
     </header>

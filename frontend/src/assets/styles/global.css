@@ -39,7 +39,7 @@ body {
 
 main {
   padding-top: 40px;
-  margin-bottom: 120px;
+  /* margin-bottom: 120px; */
 }
 
 h1 {
@@ -437,7 +437,7 @@ p {
   justify-content: center;
   align-items: center;
   width: 100%;
-  gap: 12px;
+  gap: 18px;
 }
 
 .account__avatar {

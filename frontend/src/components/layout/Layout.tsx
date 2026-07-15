@@ -6,7 +6,7 @@ const Layout = () => {
   const isAuth = useAuthStore((s) => s.isAuth);
   return (
     <>
-      <main>
+      <main className={isAuth ? "mb-32" : "mb-0"}>
         <Outlet />
       </main>
       {isAuth && <Navigation />}

@@ -19,6 +19,7 @@ export const useExists = () => {
   };
   const handleDelete = async () => {
     await usersApi.deleteMe();
+    handleLogoutAll();
   };
 
   return {

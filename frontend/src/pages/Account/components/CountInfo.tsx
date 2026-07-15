@@ -3,14 +3,14 @@ import type { CountType } from "@/types/entities";
 interface CountInfoProps {
   followers: number;
   followings: number;
-  publications: number;
+  posts: number;
   onClick: (type: CountType) => void;
 }
 
 const CountInfo = ({
   followers,
   followings,
-  publications,
+  posts,
   onClick,
 }: CountInfoProps) => {
   const rowCounts = [
@@ -27,7 +27,7 @@ const CountInfo = ({
     {
       type: "publications" as const,
       label: "публикаций",
-      value: publications ?? 0,
+      value: posts ?? 0,
     },
   ];
   return rowCounts.map((row) => (
