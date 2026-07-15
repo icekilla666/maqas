@@ -1,6 +1,8 @@
 import AccountHeader from "./components/AccountHeader";
+import EmptyState from "@/components/common/EmptyState";
 import Loader from "@/components/ui/Loader";
 import { useProfileStore } from "@/store/profile.store";
+import { TriangleAlert } from "lucide-react";
 
 const AccountPage = () => {
   const profile = useProfileStore((state) => state.profile);
@@ -14,7 +16,11 @@ const AccountPage = () => {
         {profile ? (
           <AccountHeader {...profile} />
         ) : (
-          <h1 className="text-red text-center">{error}</h1>
+          <EmptyState
+            icon={<TriangleAlert />}
+            text={error ?? "Не удалось загрузить профиль"}
+            variant="error"
+          />
         )}
       </div>
     </section>

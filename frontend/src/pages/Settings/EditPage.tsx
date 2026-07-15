@@ -2,9 +2,10 @@ import TitlePage from "@/components/common/TitlePage";
 import { useProfileStore } from "@/store/profile.store";
 import Input from "@/components/ui/Inputs/Input";
 import MainButton from "@/components/ui/Buttons/MainButton";
-import { PenLine } from "lucide-react";
+import { PenLine, TriangleAlert } from "lucide-react";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import Avatar from "@/components/common/Avatar";
+import EmptyState from "@/components/common/EmptyState";
 
 const EditPage = () => {
   const profile = useProfileStore((s) => s.profile);
@@ -116,7 +117,11 @@ const EditPage = () => {
               </form>
             </>
           ) : (
-            <h1 className="text-red text-center">{error}</h1>
+            <EmptyState
+              icon={<TriangleAlert />}
+              text={error ?? "Не удалось загрузить профиль"}
+              variant="error"
+            />
           )}
           <MainButton
             disabled={!profile || isLoading}

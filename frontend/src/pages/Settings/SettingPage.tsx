@@ -10,6 +10,8 @@ import { useExists } from "@/hooks/useExists";
 import { useState } from "react";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import Avatar from "@/components/common/Avatar";
+import EmptyState from "@/components/common/EmptyState";
+import { TriangleAlert } from "lucide-react";
 
 type ExitAction = "logout" | "logoutAll" | "delete" | null;
 
@@ -90,7 +92,11 @@ const SettingPage = () => {
             />
           </div>
         ) : (
-          <h1 className="text-red text-center">{error}</h1>
+          <EmptyState
+            icon={<TriangleAlert />}
+            text={error ?? "Не удалось загрузить профиль"}
+            variant="error"
+          />
         )}
         <div className="flex flex-col gap-3">
           <MainButton onClick={() => navigate(EDIT_PAGE)}>

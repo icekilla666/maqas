@@ -1,8 +1,14 @@
+import EmptyState from "@/components/common/EmptyState";
 import Loader from "@/components/ui/Loader";
 import { useFollow, type FollowTab } from "@/hooks/useFollow";
 import { useProfileStore } from "@/store/profile.store";
 import type { FollowUser } from "@/types/entities";
-import { ChevronLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  TriangleAlert,
+  UserRoundCheck,
+  UserRoundPlus,
+} from "lucide-react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -42,10 +48,13 @@ const FollowList = () => {
     serverError,
   } = useFollow(initialTab, targetUserId);
   const isFollowings = activeTab === "followings";
-  const emptyText = isFollowings ? "Подписок пока нет" : "Подписчиков пока нет";
-  console.log(followers, followings)
+  const emptyText = isFollowings
+    ? "Пока ни на кого не подписались"
+    : "Здесь пока нет подписчиков";
   const followersCount =
-    locationState?.followersCount ?? profile?.followers_count ?? followers.length;
+    locationState?.followersCount ??
+    profile?.followers_count ??
+    followers.length;
   const followingsCount =
     locationState?.followingsCount ??
     profile?.followings_count ??
@@ -105,13 +114,18 @@ const FollowList = () => {
       )}
 
       {!isLoading && serverError && (
-        <div className="follow-list__state follow-list__state--error">
-          {serverError}
-        </div>
+        <EmptyState
+          icon={<TriangleAlert />}
+          text={serverError}
+          variant="error"
+        />
       )}
 
       {!isLoading && !serverError && users.length === 0 && (
-        <p className="follow-list__empty">{emptyText}</p>
+        <EmptyState
+          icon={isFollowings ? <UserRoundPlus /> : <UserRoundCheck />}
+          text={emptyText}
+        />
       )}
 
       {!isLoading && !serverError && users.length > 0 && (

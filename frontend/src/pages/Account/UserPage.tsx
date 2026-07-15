@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 import AccountHeader from "./components/AccountHeader";
+import EmptyState from "@/components/common/EmptyState";
 import { useEffect, useState } from "react";
 import type { AccountData } from "@/types/entities";
 import Loader from "@/components/ui/Loader";
 import { usersApi } from "@/services/users.api";
+import { TriangleAlert } from "lucide-react";
 
 const UserPage = () => {
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,11 @@ const UserPage = () => {
         {profile ? (
           <AccountHeader {...profile} publications={0} lvl="лошок" />
         ) : (
-          <h1 className="text-red text-center">{error}</h1>
+          <EmptyState
+            icon={<TriangleAlert />}
+            text={error || "Не удалось загрузить профиль"}
+            variant="error"
+          />
         )}
       </div>
     </section>

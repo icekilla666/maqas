@@ -70,6 +70,46 @@ p {
   border-bottom: 1px solid var(--color-grey);
 }
 
+/* ---EMPTY--- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 180px;
+  padding: 32px 16px;
+  color: color-mix(in oklab, var(--color-second) 64%, transparent);
+  text-align: center;
+}
+
+.empty-state__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in oklab, var(--color-second) 46%, transparent);
+}
+
+.empty-state__icon .lucide {
+  width: 48px;
+  height: 48px;
+  stroke-width: 1px;
+}
+
+.empty-state__text {
+  max-width: 260px;
+  color: color-mix(in oklab, var(--color-second) 64%, transparent);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.empty-state--error,
+.empty-state--error .empty-state__icon,
+.empty-state--error .empty-state__text {
+  color: var(--color-red);
+}
+
 /* ---ИНПУТЫ--- */
 .input {
   color: var(--color-second);
@@ -641,13 +681,6 @@ p {
 
 .follow-list__state--error {
   color: var(--color-red);
-}
-
-.follow-list__empty {
-  margin-top: 92px;
-  color: color-mix(in oklab, var(--color-second) 62%, transparent);
-  font-size: 14px;
-  text-align: center;
 }
 
 .theme-settings__wrapper {
