@@ -3,8 +3,8 @@ import CountInfo from "./CountInfo";
 import { useNavigate } from "react-router-dom";
 import { FOLLOW_PAGE } from "@/utils/constants";
 import { anchor } from "@/utils/anchor";
-import AccountAvatar from "./AccountAvatar";
 import AccountInfo from "./AccountInfo";
+import Avatar from "@/components/common/Avatar";
 
 interface AccountHeaderProps {
   id: string;
@@ -56,7 +56,7 @@ const AccountHeader = ({
   return (
     <header className="account-header">
       <div className="flex gap-3.5">
-        <AccountAvatar username={username} avatar={avatar_url} />
+        <Avatar username={username} avatar={avatar_url} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <AccountInfo name={name} username={username} lvl={level} />
           <div className="account__count-wrapper flex items-center gap-3">

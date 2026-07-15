@@ -813,6 +813,70 @@ p {
   outline-offset: 3px;
 }
 
+/* ---FAQ--- */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.faq-accordion {
+  overflow: hidden;
+  color: var(--color-second);
+  background-color: var(--color-primary);
+  border-radius: 20px;
+}
+
+.faq-accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 58px;
+  padding: 16px 18px;
+  color: var(--color-second);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: left;
+  background-color: var(--color-primary);
+  border: 0;
+  cursor: pointer;
+}
+
+.faq-accordion__trigger span {
+  min-width: 0;
+}
+
+.faq-accordion__icon {
+  flex: 0 0 26px;
+  color: var(--color-second);
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.faq-accordion.active .faq-accordion__icon {
+  color: var(--color-main);
+  transform: rotate(180deg);
+}
+
+.faq-accordion__content {
+  padding: 0 18px 18px;
+  color: var(--color-second);
+  font-size: 14px;
+  line-height: 1.35;
+  background-color: var(--color-primary);
+}
+
+.faq-accordion__content p {
+  line-height: 1.35;
+  font-weight: 300;
+}
+
 /* ---МОБИЛКА--- */
 @media screen and (max-width: 640px) {
   .mobile-nav {

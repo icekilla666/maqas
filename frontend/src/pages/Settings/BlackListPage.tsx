@@ -1,8 +1,10 @@
+import TitlePage from "@/components/common/TitlePage";
+
 const BlackListPage = () => {
   return (
     <section>
       <div className="container">
-        <h1>blacklist</h1>
+        <TitlePage title="Черный список" />
       </div>
     </section>
   );

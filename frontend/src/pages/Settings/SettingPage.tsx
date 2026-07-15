@@ -1,5 +1,4 @@
 import { useProfileStore } from "@/store/profile.store";
-import AccountAvatar from "../Account/components/AccountAvatar";
 import AccountInfo from "../Account/components/AccountInfo";
 import TitlePage from "@/components/common/TitlePage";
 import MainButton from "@/components/ui/Buttons/MainButton";
@@ -10,6 +9,7 @@ import { BLACKLIST_PAGE, EDIT_PAGE, FAQ_PAGE } from "@/utils/constants";
 import { useExists } from "@/hooks/useExists";
 import { useState } from "react";
 import ModalActions from "@/components/ui/Modals/ModalActions";
+import Avatar from "@/components/common/Avatar";
 
 type ExitAction = "logout" | "logoutAll" | "delete" | null;
 
@@ -82,15 +82,11 @@ const SettingPage = () => {
         <TitlePage title="Настройки" />
         {profile ? (
           <div className="mb-6 flex gap-3.5 items-center">
-            <AccountAvatar
-              username={profile.username}
-              avatar={profile.avatar_url}
-            />
-            {/* лвл заглушка */}
+            <Avatar username={profile.username} avatar={profile.avatar_url} />
             <AccountInfo
               name={profile.name}
               username={profile.username}
-              lvl="лошок"
+              lvl={profile.level}
             />
           </div>
         ) : (

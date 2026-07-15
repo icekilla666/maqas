@@ -1,10 +1,10 @@
 import TitlePage from "@/components/common/TitlePage";
-import AccountAvatar from "../Account/components/AccountAvatar";
 import { useProfileStore } from "@/store/profile.store";
 import Input from "@/components/ui/Inputs/Input";
 import MainButton from "@/components/ui/Buttons/MainButton";
 import { PenLine } from "lucide-react";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import Avatar from "@/components/common/Avatar";
 
 const EditPage = () => {
   const profile = useProfileStore((s) => s.profile);
@@ -65,7 +65,7 @@ const EditPage = () => {
           {profile ? (
             <>
               <div className="relative">
-                <AccountAvatar
+                <Avatar
                   avatar={profile.avatar_url}
                   username={profile.username}
                   width={128}

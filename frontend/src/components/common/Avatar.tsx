@@ -8,7 +8,7 @@ interface AvatarProps {
   width?: number;
   size?: number;
 }
-const AccountAvatar = ({
+const Avatar = ({
   avatar,
   username,
   width,
@@ -35,4 +35,4 @@ const AccountAvatar = ({
   );
 };
 
-export default AccountAvatar;
+export default Avatar;
