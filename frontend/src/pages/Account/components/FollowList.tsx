@@ -3,6 +3,7 @@ import Loader from "@/components/ui/Loader";
 import { useFollow, type FollowTab } from "@/hooks/useFollow";
 import { useProfileStore } from "@/store/profile.store";
 import type { FollowUser } from "@/types/entities";
+import { ACCOUNT_PAGE } from "@/utils/constants";
 import {
   ChevronLeft,
   TriangleAlert,
@@ -31,13 +32,8 @@ const FollowList = () => {
   const profile = useProfileStore((state) => state.profile);
   const fetchProfile = useProfileStore((state) => state.fetchProfile);
   const initialTab: FollowTab =
-    locationState?.tab === "followings"
-      ? "followings"
-      : "followers";
-  const targetUserId =
-    locationState?.userId && locationState.userId !== profile?.id
-      ? locationState.userId
-      : undefined;
+    locationState?.tab === "followings" ? "followings" : "followers";
+  const targetUserId = locationState?.userId ? locationState.userId : undefined;
   const {
     activeTab,
     setActiveTab,
@@ -66,6 +62,11 @@ const FollowList = () => {
 
   const switchTab = (tab: FollowTab) => {
     setActiveTab(tab);
+  };
+
+  const handleNavigate = (id: string) => {
+    if (id === profile?.id) return navigate(ACCOUNT_PAGE);
+    navigate(`/${id}`);
   };
 
   return (
@@ -138,7 +139,7 @@ const FollowList = () => {
                 className={`follow-list__item ${
                   isActive ? "" : "follow-list__item--inactive"
                 }`.trim()}
-                onClick={() => navigate(`/${user.id}`)}
+                onClick={() => handleNavigate(user.id)}
                 key={user.id}
               >
                 <div className="follow-list__avatar">

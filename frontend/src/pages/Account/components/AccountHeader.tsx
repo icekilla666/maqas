@@ -5,6 +5,7 @@ import { FOLLOW_PAGE } from "@/utils/constants";
 import { anchor } from "@/utils/anchor";
 import AccountInfo from "./AccountInfo";
 import Avatar from "@/components/common/Avatar";
+import AccountMenu from "./AccountMenu";
 
 interface AccountHeaderProps {
   id: string;
@@ -16,6 +17,8 @@ interface AccountHeaderProps {
   followers_count: number;
   followings_count: number;
   posts_count: number;
+  is_blocked?: boolean;
+  isOwnProfile?: boolean;
 }
 
 const AccountHeader = ({
@@ -28,9 +31,10 @@ const AccountHeader = ({
   followers_count,
   followings_count,
   posts_count,
+  is_blocked,
+  isOwnProfile = false,
 }: AccountHeaderProps) => {
   const navigate = useNavigate();
-
   const switchCount = (type: CountType) => {
     const followState = {
       userId: id,
@@ -58,7 +62,12 @@ const AccountHeader = ({
       <div className="flex gap-3.5">
         <Avatar username={username} avatar={avatar_url} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
-          <AccountInfo name={name} username={username} lvl={level} />
+          <div className="flex justify-between">
+            <AccountInfo name={name} username={username} lvl={level} />
+            {!isOwnProfile && (
+              <AccountMenu id={id} is_blocked={Boolean(is_blocked)} />
+            )}
+          </div>
           <div className="account__count-wrapper flex items-center gap-3">
             <CountInfo
               followers={followers_count}

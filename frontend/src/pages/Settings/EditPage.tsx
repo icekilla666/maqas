@@ -128,6 +128,7 @@ const EditPage = () => {
             type="submit"
             form="edit-form"
             typesBtn="primary"
+            align="center"
           >
             {isLoading ? "Сохранение..." : "Сохранить"}
           </MainButton>

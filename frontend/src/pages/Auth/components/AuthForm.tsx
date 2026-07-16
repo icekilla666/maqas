@@ -79,6 +79,7 @@ const AuthForm = () => {
             className="mt-3"
             disabled={isLoading}
             typesBtn="primary-outline"
+            align="center"
           >
             {isLoading ? <Loader width={35} /> : "Отправить"}
           </MainButton>

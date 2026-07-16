@@ -63,17 +63,17 @@ const SettingPage = () => {
   ];
   const exitBtns = [
     {
-      children: "выйти из аккаунта",
-      onClick: () => setModal("logout"),
+      children: "удаление аккаунта",
+      className: "text-red",
+      onClick: () => setModal("delete"),
     },
     {
       children: "выйти со всех устройств",
       onClick: () => setModal("logoutAll"),
     },
     {
-      children: "удаление аккаунта",
-      className: "text-red",
-      onClick: () => setModal("delete"),
+      children: "выйти из аккаунта",
+      onClick: () => setModal("logout"),
     },
   ];
 

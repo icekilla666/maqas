@@ -54,4 +54,24 @@ export const usersApi = {
     });
     return response.data.data;
   },
+
+  followUser: async (id: string) => {
+    const response = await api.post(`/api/users/${id}/follow`);
+    return response.data.data;
+  },
+
+  unfollowUser: async (id: string) => {
+    const response = await api.delete(`/api/users/${id}/unfollow`);
+    return response.data.data;
+  },
+
+  blockUser: async (id: string) => {
+    const response = await api.post(`/api/users/${id}/block`);
+    return response.data.data;
+  },
+
+  unblockUser: async (id: string) => {
+    const response = await api.delete(`/api/users/${id}/unblock`);
+    return response.data.data;
+  },
 };

@@ -1,13 +1,3 @@
-export type UserData = {
-  id: number;
-  username: string;
-  name: string;
-  email: string;
-  password: string;
-  password_confirm: string;
-  role?: "user" | "admin";
-};
-
 export type AccountData = {
   id: string;
   username: string;
@@ -21,6 +11,11 @@ export type AccountData = {
   followings_count: number;
   posts_count: number;
 };
+
+export type UserData = AccountData & {
+  is_blocked: boolean;
+  is_following: boolean
+}
 
 export type CountType = "followers" | "followings" | "publications";
 

@@ -11,6 +11,7 @@ interface ProfileState {
   fetchProfile: () => Promise<void>;
   updateProfile: (data: ProfileProps) => Promise<void>;
   uploadAvatar: (file: File) => Promise<void>;
+  changeFollowingsCount: (delta: number) => void;
   clearProfile: () => void;
 }
 export const useProfileStore = create<ProfileState>()((set, get) => ({
@@ -56,6 +57,20 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
       set({ error: "Не удалось обновить аватар", isLoading: false });
       throw error;
     }
+  },
+
+  changeFollowingsCount: (delta) => {
+    set((state) => ({
+      profile: state.profile
+        ? {
+            ...state.profile,
+            followings_count: Math.max(
+              0,
+              state.profile.followings_count + delta,
+            ),
+          }
+        : state.profile,
+    }));
   },
 
   clearProfile: () => {
