@@ -17,7 +17,7 @@ export interface ProfileProps {
   bio?: string;
 }
 
-export interface FollowProps {
+export interface ListUsersProps {
   skip?: number;
   limit?: number;
 }

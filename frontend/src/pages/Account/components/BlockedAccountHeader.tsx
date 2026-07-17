@@ -7,7 +7,6 @@ interface BlockedAccountHeaderProps {
   username: string;
   name: string;
   level: string;
-  is_blocked?: boolean;
 }
 
 const BlockedAccountHeader = ({
@@ -15,7 +14,6 @@ const BlockedAccountHeader = ({
   username,
   name,
   level,
-  is_blocked,
 }: BlockedAccountHeaderProps) => {
   return (
     <header className="account-header account-header--blocked">
@@ -26,7 +24,7 @@ const BlockedAccountHeader = ({
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <div className="flex justify-between">
             <AccountInfo name={name} username={username} lvl={level} />
-            <AccountMenu id={id} is_blocked={Boolean(is_blocked)} />
+            <AccountMenu id={id} />
           </div>
           <p className="account-blocked__message">
             Пользователь ограничил доступ к профилю

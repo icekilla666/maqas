@@ -62,12 +62,14 @@ p {
 }
 
 .title-page {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--color-second);
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 24px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--color-grey);
+  font-size: 20px;
+  color: var(--color-second);
 }
 
 /* ---EMPTY--- */
@@ -118,6 +120,32 @@ p {
 .input::placeholder {
   color: var(--color-second);
   opacity: 0.3;
+}
+
+.search-input {
+  position: relative;
+}
+
+.search-input__icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  color: var(--color-second);
+  opacity: 0.3;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 0.16s ease;
+}
+
+.search-input:focus-within .search-input__icon {
+  opacity: 1;
+}
+
+.search-input__field {
+  width: 100%;
+  padding: 12px 18px 12px 46px;
+  border: 1px solid var(--color-grey);
+  border-radius: 30px;
 }
 
 .ui-input {
@@ -730,6 +758,17 @@ p {
   white-space: nowrap;
 }
 
+.follow-list__level {
+  flex: 0 0 auto;
+  padding: 2px 6px;
+  color: var(--color-second);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+  background-color: color-mix(in oklab, var(--color-main) 50%, transparent);
+  border-radius: 40px;
+}
+
 .follow-list__name {
   margin-top: 5px;
   overflow: hidden;
@@ -988,6 +1027,12 @@ p {
 .faq-accordion__content p {
   line-height: 1.35;
   font-weight: 300;
+}
+
+.blacklist-item {
+  padding: 12px 24px 12px 12px;
+  background-color: var(--color-primary);
+  border-radius: 20px;
 }
 
 /* ---МОБИЛКА--- */

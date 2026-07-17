@@ -1,9 +1,8 @@
 import EmptyState from "@/components/common/EmptyState";
+import UsersList from "@/components/common/UsersList";
 import Loader from "@/components/ui/Loader";
 import { useFollow, type FollowTab } from "@/hooks/useFollow";
 import { useProfileStore } from "@/store/profile.store";
-import type { FollowUser } from "@/types/entities";
-import { ACCOUNT_PAGE } from "@/utils/constants";
 import {
   ChevronLeft,
   TriangleAlert,
@@ -12,10 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-const getInitial = (username: string) => username.slice(0, 1).toUpperCase();
-const getStatusLabel = (status: FollowUser["status"]) =>
-  status === "banned" ? "заблокирован" : "не активен";
 
 interface FollowLocationState {
   tab?: FollowTab;
@@ -62,11 +57,6 @@ const FollowList = () => {
 
   const switchTab = (tab: FollowTab) => {
     setActiveTab(tab);
-  };
-
-  const handleNavigate = (id: string) => {
-    if (id === profile?.id) return navigate(ACCOUNT_PAGE);
-    navigate(`/${id}`);
   };
 
   return (
@@ -130,41 +120,7 @@ const FollowList = () => {
       )}
 
       {!isLoading && !serverError && users.length > 0 && (
-        <ul className="follow-list__items">
-          {users.map((user) => {
-            const isActive = user.status === "active";
-
-            return (
-              <li
-                className={`follow-list__item ${
-                  isActive ? "" : "follow-list__item--inactive"
-                }`.trim()}
-                onClick={() => handleNavigate(user.id)}
-                key={user.id}
-              >
-                <div className="follow-list__avatar">
-                  {user.avatar_url ? (
-                    <img src={user.avatar_url} alt={user.username} />
-                  ) : (
-                    <span>{getInitial(user.username)}</span>
-                  )}
-                </div>
-
-                <div className="follow-list__user">
-                  <div className="follow-list__user-row">
-                    <p className="follow-list__username">{user.username}</p>
-                    {!isActive && (
-                      <span className="follow-list__status">
-                        {getStatusLabel(user.status)}
-                      </span>
-                    )}
-                  </div>
-                  <p className="follow-list__name">{user.name}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <UsersList users={users} />
       )}
     </div>
   );

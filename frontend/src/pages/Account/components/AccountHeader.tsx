@@ -31,7 +31,6 @@ const AccountHeader = ({
   followers_count,
   followings_count,
   posts_count,
-  is_blocked,
   isOwnProfile = false,
 }: AccountHeaderProps) => {
   const navigate = useNavigate();
@@ -64,9 +63,7 @@ const AccountHeader = ({
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <div className="flex justify-between">
             <AccountInfo name={name} username={username} lvl={level} />
-            {!isOwnProfile && (
-              <AccountMenu id={id} is_blocked={Boolean(is_blocked)} />
-            )}
+            {!isOwnProfile && <AccountMenu id={id} />}
           </div>
           <div className="account__count-wrapper flex items-center gap-3">
             <CountInfo

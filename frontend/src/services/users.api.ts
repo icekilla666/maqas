@@ -1,5 +1,6 @@
-import type { FollowProps, ProfileProps } from "@/types/api.types";
+import type { ListUsersProps, ProfileProps } from "@/types/api.types";
 import { api } from "./api";
+
 
 export const usersApi = {
   getMe: async () => {
@@ -30,48 +31,51 @@ export const usersApi = {
     return response.data;
   },
 
-  getFollowers: async ({ skip, limit }: FollowProps) => {
+  getFollowers: async ({ skip, limit }: ListUsersProps) => {
     const response = await api.get("/api/users/me/followers", {
       params: { skip, limit },
     });
     return response.data.data;
   },
-  getFollowings: async ({ skip, limit }: FollowProps) => {
+  getFollowings: async ({ skip, limit }: ListUsersProps) => {
     const response = await api.get("/api/users/me/followings", {
       params: { skip, limit },
     });
     return response.data.data;
   },
-  getUserFollowers: async (id: string, { skip, limit }: FollowProps) => {
+  getUserFollowers: async (id: string, { skip, limit }: ListUsersProps) => {
     const response = await api.get(`/api/users/${id}/followers`, {
       params: { skip, limit },
     });
     return response.data.data;
   },
-  getUserFollowings: async (id: string, { skip, limit }: FollowProps) => {
+  getUserFollowings: async (id: string, { skip, limit }: ListUsersProps) => {
     const response = await api.get(`/api/users/${id}/followings`, {
       params: { skip, limit },
     });
     return response.data.data;
   },
-
   followUser: async (id: string) => {
     const response = await api.post(`/api/users/${id}/follow`);
     return response.data.data;
   },
-
   unfollowUser: async (id: string) => {
     const response = await api.delete(`/api/users/${id}/unfollow`);
     return response.data.data;
   },
-
   blockUser: async (id: string) => {
     const response = await api.post(`/api/users/${id}/block`);
     return response.data.data;
   },
-
   unblockUser: async (id: string) => {
     const response = await api.delete(`/api/users/${id}/unblock`);
+    return response.data.data;
+  },
+
+  getBlackList: async ({ skip, limit }: ListUsersProps) => {
+    const response = await api.get(`/api/users/me/blacklist`, {
+      params: { skip, limit },
+    });
     return response.data.data;
   },
 };

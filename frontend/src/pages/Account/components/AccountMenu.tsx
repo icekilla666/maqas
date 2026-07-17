@@ -1,24 +1,16 @@
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
-import { usersApi } from "@/services/users.api";
+import { useBlackList } from "@/hooks/useBlackList";
 import { Ellipsis, Flag, X } from "lucide-react";
 import { useState } from "react";
 
 interface AccountMenuProps {
   id: string;
-  is_blocked: boolean;
 }
 
-const AccountMenu = ({ id, is_blocked }: AccountMenuProps) => {
+const AccountMenu = ({ id }: AccountMenuProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const handleBlackList = async () => {
-    console.log(is_blocked);
-    try {
-      const data = await usersApi.blockUser(id);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { handleBlock, handleUnblock } = useBlackList();
+
   return (
     <div className="account__menu-wrapper">
       <button
@@ -41,14 +33,14 @@ const AccountMenu = ({ id, is_blocked }: AccountMenuProps) => {
           пожаловаться
         </StrokeButton>
         <StrokeButton
-          onClick={handleBlackList}
+          onClick={() => handleBlock(id)}
           icon={<X />}
           className="text-red"
         >
           добавить в чс
         </StrokeButton>
         <StrokeButton
-          onClick={async () => await usersApi.unblockUser(id)}
+          onClick={() => handleUnblock(id)}
           icon={<X />}
           className="text-red"
         >
