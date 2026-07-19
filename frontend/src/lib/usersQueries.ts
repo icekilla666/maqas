@@ -18,10 +18,14 @@ export const useMeQuery = () => {
   });
 };
 
-export const useUserQuery = (id: string) => {
+export const useUserQuery = (id?: string) => {
   return useQuery({
-    queryKey: userKeys.detail(id),
-    queryFn: () => usersApi.getUser(id),
+    queryKey: id ? userKeys.detail(id) : [...userKeys.all, "detail", "missing"],
+    queryFn: () => {
+      if (!id) throw new Error("ID аккаунта не распознан!");
+      return usersApi.getUser(id);
+    },
+    enabled: Boolean(id),
   });
 };
 

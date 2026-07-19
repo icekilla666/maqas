@@ -4,7 +4,7 @@ import { MessageCircle, UserRoundPlus, UserRoundX } from "lucide-react";
 
 interface UserActionsProps {
   profile: UserData;
-  onFollow: () => Promise<void>;
+  onFollow: () => void;
 }
 
 const UserActions = ({ profile, onFollow }: UserActionsProps) => {
