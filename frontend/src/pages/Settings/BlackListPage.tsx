@@ -10,7 +10,7 @@ import UsersList from "@/components/common/UsersList";
 import { useBlackListQuery, useUnblockUserMutation } from "@/lib/usersQueries";
 
 const BlackListPage = () => {
-  const { data: users, isLoading, isPending, isFetching } = useBlackListQuery();
+  const { data: users, isLoading, isFetching } = useBlackListQuery();
   const unblockMutation = useUnblockUserMutation();
   const [selectedUser, setSelectedUser] = useState<BlackListUserData | null>(
     null,

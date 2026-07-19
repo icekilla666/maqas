@@ -5,7 +5,7 @@ import { api } from "./api";
 export const usersApi = {
   getMe: async () => {
     const response = await api.get("/api/users/me");
-    return response.data;
+    return response.data.data;
   },
   getUser: async (id: string) => {
     const response = await api.get(`/api/users/${id}`);

@@ -3,6 +3,7 @@ import type { BlackListUserData } from "@/types/entities";
 import { userKeys } from "@/utils/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+// get запросы
 export const useBlackListQuery = () => {
   return useQuery({
     queryKey: userKeys.blacklist(),
@@ -10,6 +11,35 @@ export const useBlackListQuery = () => {
   });
 };
 
+export const useMeQuery = () => {
+  return useQuery({
+    queryKey: userKeys.me(),
+    queryFn: () => usersApi.getMe(),
+  });
+};
+
+export const useUserQuery = (id: string) => {
+  return useQuery({
+    queryKey: userKeys.detail(id),
+    queryFn: () => usersApi.getUser(id),
+  });
+};
+
+export const useFollowersQuery = () => {
+  return useQuery({
+    queryKey: userKeys.followers(),
+    queryFn: () => usersApi.getFollowers({ skip: 0, limit: 20 }),
+  });
+};
+
+export const useFollowingsQuery = () => {
+  return useQuery({
+    queryKey: userKeys.followings(),
+    queryFn: () => usersApi.getFollowings({ skip: 0, limit: 20 }),
+  });
+};
+
+// post запросы
 export const useBlockUserMutation = () => {
   const queryClient = useQueryClient();
 
