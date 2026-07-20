@@ -10,7 +10,6 @@ import { useUserQuery } from "@/lib/usersQueries";
 const UserPage = () => {
   const { id } = useParams();
   const { isLoading, data: profile } = useUserQuery(id);
-  console.log(profile);
 
   if (isLoading) return <Loader />; // скелет
   return (

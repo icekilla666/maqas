@@ -1,5 +1,5 @@
 import { usersApi } from "@/services/users.api";
-import type { BlackListUserData } from "@/types/entities";
+import type { BlackListUserData, FollowTab } from "@/types/entities";
 import { userKeys } from "@/utils/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -29,17 +29,25 @@ export const useUserQuery = (id?: string) => {
   });
 };
 
-export const useFollowersQuery = () => {
+export const useFollowQuery = (tab: FollowTab, userId?: string) => {
   return useQuery({
-    queryKey: userKeys.followers(),
-    queryFn: () => usersApi.getFollowers({ skip: 0, limit: 20 }),
-  });
-};
+    queryKey:
+      tab === "followers"
+        ? userKeys.followers(userId)
+        : userKeys.followings(userId),
 
-export const useFollowingsQuery = () => {
-  return useQuery({
-    queryKey: userKeys.followings(),
-    queryFn: () => usersApi.getFollowings({ skip: 0, limit: 20 }),
+    queryFn: () => {
+      const params = { skip: 0, limit: 20 };
+
+      if (tab === "followers") {
+        return userId
+          ? usersApi.getUserFollowers(userId, params)
+          : usersApi.getFollowers(params);
+      }
+      return userId
+        ? usersApi.getUserFollowings(userId, params)
+        : usersApi.getFollowings(params);
+    },
   });
 };
 

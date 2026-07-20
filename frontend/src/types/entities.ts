@@ -23,6 +23,8 @@ export type BlackListUserData = Omit<
 >;
 
 export type CountType = "followers" | "followings" | "publications";
+export type FollowTab = "followers" | "followings";
+
 
 export type FollowUser = {
   id: string;
@@ -32,4 +34,3 @@ export type FollowUser = {
   level: string;
   status: "active" | "banned" | "deactivated";
 };
-// type FormData = Omit<UserData, 'id' | 'role'>

@@ -1,15 +1,15 @@
 import EmptyState from "@/components/common/EmptyState";
 import UsersList from "@/components/common/UsersList";
 import Loader from "@/components/ui/Loader";
-import { useFollow, type FollowTab } from "@/hooks/useFollow";
-import { useProfileStore } from "@/store/profile.store";
+import { useFollowQuery, useMeQuery } from "@/lib/usersQueries";
+import type { FollowTab } from "@/types/entities";
 import {
   ChevronLeft,
   TriangleAlert,
   UserRoundCheck,
   UserRoundPlus,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface FollowLocationState {
@@ -24,36 +24,22 @@ const FollowList = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state as FollowLocationState | null;
-  const profile = useProfileStore((state) => state.profile);
-  const fetchProfile = useProfileStore((state) => state.fetchProfile);
   const initialTab: FollowTab =
     locationState?.tab === "followings" ? "followings" : "followers";
   const targetUserId = locationState?.userId ? locationState.userId : undefined;
+  const [activeTab, setActiveTab] = useState<FollowTab>(initialTab);
   const {
-    activeTab,
-    setActiveTab,
-    users,
-    followers,
-    followings,
+    data: users,
     isLoading,
-    serverError,
-  } = useFollow(initialTab, targetUserId);
-  const isFollowings = activeTab === "followings";
-  const emptyText = isFollowings
-    ? "Пока ни на кого не подписались"
-    : "Здесь пока нет подписчиков";
-  const followersCount =
-    locationState?.followersCount ??
-    profile?.followers_count ??
-    followers.length;
-  const followingsCount =
-    locationState?.followingsCount ??
-    profile?.followings_count ??
-    followings.length;
+    isError,
+  } = useFollowQuery(activeTab, targetUserId);
+  const { data: profile } = useMeQuery();
 
-  useEffect(() => {
-    if (!profile) void fetchProfile();
-  }, [fetchProfile, profile]);
+  const isFollowings = activeTab === "followings";
+  const followersCount =
+    locationState?.followersCount ?? profile?.followers_count ?? 0;
+  const followingsCount =
+    locationState?.followingsCount ?? profile?.followings_count ?? 0;
 
   const switchTab = (tab: FollowTab) => {
     setActiveTab(tab);
@@ -98,28 +84,26 @@ const FollowList = () => {
         </button>
       </nav>
 
-      {isLoading && (
+      {isLoading ? (
         <div className="follow-list__state">
           <Loader width={38} />
         </div>
-      )}
-
-      {!isLoading && serverError && (
+      ) : isError ? (
         <EmptyState
           icon={<TriangleAlert />}
-          text={serverError}
+          text="Не удалось загрузить список"
           variant="error"
         />
-      )}
-
-      {!isLoading && !serverError && users.length === 0 && (
+      ) : users.length === 0 ? (
         <EmptyState
           icon={isFollowings ? <UserRoundPlus /> : <UserRoundCheck />}
-          text={emptyText}
+          text={
+            isFollowings
+              ? "Пока ни на кого не подписались"
+              : "Здесь пока нет подписчиков"
+          }
         />
-      )}
-
-      {!isLoading && !serverError && users.length > 0 && (
+      ) : (
         <UsersList users={users} />
       )}
     </div>

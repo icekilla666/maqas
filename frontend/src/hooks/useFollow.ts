@@ -2,7 +2,6 @@ import type { FollowUser } from "@/types/entities";
 import { usersApi } from "@/services/users.api";
 import { useEffect, useState } from "react";
 
-export type FollowTab = "followers" | "followings";
 
 const emptyUsers: Record<FollowTab, FollowUser[]> = {
   followers: [],
