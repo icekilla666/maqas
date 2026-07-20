@@ -5,11 +5,23 @@ import Loader from "@/components/ui/Loader";
 import { TriangleAlert } from "lucide-react";
 import UserActions from "./components/UserActions";
 import BlockedAccountHeader from "./components/BlockedAccountHeader";
-import { useUserQuery } from "@/lib/usersQueries";
+import {
+  useFollowMutation,
+  useUnfollowMutation,
+  useUserQuery,
+} from "@/lib/usersQueries";
 
 const UserPage = () => {
   const { id } = useParams();
   const { isLoading, data: profile } = useUserQuery(id);
+  const followMutation = useFollowMutation();
+  const unfollowMutation = useUnfollowMutation();
+  console.log(profile);
+  const handleFollow = (id: string) => {
+    if (!profile) return;
+    if (!profile.is_following) return followMutation.mutate(id);
+    return unfollowMutation.mutate(id);
+  };
 
   if (isLoading) return <Loader />; // скелет
   return (
@@ -23,7 +35,7 @@ const UserPage = () => {
               <AccountHeader {...profile} isOwnProfile={false} />
               <UserActions
                 profile={profile}
-                onFollow={() => console.log("q")}
+                onFollow={() => handleFollow(profile.id)}
               />
             </>
           )

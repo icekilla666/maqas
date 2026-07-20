@@ -1,5 +1,5 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
-import type { UserData } from "@/types/entities";
+import type { UserData } from "@/types/api.types";
 import { MessageCircle, UserRoundPlus, UserRoundX } from "lucide-react";
 
 interface UserActionsProps {

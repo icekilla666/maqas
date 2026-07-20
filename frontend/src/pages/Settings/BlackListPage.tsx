@@ -3,14 +3,14 @@ import TitlePage from "@/components/common/TitlePage";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
 import Loader from "@/components/ui/Loader";
 import ModalActions from "@/components/ui/Modals/ModalActions";
-import type { BlackListUserData } from "@/types/entities";
 import { Ban, CircleX } from "lucide-react";
 import { useState } from "react";
 import UsersList from "@/components/common/UsersList";
 import { useBlackListQuery, useUnblockUserMutation } from "@/lib/usersQueries";
+import type { BlackListUserData } from "@/types/api.types";
 
 const BlackListPage = () => {
-  const { data: users, isLoading, isFetching } = useBlackListQuery();
+  const { data: users = [], isLoading, isFetching } = useBlackListQuery();
   const unblockMutation = useUnblockUserMutation();
   const [selectedUser, setSelectedUser] = useState<BlackListUserData | null>(
     null,
@@ -29,7 +29,7 @@ const BlackListPage = () => {
     });
   };
 
-  if (isLoading || (isFetching && users.length === 0)) return <Loader />; // скелет
+  if (isLoading || isFetching) return <Loader />; // скелет
 
   return (
     <section>

@@ -32,6 +32,7 @@ const FollowList = () => {
     data: users,
     isLoading,
     isError,
+    isFetching,
   } = useFollowQuery(activeTab, targetUserId);
   const { data: profile } = useMeQuery();
 
@@ -84,9 +85,10 @@ const FollowList = () => {
         </button>
       </nav>
 
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <div className="follow-list__state">
-          <Loader width={38} />
+          {/* скелет */}
+          <Loader width={38} /> 
         </div>
       ) : isError ? (
         <EmptyState

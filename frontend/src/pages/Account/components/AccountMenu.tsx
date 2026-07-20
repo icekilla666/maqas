@@ -6,11 +6,7 @@ import {
 import { Ellipsis, Flag, X } from "lucide-react";
 import { useState } from "react";
 
-interface AccountMenuProps {
-  id: string;
-}
-
-const AccountMenu = ({ id }: AccountMenuProps) => {
+const AccountMenu = ({ id }: { id: string }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const blockMutation = useBlockUserMutation();
   const unblockMutation = useUnblockUserMutation();
