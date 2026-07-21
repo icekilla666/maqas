@@ -1,3 +1,4 @@
+// роуты
 export const HOME_PAGE = "/";
 export const ACCOUNT_PAGE = "/account";
 export const FOLLOW_PAGE = `${ACCOUNT_PAGE}/follow`;
@@ -12,7 +13,7 @@ export const BLACKLIST_PAGE = `${SETTINGS_PAGE}/blacklist`;
 export const VERIFY_EMAIL_PAGE = "/verify-email";
 export const VERIFY_EMAIL_PENDING_PAGE = "/verify-email/pending";
 
-
+// ключи кэша
 export const userKeys = {
   all: ["users"] as const,
   me: () => [...userKeys.all, "me"] as const,

@@ -108,3 +108,33 @@ export const useUnfollowMutation = () => {
     },
   });
 };
+
+export const useUpdateMeMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: usersApi.updateMe,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+    },
+  });
+};
+
+export const useUploadAvatarMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: usersApi.uploadAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+    },
+  });
+};
+
+export const useDeleteAvatarMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: usersApi.deleteAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+    },
+  });
+};

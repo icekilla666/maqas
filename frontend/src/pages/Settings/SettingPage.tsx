@@ -1,4 +1,3 @@
-import { useProfileStore } from "@/store/profile.store";
 import AccountInfo from "../Account/components/AccountInfo";
 import TitlePage from "@/components/common/TitlePage";
 import MainButton from "@/components/ui/Buttons/MainButton";
@@ -12,12 +11,12 @@ import ModalActions from "@/components/ui/Modals/ModalActions";
 import Avatar from "@/components/common/Avatar";
 import EmptyState from "@/components/common/EmptyState";
 import { TriangleAlert } from "lucide-react";
+import { useMeQuery } from "@/lib/usersQueries";
 
 type ExitAction = "logout" | "logoutAll" | "delete" | null;
 
 const SettingPage = () => {
-  const profile = useProfileStore((s) => s.profile);
-  const error = useProfileStore((state) => state.error);
+  const { data: profile } = useMeQuery();
   const navigate = useNavigate();
   const { handleLogout, handleLogoutAll, handleDelete } = useExists();
   const [modal, setModal] = useState<ExitAction>(null);
@@ -94,7 +93,7 @@ const SettingPage = () => {
         ) : (
           <EmptyState
             icon={<TriangleAlert />}
-            text={error ?? "Не удалось загрузить профиль"}
+            text={"Не удалось загрузить профиль"}
             variant="error"
           />
         )}

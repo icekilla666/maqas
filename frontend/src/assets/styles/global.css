@@ -386,6 +386,35 @@ p {
   stroke-width: 1px;
 }
 
+.modal--avatar-actions {
+  width: min(280px, calc(100% - 32px));
+}
+
+.modal--avatar-actions .modal__window {
+  padding: 8px;
+  border-radius: 20px;
+}
+
+.avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.avatar-actions__button {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 12px;
+  color: var(--color-second);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.avatar-actions__button .lucide {
+  stroke-width: 1.1px;
+}
+
 .modal-actions__tooltip {
   position: absolute;
   right: 0;
