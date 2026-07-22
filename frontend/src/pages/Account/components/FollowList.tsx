@@ -1,6 +1,6 @@
 import EmptyState from "@/components/common/EmptyState";
 import UsersList from "@/components/common/UsersList";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 import { useFollowQuery, useMeQuery } from "@/lib/usersQueries";
 import type { FollowTab } from "@/types/entities";
 import {
@@ -88,7 +88,7 @@ const FollowList = () => {
       {isLoading || isFetching ? (
         <div className="follow-list__state">
           {/* скелет */}
-          <Loader width={38} /> 
+          <Loader width={38} />
         </div>
       ) : isError ? (
         <EmptyState

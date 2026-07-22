@@ -2,7 +2,7 @@ import TitlePage from "@/components/common/TitlePage";
 import { TriangleAlert } from "lucide-react";
 import EmptyState from "@/components/common/EmptyState";
 import { useMeQuery } from "@/lib/usersQueries";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 import EditForm from "./components/EditForm";
 
 const EditPage = () => {

@@ -24,3 +24,13 @@ export const userKeys = {
     [...userKeys.all, "followings", id ?? "me"] as const,
   blacklist: () => [...userKeys.all, "blacklist"] as const,
 };
+
+export const authKeys = {
+  all: ["auth"] as const,
+  login: () => [...authKeys.all, "login"] as const,
+  register: () => [...authKeys.all, "register"] as const,
+  logout: () => [...authKeys.all, "logout"] as const,
+  logoutAll: () => [...authKeys.all, "logout-all"] as const,
+  deleteMe: () => [...authKeys.all, "delete-me"] as const,
+  resendEmail: () => [...authKeys.all, "resend-email"] as const,
+};

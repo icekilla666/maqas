@@ -1,30 +1,18 @@
-import { authApi } from "@/services/auth.api";
-import { usersApi } from "@/services/users.api";
-import { useAuthStore } from "@/store/auth.store";
-import { useProfileStore } from "@/store/profile.store";
+import {
+  useDeleteMeMutation,
+  useLogoutAllMutation,
+  useLogoutMutation,
+} from "@/lib/authQueries";
 
 export const useExists = () => {
-  const clearProfile = useProfileStore((state) => state.clearProfile);
-  const setUser = useAuthStore((state) => state.setUser);
-
-  const handleLogout = async () => {
-    await authApi.logout();
-    setUser(false, null);
-    clearProfile();
-  };
-  const handleLogoutAll = async () => {
-    await authApi.logoutAll();
-    setUser(false, null);
-    clearProfile();
-  };
-  const handleDelete = async () => {
-    await usersApi.deleteMe();
-    handleLogoutAll();
-  };
+  const logout = useLogoutMutation();
+  const logoutAll = useLogoutAllMutation();
+  const deleteMe = useDeleteMeMutation();
 
   return {
-    handleLogout,
-    handleLogoutAll,
-    handleDelete,
+    handleLogout: () => logout.mutateAsync(),
+    handleLogoutAll: () => logoutAll.mutateAsync(),
+    handleDelete: () => deleteMe.mutateAsync(),
+    isPending: logout.isPending || logoutAll.isPending || deleteMe.isPending,
   };
 };

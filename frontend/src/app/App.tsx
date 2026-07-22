@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/auth.store.ts";
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "../routes/router.tsx";
-import Loader from "@/components/ui/Loader.tsx";
+import Loader from "@/components/ui/Loaders/Loader.tsx";
 import { useProfileStore } from "@/store/profile.store.ts";
 
 const App = () => {

@@ -4,6 +4,9 @@ import type { FollowTab } from "@/types/entities";
 import { userKeys } from "@/utils/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+
+
+
 // get запросы
 export const useBlackListQuery = () => {
   return useQuery({
@@ -60,7 +63,12 @@ export const useBlockUserMutation = () => {
     mutationFn: usersApi.blockUser,
     onSuccess: (_, userId) => {
       queryClient.invalidateQueries({ queryKey: userKeys.blacklist() });
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      queryClient.invalidateQueries({ queryKey: userKeys.followers() });
+      queryClient.invalidateQueries({ queryKey: userKeys.followings() });
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
+      queryClient.invalidateQueries({ queryKey: userKeys.followers(userId) });
+      queryClient.invalidateQueries({ queryKey: userKeys.followings(userId) });
     },
   });
 };
@@ -90,7 +98,7 @@ export const useFollowMutation = () => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
       queryClient.invalidateQueries({ queryKey: userKeys.followers(userId) });
-      queryClient.invalidateQueries({ queryKey: userKeys.followings(userId) });
+      queryClient.invalidateQueries({ queryKey: userKeys.followings() });
     },
   });
 };

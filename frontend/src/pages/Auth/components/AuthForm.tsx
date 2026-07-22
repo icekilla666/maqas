@@ -11,17 +11,14 @@ import Logo from "@/components/common/Logo";
 import MainButton from "@/components/ui/Buttons/MainButton";
 import { useAuth } from "@/hooks/useAuth";
 import { type SubmitEvent } from "react";
-import Loader from "@/components/ui/Loader";
-import { authApi } from "@/services/auth.api";
+import Loader from "@/components/ui/Loaders/Loader";
 import type { LoginData, RegisterData } from "@/types/api.types";
-import { useAuthStore } from "@/store/auth.store";
-import { useProfileStore } from "@/store/profile.store";
+import { useLoginMutation, useRegisterMutation } from "@/lib/authQueries";
 
 const AuthForm = () => {
+  const loginMutation = useLoginMutation();
+  const registerMutation = useRegisterMutation();
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
-  const setPendingEmail = useAuthStore((state) => state.setPendingEmail);
-  const clearProfile = useProfileStore((state) => state.clearProfile);
   const location = useLocation();
   const isLogin = location.pathname == LOGIN_PAGE;
   const {
@@ -36,15 +33,12 @@ const AuthForm = () => {
   const onSubmit = async () => {
     const submitData = getSubmitData();
     if (isLogin) {
-      const response = await authApi.login(submitData as LoginData);
-      clearProfile();
-      setUser(true, response.data.access_token);
+      await loginMutation.mutateAsync(submitData as LoginData);
       navigate(ACCOUNT_PAGE);
-    } else {
-      const response = await authApi.register(submitData as RegisterData);
-      setPendingEmail(response.data);
-      navigate(VERIFY_EMAIL_PENDING_PAGE);
+      return;
     }
+    await registerMutation.mutateAsync(submitData as RegisterData);
+    navigate(VERIFY_EMAIL_PENDING_PAGE);
   };
   const onSumbitForm = (e: SubmitEvent) => {
     e.preventDefault();

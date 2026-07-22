@@ -1,7 +1,7 @@
 import EmptyState from "@/components/common/EmptyState";
 import TitlePage from "@/components/common/TitlePage";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import { Ban, CircleX } from "lucide-react";
 import { useState } from "react";

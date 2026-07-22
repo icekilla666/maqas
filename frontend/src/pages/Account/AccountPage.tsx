@@ -1,7 +1,7 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 import { TriangleAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMeQuery } from "@/lib/usersQueries";

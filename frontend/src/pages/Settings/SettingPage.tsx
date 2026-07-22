@@ -12,13 +12,15 @@ import Avatar from "@/components/common/Avatar";
 import EmptyState from "@/components/common/EmptyState";
 import { TriangleAlert } from "lucide-react";
 import { useMeQuery } from "@/lib/usersQueries";
+import LoaderBackdrop from "@/components/ui/Loaders/LoaderBackdrop";
 
 type ExitAction = "logout" | "logoutAll" | "delete" | null;
 
 const SettingPage = () => {
   const { data: profile } = useMeQuery();
   const navigate = useNavigate();
-  const { handleLogout, handleLogoutAll, handleDelete } = useExists();
+  const { handleLogout, handleLogoutAll, handleDelete, isPending } =
+    useExists();
   const [modal, setModal] = useState<ExitAction>(null);
   const modalConfig = {
     logout: {
@@ -120,6 +122,7 @@ const SettingPage = () => {
           infoText={activeModal.infoText}
         />
       )}
+      <LoaderBackdrop open={isPending} />
     </section>
   );
 };

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 import { TriangleAlert } from "lucide-react";
 import UserActions from "./components/UserActions";
 import BlockedAccountHeader from "./components/BlockedAccountHeader";
@@ -16,7 +16,6 @@ const UserPage = () => {
   const { isLoading, data: profile } = useUserQuery(id);
   const followMutation = useFollowMutation();
   const unfollowMutation = useUnfollowMutation();
-  console.log(profile);
   const handleFollow = (id: string) => {
     if (!profile) return;
     if (!profile.is_following) return followMutation.mutate(id);
