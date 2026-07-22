@@ -5,11 +5,18 @@ import {
 } from "@/lib/usersQueries";
 import { Ellipsis, Flag, X } from "lucide-react";
 import { useState } from "react";
+import ReportModal from "./ReportModal";
 
 const AccountMenu = ({ id }: { id: string }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const blockMutation = useBlockUserMutation();
   const unblockMutation = useUnblockUserMutation();
+
+  const handleReportClick = () => {
+    setMenuOpen(false);
+    setReportOpen(true);
+  };
 
   return (
     <div className="account__menu-wrapper">
@@ -26,9 +33,10 @@ const AccountMenu = ({ id }: { id: string }) => {
         aria-hidden={!menuOpen}
       >
         <StrokeButton
-          onClick={() => console.log("rep")}
+          onClick={handleReportClick}
           icon={<Flag />}
           className="text-red"
+          type="button"
         >
           пожаловаться
         </StrokeButton>
@@ -36,6 +44,7 @@ const AccountMenu = ({ id }: { id: string }) => {
           onClick={() => blockMutation.mutate(id)}
           icon={<X />}
           className="text-red"
+          type="button"
         >
           добавить в чс
         </StrokeButton>
@@ -43,10 +52,16 @@ const AccountMenu = ({ id }: { id: string }) => {
           onClick={() => unblockMutation.mutate(id)}
           icon={<X />}
           className="text-red"
+          type="button"
         >
           убрать из чс
         </StrokeButton>
       </div>
+      <ReportModal
+        open={reportOpen}
+        userId={id}
+        onClose={() => setReportOpen(false)}
+      />
     </div>
   );
 };

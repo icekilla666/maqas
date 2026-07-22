@@ -345,6 +345,10 @@ p {
   width: min(360px, calc(100% - 32px));
 }
 
+.modal--report {
+  width: min(390px, calc(100% - 32px));
+}
+
 .modal-actions {
   display: flex;
   flex-direction: column;
@@ -472,6 +476,150 @@ p {
   color: var(--color-primary);
   background-color: var(--color-second);
   border: 0;
+}
+
+.report-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.report-modal__title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.report-modal__subtitle {
+  color: color-mix(in oklab, var(--color-second) 58%, transparent);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.report-modal__reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.report-modal__reason {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  background-color: var(--color-wrapper);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  transition:
+    border-color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.report-modal__reason:has(.report-modal__checkbox:checked) {
+  border-color: color-mix(in oklab, var(--color-main) 68%, transparent);
+  background-color: color-mix(in oklab, var(--color-main) 14%, var(--color-wrapper));
+}
+
+.report-modal__checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.report-modal__checkmark {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid color-mix(in oklab, var(--color-second) 28%, transparent);
+  border-radius: 6px;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.report-modal__checkbox:checked + .report-modal__checkmark {
+  background-color: var(--color-main);
+  border-color: var(--color-main);
+}
+
+.report-modal__checkbox:checked + .report-modal__checkmark::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border: solid var(--color-primary);
+  border-width: 0 0 2px 2px;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.report-modal__reason-text {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.report-modal__comment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-modal__comment-label {
+  color: color-mix(in oklab, var(--color-second) 64%, transparent);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.report-modal__textarea {
+  width: 100%;
+  min-height: 112px;
+  resize: vertical;
+  padding: 14px;
+  color: var(--color-second);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.35;
+  background-color: var(--color-wrapper);
+  border: 1px solid transparent;
+  border-radius: 18px;
+  outline: 0;
+  transition: border-color 0.16s ease;
+}
+
+.report-modal__textarea::placeholder {
+  color: color-mix(in oklab, var(--color-second) 42%, transparent);
+}
+
+.report-modal__textarea:focus {
+  border-color: var(--color-main);
+}
+
+.report-modal__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.report-modal__actions .btn {
+  justify-content: center;
+  min-height: 46px;
+  border: 0;
+}
+
+.report-modal__actions .btn:disabled {
+  cursor: default;
+  opacity: 0.45;
 }
 
 @keyframes modal-fade-in {
