@@ -1,5 +1,6 @@
 import { useProfileStore } from "@/store/profile.store";
-import type { BlackListUserData, FollowUser } from "@/types/entities";
+import type { BlackListUserData } from "@/types/api.types";
+import type { FollowUser } from "@/types/entities";
 import { ACCOUNT_PAGE } from "@/utils/constants";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";

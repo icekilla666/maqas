@@ -1,15 +1,15 @@
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
-import { useBlackList } from "@/hooks/useBlackList";
+import {
+  useBlockUserMutation,
+  useUnblockUserMutation,
+} from "@/lib/usersQueries";
 import { Ellipsis, Flag, X } from "lucide-react";
 import { useState } from "react";
 
-interface AccountMenuProps {
-  id: string;
-}
-
-const AccountMenu = ({ id }: AccountMenuProps) => {
+const AccountMenu = ({ id }: { id: string }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { handleBlock, handleUnblock } = useBlackList();
+  const blockMutation = useBlockUserMutation();
+  const unblockMutation = useUnblockUserMutation();
 
   return (
     <div className="account__menu-wrapper">
@@ -33,14 +33,14 @@ const AccountMenu = ({ id }: AccountMenuProps) => {
           пожаловаться
         </StrokeButton>
         <StrokeButton
-          onClick={() => handleBlock(id)}
+          onClick={() => blockMutation.mutate(id)}
           icon={<X />}
           className="text-red"
         >
           добавить в чс
         </StrokeButton>
         <StrokeButton
-          onClick={() => handleUnblock(id)}
+          onClick={() => unblockMutation.mutate(id)}
           icon={<X />}
           className="text-red"
         >

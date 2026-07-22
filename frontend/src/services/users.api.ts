@@ -1,13 +1,18 @@
-import type { ListUsersProps, ProfileProps } from "@/types/api.types";
+import type {
+  AccountData,
+  BlackListUserData,
+  ListUsersProps,
+  ProfileProps,
+  UserData,
+} from "@/types/api.types";
 import { api } from "./api";
 
-
 export const usersApi = {
-  getMe: async () => {
+  getMe: async (): Promise<AccountData> => {
     const response = await api.get("/api/users/me");
-    return response.data;
+    return response.data.data;
   },
-  getUser: async (id: string) => {
+  getUser: async (id: string): Promise<UserData> => {
     const response = await api.get(`/api/users/${id}`);
     return response.data.data;
   },
@@ -72,7 +77,10 @@ export const usersApi = {
     return response.data.data;
   },
 
-  getBlackList: async ({ skip, limit }: ListUsersProps) => {
+  getBlackList: async ({
+    skip,
+    limit,
+  }: ListUsersProps): Promise<BlackListUserData[]> => {
     const response = await api.get(`/api/users/me/blacklist`, {
       params: { skip, limit },
     });

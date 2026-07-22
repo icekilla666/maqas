@@ -1,15 +1,13 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
-import Loader from "@/components/ui/Loader";
-import { useProfileStore } from "@/store/profile.store";
+import Loader from "@/components/ui/Loaders/Loader";
 import { TriangleAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useMeQuery } from "@/lib/usersQueries";
 
 const AccountPage = () => {
-  const profile = useProfileStore((state) => state.profile);
-  const isLoading = useProfileStore((state) => state.isLoading);
-  const error = useProfileStore((state) => state.error);
+  const { isLoading, data: profile } = useMeQuery();
   const navigate = useNavigate();
 
   if (isLoading) return <Loader />; // в будущем здесь будет skeletonview
@@ -18,7 +16,7 @@ const AccountPage = () => {
       <div className="container">
         {profile ? (
           <>
-            <AccountHeader {...profile} isOwnProfile/>
+            <AccountHeader {...profile} isOwnProfile />
             <MainButton
               className="mt-7"
               onClick={() => navigate("/f6e8cf88-6829-4ef2-b09b-9fe2a3059e1e")}
@@ -29,7 +27,7 @@ const AccountPage = () => {
         ) : (
           <EmptyState
             icon={<TriangleAlert />}
-            text={error ?? "Не удалось загрузить профиль"}
+            text={"Не удалось загрузить профиль"}
             variant="error"
           />
         )}

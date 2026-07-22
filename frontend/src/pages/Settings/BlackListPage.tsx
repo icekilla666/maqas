@@ -1,55 +1,36 @@
 import EmptyState from "@/components/common/EmptyState";
 import TitlePage from "@/components/common/TitlePage";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 import ModalActions from "@/components/ui/Modals/ModalActions";
-import { usersApi } from "@/services/users.api";
-import type { BlackListUserData } from "@/types/entities";
 import { Ban, CircleX } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import UsersList from "@/components/common/UsersList";
-import { useBlackList } from "@/hooks/useBlackList";
+import { useBlackListQuery, useUnblockUserMutation } from "@/lib/usersQueries";
+import type { BlackListUserData } from "@/types/api.types";
 
 const BlackListPage = () => {
-  const { handleUnblock } = useBlackList();
-  const [users, setUsers] = useState<BlackListUserData[] | null>(null);
+  const { data: users = [], isLoading, isFetching } = useBlackListQuery();
+  const unblockMutation = useUnblockUserMutation();
   const [selectedUser, setSelectedUser] = useState<BlackListUserData | null>(
     null,
   );
 
-  useEffect(() => {
-    const fetchBlackList = async () => {
-      try {
-        const data = await usersApi.getBlackList({ skip: 0, limit: 20 });
-        setUsers(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchBlackList();
-  }, []);
-
   const openUnblockModal = (id: string) => {
-    if (!users) return;
-    const user = users.find((user) => user.id === id);
+    const user = users.find((user: BlackListUserData) => user.id === id);
     if (user) setSelectedUser(user);
   };
 
-  const handleUnblockConfirm = async () => {
+  const confirmUnblock = () => {
     if (!selectedUser) return;
 
-    try {
-      handleUnblock(selectedUser.id);
-      setUsers((prev) =>
-        prev ? prev.filter((user) => user.id !== selectedUser.id) : prev,
-      );
-      setSelectedUser(null);
-    } catch (error) {
-      console.log(error);
-    }
+    unblockMutation.mutate(selectedUser.id, {
+      onSuccess: () => setSelectedUser(null),
+    });
   };
 
-  if (!users) return <Loader />; // скелет
+  if (isLoading || isFetching) return <Loader />; // скелет
+
   return (
     <section>
       <div className="container">
@@ -86,7 +67,7 @@ const BlackListPage = () => {
           cancelText="Отмена"
           confirmText="Да"
           onCancel={() => setSelectedUser(null)}
-          onConfirm={() => void handleUnblockConfirm()}
+          onConfirm={confirmUnblock}
         />
       )}
     </section>

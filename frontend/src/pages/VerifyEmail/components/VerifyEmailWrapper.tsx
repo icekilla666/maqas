@@ -4,7 +4,7 @@ import verifyError from "@/assets/images/verify-error.svg";
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
 import { authApi } from "@/services/auth.api";
 import { useEffect, useState } from "react";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/Loaders/Loader";
 
 interface VerifyEmailProps {
   variant: "wait" | "success" | "error";
@@ -67,7 +67,13 @@ const VerifyEmailWrapper = ({
           className="text-[12px]"
           disabled={cooldown > 0}
         >
-          {loading ? <Loader width={18} /> : cooldown > 0 ? `отправить повторно через ${cooldown}` : "отправить сообщение повторно"}
+          {loading ? (
+            <Loader width={18} />
+          ) : cooldown > 0 ? (
+            `отправить повторно через ${cooldown}`
+          ) : (
+            "отправить сообщение повторно"
+          )}
         </StrokeButton>
       )}
     </div>

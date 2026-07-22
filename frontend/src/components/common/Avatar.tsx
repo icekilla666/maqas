@@ -27,6 +27,9 @@ const Avatar = ({
           className="w-full h-full rounded-full object-cover"
           src={avatar}
           alt="avatar"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
       ) : (
         <AvatarPlaceholder username={username} size={size} />

@@ -1,10 +1,10 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
-import type { UserData } from "@/types/entities";
+import type { UserData } from "@/types/api.types";
 import { MessageCircle, UserRoundPlus, UserRoundX } from "lucide-react";
 
 interface UserActionsProps {
   profile: UserData;
-  onFollow: () => Promise<void>;
+  onFollow: () => void;
 }
 
 const UserActions = ({ profile, onFollow }: UserActionsProps) => {

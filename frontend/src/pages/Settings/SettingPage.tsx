@@ -1,4 +1,3 @@
-import { useProfileStore } from "@/store/profile.store";
 import AccountInfo from "../Account/components/AccountInfo";
 import TitlePage from "@/components/common/TitlePage";
 import MainButton from "@/components/ui/Buttons/MainButton";
@@ -12,14 +11,16 @@ import ModalActions from "@/components/ui/Modals/ModalActions";
 import Avatar from "@/components/common/Avatar";
 import EmptyState from "@/components/common/EmptyState";
 import { TriangleAlert } from "lucide-react";
+import { useMeQuery } from "@/lib/usersQueries";
+import LoaderBackdrop from "@/components/ui/Loaders/LoaderBackdrop";
 
 type ExitAction = "logout" | "logoutAll" | "delete" | null;
 
 const SettingPage = () => {
-  const profile = useProfileStore((s) => s.profile);
-  const error = useProfileStore((state) => state.error);
+  const { data: profile } = useMeQuery();
   const navigate = useNavigate();
-  const { handleLogout, handleLogoutAll, handleDelete } = useExists();
+  const { handleLogout, handleLogoutAll, handleDelete, isPending } =
+    useExists();
   const [modal, setModal] = useState<ExitAction>(null);
   const modalConfig = {
     logout: {
@@ -94,7 +95,7 @@ const SettingPage = () => {
         ) : (
           <EmptyState
             icon={<TriangleAlert />}
-            text={error ?? "Не удалось загрузить профиль"}
+            text={"Не удалось загрузить профиль"}
             variant="error"
           />
         )}
@@ -121,6 +122,7 @@ const SettingPage = () => {
           infoText={activeModal.infoText}
         />
       )}
+      <LoaderBackdrop open={isPending} />
     </section>
   );
 };
