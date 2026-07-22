@@ -5,9 +5,10 @@ import { MessageCircle, UserRoundPlus, UserRoundX } from "lucide-react";
 interface UserActionsProps {
   profile: UserData;
   onFollow: () => void;
+  isFollowDisabled?: boolean;
 }
 
-const UserActions = ({ profile, onFollow }: UserActionsProps) => {
+const UserActions = ({ profile, onFollow, isFollowDisabled }: UserActionsProps) => {
   return (
     <div className="flex w-full gap-2.5 mt-6">
       <MainButton
@@ -19,6 +20,7 @@ const UserActions = ({ profile, onFollow }: UserActionsProps) => {
         Сообщения
       </MainButton>
       <MainButton
+        disabled={isFollowDisabled}
         className="follow-button"
         onClick={onFollow}
         icon={!profile.is_following ? <UserRoundPlus /> : <UserRoundX />}

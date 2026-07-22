@@ -1,11 +1,18 @@
 import { usersApi } from "@/services/users.api";
-import type { BlackListUserData } from "@/types/api.types";
+import type { AccountData, BlackListUserData, UserData } from "@/types/api.types";
 import type { FollowTab } from "@/types/entities";
 import { userKeys } from "@/utils/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+type ToggleFollowVariables = {
+  userId: string;
+  isFollowing: boolean;
+};
 
-
+type ToggleFollowContext = {
+  previousUser?: UserData;
+  previousMe?: AccountData;
+};
 
 // get запросы
 export const useBlackListQuery = () => {
@@ -93,8 +100,56 @@ export const useFollowMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: usersApi.followUser,
-    onSuccess: (_, userId) => {
+    mutationFn: ({ userId, isFollowing }: ToggleFollowVariables) =>
+      isFollowing ? usersApi.unfollowUser(userId) : usersApi.followUser(userId),
+
+    onMutate: async ({ userId, isFollowing }): Promise<ToggleFollowContext> => {
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: userKeys.detail(userId) }),
+        queryClient.cancelQueries({ queryKey: userKeys.me() }),
+      ]);
+
+      const previousUser = queryClient.getQueryData<UserData>(
+        userKeys.detail(userId),
+      );
+      const previousMe = queryClient.getQueryData<AccountData>(userKeys.me());
+
+      const nextIsFollowing = !isFollowing;
+      const delta = nextIsFollowing ? 1 : -1;
+
+      queryClient.setQueryData<UserData>(userKeys.detail(userId), (old) =>
+        old
+          ? {
+              ...old,
+              is_following: nextIsFollowing,
+              followers_count: Math.max(0, old.followers_count + delta),
+            }
+          : old,
+      );
+
+      queryClient.setQueryData<AccountData>(userKeys.me(), (old) =>
+        old
+          ? {
+              ...old,
+              followings_count: Math.max(0, old.followings_count + delta),
+            }
+          : old,
+      );
+
+      return { previousUser, previousMe };
+    },
+
+    onError: (_error, { userId }, context) => {
+      if (context?.previousUser) {
+        queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
+      }
+
+      if (context?.previousMe) {
+        queryClient.setQueryData(userKeys.me(), context.previousMe);
+      }
+    },
+
+    onSettled: (_data, _error, { userId }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
       queryClient.invalidateQueries({ queryKey: userKeys.followers(userId) });

@@ -5,23 +5,45 @@ import Loader from "@/components/ui/Loaders/Loader";
 import { TriangleAlert } from "lucide-react";
 import UserActions from "./components/UserActions";
 import BlockedAccountHeader from "./components/BlockedAccountHeader";
-import {
-  useFollowMutation,
-  useUnfollowMutation,
-  useUserQuery,
-} from "@/lib/usersQueries";
+import { useFollowMutation, useUserQuery } from "@/lib/usersQueries";
+import { useEffect, useRef, useState } from "react";
 
 const UserPage = () => {
   const { id } = useParams();
   const { isLoading, data: profile } = useUserQuery(id);
-  const followMutation = useFollowMutation();
-  const unfollowMutation = useUnfollowMutation();
-  const handleFollow = (id: string) => {
-    if (!profile) return;
-    if (!profile.is_following) return followMutation.mutate(id);
-    return unfollowMutation.mutate(id);
-  };
+  const toggleFollowMutation = useFollowMutation();
+  const [isFollowLocked, setIsFollowLocked] = useState(false);
+  const followLockRef = useRef(false);
+  const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
 
+  useEffect(() => {
+    return () => {
+      if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
+    };
+  }, []);
+
+  const handleFollow = () => {
+    if (!profile || followLockRef.current) return;
+
+    followLockRef.current = true;
+    setIsFollowLocked(true);
+
+    toggleFollowMutation.mutate(
+      {
+        userId: profile.id,
+        isFollowing: profile.is_following,
+      },
+      {
+        onSettled: () => {
+          unlockTimerRef.current = setTimeout(() => {
+            followLockRef.current = false;
+            setIsFollowLocked(false);
+          }, 500);
+        },
+      },
+    );
+  };
   if (isLoading) return <Loader />; // скелет
   return (
     <section>
@@ -34,7 +56,8 @@ const UserPage = () => {
               <AccountHeader {...profile} isOwnProfile={false} />
               <UserActions
                 profile={profile}
-                onFollow={() => handleFollow(profile.id)}
+                onFollow={handleFollow}
+                isFollowDisabled={isFollowDisabled}
               />
             </>
           )
