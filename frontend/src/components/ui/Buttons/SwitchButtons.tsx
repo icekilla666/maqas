@@ -9,6 +9,7 @@ export interface SwitchButtonItem {
 interface SwitchButtonsProps {
   name: string;
   items: SwitchButtonItem[];
+  value?: string;
   defaultValue?: string;
   className?: string;
   onChange?: (value: string) => void;
@@ -21,13 +22,14 @@ type SwitchButtonsStyle = CSSProperties & {
 const SwitchButtons = ({
   name,
   items,
+  value,
   defaultValue,
   className = "",
   onChange,
 }: SwitchButtonsProps) => {
   if (!items.length) return null;
 
-  const activeValue = defaultValue ?? items[0].value;
+  const activeValue = value ?? defaultValue ?? items[0].value;
   const switchStyle: SwitchButtonsStyle = {
     "--switch-items": items.length,
   };
@@ -38,20 +40,27 @@ const SwitchButtons = ({
       style={switchStyle}
     >
       <span className="switch-buttons__indicator" />
-      {items.map((item) => (
-        <label className="switch-buttons__item" key={item.value}>
-          <input
-            aria-label={item.ariaLabel ?? item.value}
-            className="switch-buttons__input"
-            defaultChecked={item.value === activeValue}
-            name={name}
-            onChange={() => onChange?.(item.value)}
-            type="radio"
-            value={item.value}
-          />
-          <span className="switch-buttons__button">{item.children}</span>
-        </label>
-      ))}
+      {items.map((item) => {
+        const checkedProps =
+          value === undefined
+            ? { defaultChecked: item.value === activeValue }
+            : { checked: item.value === activeValue };
+
+        return (
+          <label className="switch-buttons__item" key={item.value}>
+            <input
+              aria-label={item.ariaLabel ?? item.value}
+              className="switch-buttons__input"
+              name={name}
+              onChange={() => onChange?.(item.value)}
+              type="radio"
+              value={item.value}
+              {...checkedProps}
+            />
+            <span className="switch-buttons__button">{item.children}</span>
+          </label>
+        );
+      })}
     </div>
   );
 };

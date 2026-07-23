@@ -1,19 +1,26 @@
 import SwitchButtons from "@/components/ui/Buttons/SwitchButtons";
 import type { SwitchButtonItem } from "@/components/ui/Buttons/SwitchButtons";
+import {
+  themeColors,
+  useThemeStore,
+  type ThemeMode,
+  type ThemeColorValue,
+} from "@/store/theme.store";
 import { Moon, Sun } from "lucide-react";
 import type { CSSProperties } from "react";
-
-interface ThemeColor {
-  value: string;
-  label: string;
-  color: string;
-}
 
 type ThemeColorStyle = CSSProperties & {
   "--theme-color": string;
 };
 
 const ThemeSettings = () => {
+  const theme = useThemeStore((state) => state.theme);
+  const selectedColor = useThemeStore((state) => state.selectedColor);
+  const mainColor = useThemeStore((state) => state.mainColor);
+  const setTheme = useThemeStore((state) => state.setTheme);
+  const setPresetColor = useThemeStore((state) => state.setPresetColor);
+  const setCustomColor = useThemeStore((state) => state.setCustomColor);
+
   const themeButtons: SwitchButtonItem[] = [
     {
       value: "light",
@@ -27,71 +34,64 @@ const ThemeSettings = () => {
     },
   ];
 
-  const colors: ThemeColor[] = [
-    {
-      value: "orange",
-      label: "оранжевый",
-      color: "var(--color-main)",
-    },
-    {
-      value: "green",
-      label: "зеленый",
-      color: "#49D82C",
-    },
-    {
-      value: "blue",
-      label: "синий",
-      color: "#4447FF",
-    },
-    {
-      value: "pink",
-      label: "розовый",
-      color: "#FF59CA",
-    },
-    {
-      value: "cyan",
-      label: "голубой",
-      color: "#2BD8DE",
-    },
-    {
-      value: "purple",
-      label: "фиолетовый",
-      color: "#9B3CDB",
-    },
-  ];
+  const handleThemeChange = (value: string) => {
+    setTheme(value as ThemeMode);
+  };
+
+  const handleColorChange = (value: ThemeColorValue) => {
+    if (value === "custom") return;
+    setPresetColor(value);
+  };
 
   return (
     <div className="theme-settings__wrapper">
       <div>
         <p className="mb-2">тема</p>
         <SwitchButtons
-          defaultValue="light"
           items={themeButtons}
           name="theme"
-          onChange={(value) => console.log(value)}
+          onChange={handleThemeChange}
+          value={theme}
         />
       </div>
       <div>
         <p className="mb-2">основной цвет</p>
         <div className="theme-colors">
-          {colors.map((item) => (
+          {themeColors.map((item) => (
             <label
-              className="theme-color"
+              className={`theme-color ${
+                selectedColor === item.value ? "active" : ""
+              }`.trim()}
               key={item.value}
               style={{ "--theme-color": item.color } as ThemeColorStyle}
             >
               <input
                 aria-label={item.label}
+                checked={selectedColor === item.value}
                 className="theme-color__input"
-                defaultChecked={item.value === "orange"}
                 name="main-color"
-                onChange={() => console.log(item.value)}
+                onChange={() => handleColorChange(item.value)}
                 type="radio"
                 value={item.value}
               />
               <span className="theme-color__swatch" />
             </label>
           ))}
+          <label
+            className={`theme-color ${
+              selectedColor === "custom" ? "active" : ""
+            }`.trim()}
+            style={{ "--theme-color": mainColor } as ThemeColorStyle}
+          >
+            <input
+              aria-label="свой цвет"
+              className="theme-color__input"
+              onChange={(event) => setCustomColor(event.target.value)}
+              type="color"
+              value={mainColor}
+            />
+            <span className="theme-color__swatch theme-color__swatch--custom" />
+          </label>
         </div>
       </div>
     </div>

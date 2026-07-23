@@ -31,6 +31,22 @@
   }
 }
 
+:root[data-theme="light"] {
+  --color-red: #de2b3f;
+  --color-primary: #ffffff;
+  --color-wrapper: #f0f5fd;
+  --color-second: #282b2a;
+  --color-grey: #91919133;
+}
+
+:root[data-theme="dark"] {
+  --color-red: #de2b3f;
+  --color-primary: #1f2125;
+  --color-wrapper: #121416;
+  --color-second: #fbfdff;
+  --color-grey: #5b5c5d;
+}
+
 body {
   background-color: var(--color-wrapper);
   font-family: "Montserrat", sans-serif;
@@ -1145,9 +1161,14 @@ p {
     transform 0.2s ease;
 }
 
+.theme-color.active .theme-color__swatch,
 .theme-color__input:checked + .theme-color__swatch {
   border-color: var(--color-second);
   transform: scale(0.94);
+}
+
+.theme-color__swatch--custom {
+  box-shadow: inset 0 0 0 3px var(--color-primary);
 }
 
 .theme-color__input:focus-visible + .theme-color__swatch {

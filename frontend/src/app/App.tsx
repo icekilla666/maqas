@@ -5,8 +5,11 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "../routes/router.tsx";
 import Loader from "@/components/ui/Loaders/Loader.tsx";
 import { useProfileStore } from "@/store/profile.store.ts";
+import { useApplyTheme } from "@/store/theme.store.ts";
 
 const App = () => {
+  useApplyTheme();
+
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
   const setIsAuthCheked = useAuthStore((state) => state.setIsAuthChecked);
