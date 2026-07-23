@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import VerifyEmailWrapper from "./components/VerifyEmailWrapper";
 import { LOGIN_PAGE } from "@/utils/constants";
 import { useEffect, useState } from "react";
@@ -15,7 +15,6 @@ const VerifyEmailPage = () => {
   const token = searchParams.get("token");
   const setPendingEmail = useAuthStore((state) => state.setPendingEmail);
   const pendingEmail = useAuthStore((state) => state.pendingEmail);
-  const navigate = useNavigate();
   useEffect(() => {
     let navigateTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -31,7 +30,7 @@ const VerifyEmailPage = () => {
           setStatus("success");
           setPendingEmail(null);
           navigateTimeout = setTimeout(() => {
-            navigate(LOGIN_PAGE);
+            <Navigate to={LOGIN_PAGE} replace />;
           }, 3000);
         } else {
           setStatus("error");
@@ -57,7 +56,7 @@ const VerifyEmailPage = () => {
         clearTimeout(navigateTimeout);
       }
     };
-  }, [navigate, token, setPendingEmail]);
+  }, [token, setPendingEmail]);
   return (
     <section className="h-svh flex justify-center items-center px-7">
       {status === "success" && (

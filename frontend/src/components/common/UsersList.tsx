@@ -1,4 +1,3 @@
-import { useProfileStore } from "@/store/profile.store";
 import type { BlackListUserData } from "@/types/api.types";
 import type { FollowUser } from "@/types/entities";
 import { ACCOUNT_PAGE } from "@/utils/constants";
@@ -12,6 +11,7 @@ interface UsersListProps {
   className?: string;
   button?: ReactNode;
   onBtnClick?: (id: string) => void;
+  userId?: string;
 }
 
 const getInitial = (username: string) => username.slice(0, 1).toUpperCase();
@@ -23,11 +23,11 @@ const UsersList = ({
   className,
   button,
   onBtnClick,
+  userId,
 }: UsersListProps) => {
-  const profile = useProfileStore((state) => state.profile);
   const navigate = useNavigate();
   const handleNavigate = (id: string) => {
-    if (id === profile?.id) return navigate(ACCOUNT_PAGE);
+    if (id === userId) return navigate(ACCOUNT_PAGE);
     navigate(`/${id}`);
   };
   return (

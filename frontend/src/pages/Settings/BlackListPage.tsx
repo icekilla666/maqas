@@ -6,11 +6,16 @@ import ModalActions from "@/components/ui/Modals/ModalActions";
 import { Ban, CircleX } from "lucide-react";
 import { useState } from "react";
 import UsersList from "@/components/common/UsersList";
-import { useBlackListQuery, useUnblockUserMutation } from "@/lib/usersQueries";
+import {
+  useBlackListQuery,
+  useMeQuery,
+  useUnblockUserMutation,
+} from "@/lib/usersQueries";
 import type { BlackListUserData } from "@/types/api.types";
 
 const BlackListPage = () => {
   const { data: users = [], isLoading, isFetching } = useBlackListQuery();
+  const { data: profile } = useMeQuery();
   const unblockMutation = useUnblockUserMutation();
   const [selectedUser, setSelectedUser] = useState<BlackListUserData | null>(
     null,
@@ -39,6 +44,7 @@ const BlackListPage = () => {
         <UsersList
           className="blacklist-item"
           users={users}
+          userId={profile?.id}
           button={
             <CircleX
               size={24}

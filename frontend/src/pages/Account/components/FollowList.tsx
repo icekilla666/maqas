@@ -106,7 +106,7 @@ const FollowList = () => {
           }
         />
       ) : (
-        <UsersList users={users} />
+        <UsersList users={users} userId={profile?.id} />
       )}
     </div>
   );

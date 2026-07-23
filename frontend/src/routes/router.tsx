@@ -27,6 +27,7 @@ import UserPage from "@/pages/Account/UserPage";
 import EditPage from "@/pages/Settings/EditPage";
 import FaqPage from "@/pages/Settings/FaqPage";
 import BlackListPage from "@/pages/Settings/BlackListPage";
+import UserProfileRedirect from "./UserProfileRedirect";
 
 const relativePath = (path: string) => path.slice(1);
 export const router = createBrowserRouter([
@@ -49,7 +50,10 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: relativePath(ACCOUNT_PAGE), element: <AccountPage /> },
       { path: relativePath(FOLLOW_PAGE), element: <FollowPage /> },
-      { path: relativePath(USER_ACCOUNT), element: <UserPage /> },
+      {
+        element: <UserProfileRedirect />,
+        children: [{ path: relativePath(USER_ACCOUNT), element: <UserPage /> }],
+      },
       { path: relativePath(FAQ_PAGE), element: <FaqPage /> },
       { path: relativePath(EDIT_PAGE), element: <EditPage /> },
       { path: relativePath(BLACKLIST_PAGE), element: <BlackListPage /> },
