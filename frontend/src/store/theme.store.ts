@@ -67,7 +67,7 @@ const applyThemePreferences = ({ theme, mainColor }: ThemePreferences) => {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: "light",
+      theme: "dark",
       selectedColor: "orange",
       mainColor: DEFAULT_MAIN_COLOR,
 
