@@ -23,6 +23,7 @@ export const userKeys = {
   followings: (id?: string) =>
     [...userKeys.all, "followings", id ?? "me"] as const,
   blacklist: () => [...userKeys.all, "blacklist"] as const,
+  search: (username: string) => [...userKeys.all, "search", username],
 };
 
 export const authKeys = {

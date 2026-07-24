@@ -1,10 +1,10 @@
-import type { BlackListUserData } from "@/types/api.types";
+import type { BlackListUserData, FindUsers } from "@/types/api.types";
 import type { FollowUser } from "@/types/entities";
 import { ACCOUNT_PAGE } from "@/utils/constants";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
-type ListUser = FollowUser | BlackListUserData;
+type ListUser = FollowUser | BlackListUserData | FindUsers;
 
 interface UsersListProps {
   users: ListUser[];

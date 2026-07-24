@@ -1,5 +1,9 @@
 import { usersApi } from "@/services/users.api";
-import type { AccountData, BlackListUserData, UserData } from "@/types/api.types";
+import type {
+  AccountData,
+  BlackListUserData,
+  UserData,
+} from "@/types/api.types";
 import type { FollowTab } from "@/types/entities";
 import { userKeys } from "@/utils/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -59,6 +63,15 @@ export const useFollowQuery = (tab: FollowTab, userId?: string) => {
         ? usersApi.getUserFollowings(userId, params)
         : usersApi.getFollowings(params);
     },
+  });
+};
+
+export const useUsersFindQuery = (username: string) => {
+  const normalizedUsername = username.trim();
+  return useQuery({
+    queryKey: userKeys.search(normalizedUsername),
+    queryFn: () => usersApi.findUser({ username: normalizedUsername }),
+    enabled: normalizedUsername.length >= 2,
   });
 };
 

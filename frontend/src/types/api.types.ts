@@ -45,3 +45,7 @@ export type BlackListUserData = Omit<
   AccountData,
   "email" | "bio" | "followers_count" | "followings_count" | "posts_count"
 >;
+
+export type FindUsers = BlackListUserData & {
+  is_following: boolean;
+};

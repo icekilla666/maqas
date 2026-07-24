@@ -1,6 +1,7 @@
 import type {
   AccountData,
   BlackListUserData,
+  FindUsers,
   ListUsersProps,
   ProfileProps,
   UserData,
@@ -14,6 +15,20 @@ export const usersApi = {
   },
   getUser: async (id: string): Promise<UserData> => {
     const response = await api.get(`/api/users/${id}`);
+    return response.data.data;
+  },
+  findUser: async ({
+    username,
+    skip,
+    limit,
+  }: ListUsersProps & { username: string }): Promise<FindUsers[]> => {
+    const response = await api.get("/api/users/", {
+      params: {
+        username,
+        skip,
+        limit,
+      },
+    });
     return response.data.data;
   },
   deleteMe: async () => {
