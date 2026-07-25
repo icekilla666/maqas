@@ -12,7 +12,7 @@ const Avatar = ({
   avatar,
   username,
   width,
-  className,
+  className = "",
   size = 42,
 }: AvatarProps) => {
   return (

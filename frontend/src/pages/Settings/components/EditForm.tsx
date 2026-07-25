@@ -1,4 +1,4 @@
-import Avatar from "@/components/common/Avatar";
+import Avatar from "@/components/common/Avatar/Avatar";
 import Input from "@/components/ui/Inputs/Input";
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
 import {
@@ -8,12 +8,7 @@ import {
 } from "@/lib/usersQueries";
 import type { AccountData } from "@/types/api.types";
 import { ImagePlus, PenLine, Trash2 } from "lucide-react";
-import {
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import MainButton from "@/components/ui/Buttons/MainButton";
 import Modal from "@/components/ui/Modals/Modal";
 

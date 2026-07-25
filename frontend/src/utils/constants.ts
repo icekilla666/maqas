@@ -35,3 +35,8 @@ export const authKeys = {
   deleteMe: () => [...authKeys.all, "delete-me"] as const,
   resendEmail: () => [...authKeys.all, "resend-email"] as const,
 };
+
+export const postsKeys = {
+  all: ["posts"] as const,
+  myPosts: () => [...postsKeys.all, "my-posts"] as const,
+};

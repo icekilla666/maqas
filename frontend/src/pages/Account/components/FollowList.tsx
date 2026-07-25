@@ -1,5 +1,5 @@
 import EmptyState from "@/components/common/EmptyState";
-import UsersList from "@/components/common/UsersList";
+import UsersList from "@/components/common/UsersList/UsersList";
 import Loader from "@/components/ui/Loaders/Loader";
 import { useFollowQuery, useMeQuery } from "@/lib/usersQueries";
 import type { FollowTab } from "@/types/entities";

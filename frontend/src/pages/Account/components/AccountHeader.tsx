@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FOLLOW_PAGE } from "@/utils/constants";
 import { anchor } from "@/utils/anchor";
 import AccountInfo from "./AccountInfo";
-import Avatar from "@/components/common/Avatar";
+import Avatar from "@/components/common/Avatar/Avatar";
 import AccountMenu from "./AccountMenu";
 
 interface AccountHeaderProps {

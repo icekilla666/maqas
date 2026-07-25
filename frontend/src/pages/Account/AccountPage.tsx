@@ -1,15 +1,37 @@
-import MainButton from "@/components/ui/Buttons/MainButton";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
 import Loader from "@/components/ui/Loaders/Loader";
 import { TriangleAlert } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useMeQuery } from "@/lib/usersQueries";
+import SwitchButtons, {
+  type SwitchButtonItem,
+} from "@/components/ui/Buttons/SwitchButtons";
+import { useState } from "react";
+import { useMyPostsQuery } from "@/lib/postsQueries";
+import PostsList from "@/components/common/Posts/PostsList";
+
+type AccountActions = "posts" | "likes";
 
 const AccountPage = () => {
-  const { isLoading, data: profile } = useMeQuery();
-  const navigate = useNavigate();
-
+  const { data: profile, isLoading } = useMeQuery();
+  const [action, setAction] = useState<AccountActions>("posts");
+  const { data: posts = [], isPending } = useMyPostsQuery();
+  console.log(posts)
+  const accountButtons: SwitchButtonItem[] = [
+    {
+      value: "posts",
+      ariaLabel: "мои посты",
+      children: "Мои посты",
+    },
+    {
+      value: "likes",
+      ariaLabel: "мои лайки",
+      children: "Мои лайки",
+    },
+  ];
+  const handleChangeAction = (value: string) => {
+    setAction(value as AccountActions);
+  };
   if (isLoading) return <Loader />; // в будущем здесь будет skeletonview
   return (
     <section>
@@ -17,12 +39,17 @@ const AccountPage = () => {
         {profile ? (
           <>
             <AccountHeader {...profile} isOwnProfile />
-            <MainButton
-              className="mt-7"
-              onClick={() => navigate("/f6e8cf88-6829-4ef2-b09b-9fe2a3059e1e")}
-            >
-              go
-            </MainButton>
+            <div className="flex flex-col gap-3">
+              <SwitchButtons
+                value={action}
+                onChange={handleChangeAction}
+                name="accountActions"
+                items={accountButtons}
+              />
+              {/* скелет */}
+              {isPending && <Loader />}
+              {posts ? <PostsList posts={posts} /> : <h1>постов нет</h1>}
+            </div>
           </>
         ) : (
           <EmptyState

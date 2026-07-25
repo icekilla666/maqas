@@ -1,5 +1,5 @@
 import TitlePage from "@/components/common/TitlePage";
-import UsersList from "@/components/common/UsersList";
+import UsersList from "@/components/common/UsersList/UsersList";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
 import Loader from "@/components/ui/Loaders/Loader";
 import { useDebounce } from "@/hooks/useDebounce";

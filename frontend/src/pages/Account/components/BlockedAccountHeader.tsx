@@ -1,4 +1,4 @@
-import AvatarPlaceholder from "@/components/common/AvatarPlaceholder";
+import AvatarPlaceholder from "@/components/common/Avatar/AvatarPlaceholder";
 import AccountInfo from "./AccountInfo";
 import AccountMenu from "./AccountMenu";
 

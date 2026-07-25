@@ -8,7 +8,7 @@ import { BLACKLIST_PAGE, EDIT_PAGE, FAQ_PAGE } from "@/utils/constants";
 import { useExists } from "@/hooks/useExists";
 import { useState } from "react";
 import ModalActions from "@/components/ui/Modals/ModalActions";
-import Avatar from "@/components/common/Avatar";
+import Avatar from "@/components/common/Avatar/Avatar";
 import EmptyState from "@/components/common/EmptyState";
 import { TriangleAlert } from "lucide-react";
 import { useMeQuery } from "@/lib/usersQueries";

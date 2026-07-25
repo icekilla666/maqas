@@ -5,7 +5,7 @@ import Loader from "@/components/ui/Loaders/Loader";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import { Ban, CircleX } from "lucide-react";
 import { useState } from "react";
-import UsersList from "@/components/common/UsersList";
+import UsersList from "@/components/common/UsersList/UsersList";
 import {
   useBlackListQuery,
   useMeQuery,
