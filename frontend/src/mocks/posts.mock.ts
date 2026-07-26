@@ -1,4 +1,4 @@
-import type { PostOutFull, PostOutShort, PostUserData } from "@/types/api.types";
+import type { PostOut, PostUserData } from "@/types/api.types";
 
 const mockUsers: PostUserData[] = [
   {
@@ -30,7 +30,7 @@ const mockUsers: PostUserData[] = [
   },
 ];
 
-export const mockPostsFull: PostOutFull[] = [
+export const mockPosts: PostOut[] = [
   {
     id: "0611126c-4fc5-48c1-8c28-0638b265aa40",
     title: "Минималистичный сетап для ночной разработки",
@@ -86,7 +86,11 @@ export const mockPostsFull: PostOutFull[] = [
     content:
       "Собрал треки, которые не вытаскивают внимание из работы. Меньше вокала, больше ровного ритма и длинных атмосферных партий. #музыка #фокус #работа",
     tags: [{ tag: "музыка" }],
-    hashtags: [{ hashtag: "музыка" }, { hashtag: "фокус" }, { hashtag: "работа" }],
+    hashtags: [
+      { hashtag: "музыка" },
+      { hashtag: "фокус" },
+      { hashtag: "работа" },
+    ],
     image_url:
       "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1200&q=80",
     created_at: "2026-07-21T13:05:00.000Z",
@@ -129,13 +133,3 @@ export const mockPostsFull: PostOutFull[] = [
     is_liked: false,
   },
 ];
-
-const toPostPreview = (content: string) =>
-  content.length > 150 ? `${content.slice(0, 147)}...` : content;
-
-export const mockPosts: PostOutShort[] = mockPostsFull.map(
-  ({ content, ...post }) => ({
-    ...post,
-    preview: toPostPreview(content),
-  }),
-);

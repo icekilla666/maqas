@@ -5,6 +5,8 @@ export const FOLLOW_PAGE = `${ACCOUNT_PAGE}/follow`;
 export const LOGIN_PAGE = "/login";
 export const REGISTRATION_PAGE = "/registration";
 export const USER_ACCOUNT = "/:id";
+export const POSTS_PAGE = "/posts";
+export const POST_DETAIL = `${POSTS_PAGE}/:id`;
 export const CHATS_PAGE = "/chats";
 export const SETTINGS_PAGE = "/settings";
 export const FAQ_PAGE = `${SETTINGS_PAGE}/faq`;
@@ -39,4 +41,8 @@ export const authKeys = {
 export const postsKeys = {
   all: ["posts"] as const,
   myPosts: () => [...postsKeys.all, "my-posts"] as const,
+  userPosts: (id?: string) => [...postsKeys.all, "user-posts", id] as const,
+  post: (id?: string) => [...postsKeys.all, "post", id] as const,
+  postLikers: (id?: string) => [...postsKeys.all, "post-likers", id ] as const,
+  postComments: (id?: string) => [...postsKeys.all, "post-comments", id] as const,
 };

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import HomePage from "../pages/Home/HomePage";
 import {
@@ -8,7 +8,10 @@ import {
   EDIT_PAGE,
   FAQ_PAGE,
   FOLLOW_PAGE,
+  HOME_PAGE,
   LOGIN_PAGE,
+  POST_DETAIL,
+  POSTS_PAGE,
   REGISTRATION_PAGE,
   SETTINGS_PAGE,
   USER_ACCOUNT,
@@ -28,6 +31,7 @@ import EditPage from "@/pages/Settings/EditPage";
 import FaqPage from "@/pages/Settings/FaqPage";
 import BlackListPage from "@/pages/Settings/BlackListPage";
 import UserProfileRedirect from "./UserProfileRedirect";
+import PostPage from "@/pages/Post/PostPage";
 
 const relativePath = (path: string) => path.slice(1);
 export const router = createBrowserRouter([
@@ -54,6 +58,11 @@ export const router = createBrowserRouter([
         element: <UserProfileRedirect />,
         children: [{ path: relativePath(USER_ACCOUNT), element: <UserPage /> }],
       },
+      {
+        path: relativePath(POSTS_PAGE),
+        element: <Navigate to={HOME_PAGE} replace />,
+      },
+      { path: relativePath(POST_DETAIL), element: <PostPage /> },
       { path: relativePath(FAQ_PAGE), element: <FaqPage /> },
       { path: relativePath(EDIT_PAGE), element: <EditPage /> },
       { path: relativePath(BLACKLIST_PAGE), element: <BlackListPage /> },

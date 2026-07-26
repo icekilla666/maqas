@@ -16,7 +16,6 @@ const AccountPage = () => {
   const { data: profile, isLoading } = useMeQuery();
   const [action, setAction] = useState<AccountActions>("posts");
   const { data: posts = [], isPending } = useMyPostsQuery();
-  console.log(posts)
   const accountButtons: SwitchButtonItem[] = [
     {
       value: "posts",
@@ -37,20 +36,20 @@ const AccountPage = () => {
     <section>
       <div className="container">
         {profile ? (
-          <>
+          <div className="flex flex-col gap-3">
             <AccountHeader {...profile} isOwnProfile />
-            <div className="flex flex-col gap-3">
-              <SwitchButtons
-                value={action}
-                onChange={handleChangeAction}
-                name="accountActions"
-                items={accountButtons}
-              />
-              {/* скелет */}
-              {isPending && <Loader />}
-              {posts ? <PostsList posts={posts} /> : <h1>постов нет</h1>}
-            </div>
-          </>
+
+            <SwitchButtons
+              value={action}
+              onChange={handleChangeAction}
+              name="accountActions"
+              items={accountButtons}
+              className="text-[15px]"
+            />
+            {/* скелет */}
+            {isPending && <Loader />}
+            {posts ? <PostsList posts={posts} /> : <h1>постов нет</h1>}
+          </div>
         ) : (
           <EmptyState
             icon={<TriangleAlert />}

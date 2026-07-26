@@ -10,7 +10,7 @@ interface UserActionsProps {
 
 const UserActions = ({ profile, onFollow, isFollowDisabled }: UserActionsProps) => {
   return (
-    <div className="flex w-full gap-2.5 mt-6">
+    <div className="flex w-full gap-2.5">
       <MainButton
         onClick={() => console.log("chat")}
         icon={<MessageCircle />}

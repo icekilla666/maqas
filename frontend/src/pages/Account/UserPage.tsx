@@ -7,6 +7,8 @@ import UserActions from "./components/UserActions";
 import BlockedAccountHeader from "./components/BlockedAccountHeader";
 import { useFollowMutation, useUserQuery } from "@/lib/usersQueries";
 import { useEffect, useRef, useState } from "react";
+import { useUserPostsQuery } from "@/lib/postsQueries";
+import PostsList from "@/components/common/Posts/PostsList";
 
 const UserPage = () => {
   const { id } = useParams();
@@ -16,6 +18,7 @@ const UserPage = () => {
   const followLockRef = useRef(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
+  const { data: posts = [], isPending } = useUserPostsQuery(id);
 
   useEffect(() => {
     return () => {
@@ -52,14 +55,22 @@ const UserPage = () => {
           profile.is_blocked ? (
             <BlockedAccountHeader {...profile} />
           ) : (
-            <>
+            <div className="flex flex-col gap-5">
               <AccountHeader {...profile} isOwnProfile={false} />
+
               <UserActions
                 profile={profile}
                 onFollow={handleFollow}
                 isFollowDisabled={isFollowDisabled}
               />
-            </>
+              {isPending && <Loader />}
+
+              {posts ? (
+                <PostsList count={posts.length} posts={posts} />
+              ) : (
+                <h1>постов нет</h1>
+              )}
+            </div>
           )
         ) : (
           <EmptyState

@@ -81,19 +81,12 @@ export type PostHashtagData = {
   hashtag: string;
 };
 
-export type PostUserData = {
-  id: string;
-  username: string;
-  name: string;
-  avatar_url: string | null;
-  level: string;
-  status: string;
-};
+export type PostUserData = BlackListUserData;
 
-export type PostOutShort = {
+export type PostOut = {
   id: string;
   title: string;
-  preview: string;
+  content: string;
   tags: PostTagData[];
   hashtags: PostHashtagData[] | null;
   image_url: string | null;
@@ -104,6 +97,15 @@ export type PostOutShort = {
   is_liked: boolean;
 };
 
-export type PostOutFull = Omit<PostOutShort, "preview"> & {
-  content: string;
+export type LikersData = BlackListUserData;
+
+export type CommentData = {
+  id: string;
+  preview: string;
+  is_deleted: boolean;
+  replies_count: number;
+  parent_id: string;
+  created_at: string;
+  is_owner: boolean;
+  user: PostUserData;
 };
