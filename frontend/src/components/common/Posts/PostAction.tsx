@@ -1,14 +1,25 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 export interface PostActionProps {
   icon: ReactNode;
+  ariaLabel: string;
   value?: number;
   onClick: () => void;
 }
 
-const PostAction = ({ icon, value, onClick }: PostActionProps) => {
+const PostAction = ({ icon, ariaLabel, value, onClick }: PostActionProps) => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onClick();
+  };
+
   return (
-    <button className="post-action" onClick={onClick}>
+    <button
+      aria-label={ariaLabel}
+      className="post-action"
+      onClick={handleClick}
+      type="button"
+    >
       {icon}
       {value && <span>{value}</span>}
     </button>

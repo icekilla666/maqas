@@ -1,4 +1,9 @@
-import type { PostOut, PostUserData } from "@/types/api.types";
+import type {
+  CommentData,
+  LikersData,
+  PostOut,
+  PostUserData,
+} from "@/types/api.types";
 
 const mockUsers: PostUserData[] = [
   {
@@ -26,6 +31,28 @@ const mockUsers: PostUserData[] = [
     avatar_url:
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=240&q=80",
     level: "лошок 1",
+    status: "active",
+  },
+];
+
+const mockLikerUsers: PostUserData[] = [
+  ...mockUsers,
+  {
+    id: "463e3520-5a72-4ab7-b1ff-d38de63673b9",
+    username: "frontend.vika",
+    name: "Вика",
+    avatar_url:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=240&q=80",
+    level: "лошок 1",
+    status: "active",
+  },
+  {
+    id: "77fd3d32-31b1-406b-8c30-3bf1c2a3a2b2",
+    username: "street.ilya",
+    name: "Илья",
+    avatar_url:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=240&q=80",
+    level: "лошок 0",
     status: "active",
   },
 ];
@@ -131,5 +158,72 @@ export const mockPosts: PostOut[] = [
     likes_count: 174,
     comments_count: 22,
     is_liked: false,
+  },
+];
+
+export const mockPostLikers: LikersData[] = mockLikerUsers;
+
+export const mockPostComments: CommentData[] = [
+  {
+    id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
+    preview:
+      "Очень нравится, что сетап без лишних деталей. Сразу видно, где рабочая зона, а где просто декор.",
+    is_deleted: false,
+    replies_count: 2,
+    parent_id: null,
+    created_at: "2026-07-24T09:10:00.000Z",
+    is_owner: false,
+    user: mockUsers[1],
+  },
+  {
+    id: "8b7d9551-7311-4c0a-b944-4e9a4f0fd8c9",
+    preview: "Да, самое сложное было убрать все лишнее со стола.",
+    is_deleted: false,
+    replies_count: 0,
+    parent_id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
+    created_at: "2026-07-24T09:14:00.000Z",
+    is_owner: true,
+    user: mockUsers[0],
+  },
+  {
+    id: "9526c2a1-16cf-4575-bc30-285d408c4f2e",
+    preview: "Монитор какой модели? По фото выглядит прям удобно для двух окон.",
+    is_deleted: false,
+    replies_count: 0,
+    parent_id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
+    created_at: "2026-07-24T09:22:00.000Z",
+    is_owner: false,
+    user: mockLikerUsers[3],
+  },
+  {
+    id: "b80fd18b-e3c9-477a-a838-20b34f56e8f5",
+    preview:
+      "По цвету света плюсую. Холодная лампа вечером быстро убивает концентрацию.",
+    is_deleted: false,
+    replies_count: 1,
+    parent_id: null,
+    created_at: "2026-07-24T10:35:00.000Z",
+    is_owner: false,
+    user: mockUsers[2],
+  },
+  {
+    id: "2798462a-26fb-409f-bdd2-8065545b9dd5",
+    preview: "Я перешел на теплый свет и стало легче сидеть после полуночи.",
+    is_deleted: false,
+    replies_count: 0,
+    parent_id: "b80fd18b-e3c9-477a-a838-20b34f56e8f5",
+    created_at: "2026-07-24T10:49:00.000Z",
+    is_owner: false,
+    user: mockLikerUsers[4],
+  },
+  {
+    id: "2edcddcf-d8c9-453d-89b7-887fae94b30c",
+    preview: "Комментарий удален",
+    is_deleted: true,
+    replies_count: 0,
+    parent_id: null,
+    created_at: "2026-07-24T11:02:00.000Z",
+    is_owner: false,
+    user: mockLikerUsers[4],
   },
 ];

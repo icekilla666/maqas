@@ -1,4 +1,8 @@
-import { mockPosts } from "@/mocks/posts.mock";
+import {
+  mockPostComments,
+  mockPostLikers,
+  mockPosts,
+} from "@/mocks/posts.mock";
 import type { CommentData, LikersData, PostOut } from "@/types/api.types";
 import { api } from "./api";
 
@@ -29,16 +33,31 @@ export const postsApi = {
     return response.data.data;
   },
   getPost: async (id?: string): Promise<PostOut> => {
+    if (USE_MOCK_POSTS) {
+      await wait(MOCK_DELAY_MS);
+      return mockPosts.find((post) => post.id === id) ?? mockPosts[0];
+    }
+
     const response = await api.get(`/api/posts/${id}`);
     return response.data.data;
   },
 
-  getPostLikers: async (id?: string): Promise<LikersData> => {
+  getPostLikers: async (id?: string): Promise<LikersData[]> => {
+    if (USE_MOCK_POSTS) {
+      await wait(MOCK_DELAY_MS);
+      return mockPostLikers;
+    }
+
     const response = await api.get(`/api/likes/${id}`);
     return response.data.data;
   },
 
-  getPostComments: async (id?: string): Promise<CommentData> => {
+  getPostComments: async (id?: string): Promise<CommentData[]> => {
+    if (USE_MOCK_POSTS) {
+      await wait(MOCK_DELAY_MS);
+      return mockPostComments;
+    }
+
     const response = await api.get(`/api/comments/post/${id}`);
     return response.data.data;
   },

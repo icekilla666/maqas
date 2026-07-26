@@ -4,7 +4,7 @@ interface TitlePageProps {
   count?: number;
 }
 
-const TitlePage = ({ title, className, count }: TitlePageProps) => {
+const TitlePage = ({ title, className = "", count }: TitlePageProps) => {
   return (
     <div className={`title-page ${className}`.trim()}>
       <h1 className="font-medium">{title}</h1>
