@@ -57,6 +57,10 @@ const mockLikerUsers: PostUserData[] = [
   },
 ];
 
+export const mockFollowingUserIds = mockUsers
+  .slice(1)
+  .map((user) => user.id);
+
 export const mockPosts: PostOut[] = [
   {
     id: "0611126c-4fc5-48c1-8c28-0638b265aa40",

@@ -50,6 +50,8 @@ export type FindUsers = BlackListUserData & {
   is_following: boolean;
 };
 
+export type HomeSort = "popular-desc" | "popular-asc" | "new" | "old";
+
 export type PostTag =
   | "спорт"
   | "искусство"
@@ -108,4 +110,11 @@ export type CommentData = {
   created_at: string;
   is_owner: boolean;
   user: PostUserData;
+};
+
+export type PostFeed = {
+  feed_type?: "all" | "following";
+  search_query?: string;
+  tags?: PostTag[];
+  sort?: "old" | "new" | "popular";
 };

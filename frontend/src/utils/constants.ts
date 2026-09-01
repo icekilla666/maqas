@@ -1,3 +1,5 @@
+import type { PostFeed } from "@/types/api.types";
+
 // роуты
 export const HOME_PAGE = "/";
 export const ACCOUNT_PAGE = "/account";
@@ -5,6 +7,7 @@ export const FOLLOW_PAGE = `${ACCOUNT_PAGE}/follow`;
 export const LOGIN_PAGE = "/login";
 export const REGISTRATION_PAGE = "/registration";
 export const USER_ACCOUNT = "/:id";
+export const ADD_POSTS_PAGE = "/add-post";
 export const POSTS_PAGE = "/posts";
 export const POST_DETAIL = `${POSTS_PAGE}/:id`;
 export const CHATS_PAGE = "/chats";
@@ -40,9 +43,19 @@ export const authKeys = {
 
 export const postsKeys = {
   all: ["posts"] as const,
+  postFeed: ({ feed_type, search_query, tags, sort }: PostFeed) =>
+    [
+      ...postsKeys.all,
+      "feed-post",
+      feed_type,
+      search_query,
+      tags,
+      sort,
+    ] as const,
   myPosts: () => [...postsKeys.all, "my-posts"] as const,
   userPosts: (id?: string) => [...postsKeys.all, "user-posts", id] as const,
   post: (id?: string) => [...postsKeys.all, "post", id] as const,
-  postLikers: (id?: string) => [...postsKeys.all, "post-likers", id ] as const,
-  postComments: (id?: string) => [...postsKeys.all, "post-comments", id] as const,
+  postLikers: (id?: string) => [...postsKeys.all, "post-likers", id] as const,
+  postComments: (id?: string) =>
+    [...postsKeys.all, "post-comments", id] as const,
 };

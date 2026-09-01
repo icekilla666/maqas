@@ -1,4 +1,6 @@
-import StrokeButton from "@/components/ui/Buttons/StrokeButton";
+import ActionMenu, {
+  type ActionMenuItem,
+} from "@/components/ui/ActionMenu/ActionMenu";
 import {
   useBlockUserMutation,
   useUnblockUserMutation,
@@ -7,62 +9,55 @@ import { Ellipsis, Flag, X } from "lucide-react";
 import { useState } from "react";
 import ReportModal from "./ReportModal";
 
-const AccountMenu = ({ id }: { id: string }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
+interface AccountMenuProps {
+  id: string;
+  className?: string;
+}
+
+const AccountMenu = ({ id, className = "" }: AccountMenuProps) => {
   const [reportOpen, setReportOpen] = useState(false);
   const blockMutation = useBlockUserMutation();
   const unblockMutation = useUnblockUserMutation();
 
   const handleReportClick = () => {
-    setMenuOpen(false);
     setReportOpen(true);
   };
 
+  const actions: ActionMenuItem[] = [
+    {
+      icon: <Flag />,
+      text: "пожаловаться",
+      onClick: handleReportClick,
+      className: "text-red",
+    },
+    {
+      icon: <X />,
+      text: "добавить в чс",
+      onClick: () => blockMutation.mutate(id),
+      className: "text-red",
+    },
+    {
+      icon: <X />,
+      text: "убрать из чс",
+      onClick: () => unblockMutation.mutate(id),
+      className: "text-red",
+    },
+  ];
+
   return (
-    <div className="account__menu-wrapper">
-      <button
-        className="account__menu"
-        type="button"
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((prev) => !prev)}
-      >
-        <Ellipsis size={17} />
-      </button>
-      <div
-        className={`account__menu-panel ${menuOpen ? "open" : ""}`.trim()}
-        aria-hidden={!menuOpen}
-      >
-        <StrokeButton
-          onClick={handleReportClick}
-          icon={<Flag />}
-          className="text-red"
-          type="button"
-        >
-          пожаловаться
-        </StrokeButton>
-        <StrokeButton
-          onClick={() => blockMutation.mutate(id)}
-          icon={<X />}
-          className="text-red"
-          type="button"
-        >
-          добавить в чс
-        </StrokeButton>
-        <StrokeButton
-          onClick={() => unblockMutation.mutate(id)}
-          icon={<X />}
-          className="text-red"
-          type="button"
-        >
-          убрать из чс
-        </StrokeButton>
-      </div>
+    <>
+      <ActionMenu
+        actions={actions}
+        ariaLabel="Открыть меню действий"
+        className={className}
+        icon={<Ellipsis size={17} />}
+      />
       <ReportModal
         open={reportOpen}
         userId={id}
         onClose={() => setReportOpen(false)}
       />
-    </div>
+    </>
   );
 };
 

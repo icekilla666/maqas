@@ -3,6 +3,7 @@ import Layout from "../components/layout/Layout";
 import HomePage from "../pages/Home/HomePage";
 import {
   ACCOUNT_PAGE,
+  ADD_POSTS_PAGE,
   BLACKLIST_PAGE,
   CHATS_PAGE,
   EDIT_PAGE,
@@ -32,6 +33,7 @@ import FaqPage from "@/pages/Settings/FaqPage";
 import BlackListPage from "@/pages/Settings/BlackListPage";
 import UserProfileRedirect from "./UserProfileRedirect";
 import PostPage from "@/pages/Post/PostPage";
+import AddPostPage from "@/pages/AddPost/AddPostPage";
 
 const relativePath = (path: string) => path.slice(1);
 export const router = createBrowserRouter([
@@ -63,6 +65,7 @@ export const router = createBrowserRouter([
         element: <Navigate to={HOME_PAGE} replace />,
       },
       { path: relativePath(POST_DETAIL), element: <PostPage /> },
+      { path: relativePath(ADD_POSTS_PAGE), element: <AddPostPage /> },
       { path: relativePath(FAQ_PAGE), element: <FaqPage /> },
       { path: relativePath(EDIT_PAGE), element: <EditPage /> },
       { path: relativePath(BLACKLIST_PAGE), element: <BlackListPage /> },

@@ -63,7 +63,9 @@ const AccountHeader = ({
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <div className="flex justify-between">
             <AccountInfo name={name} username={username} lvl={level} />
-            {!isOwnProfile && <AccountMenu id={id} />}
+            {!isOwnProfile && (
+              <AccountMenu className="account-header__menu" id={id} />
+            )}
           </div>
           <div className="account__count-wrapper flex items-center gap-3">
             <CountInfo

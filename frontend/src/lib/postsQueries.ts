@@ -1,6 +1,20 @@
 import { postsApi } from "@/services/posts.api";
+import type { PostFeed } from "@/types/api.types";
 import { postsKeys } from "@/utils/constants";
 import { useQuery } from "@tanstack/react-query";
+
+export const usePostFeedQuery = ({
+  feed_type,
+  search_query,
+  tags,
+  sort,
+}: PostFeed) => {
+  return useQuery({
+    queryKey: postsKeys.postFeed({ feed_type, search_query, tags, sort }),
+    queryFn: () =>
+      postsApi.getPostFeed({ feed_type, search_query, tags, sort }),
+  });
+};
 
 export const useMyPostsQuery = () => {
   return useQuery({
