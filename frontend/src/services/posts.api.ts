@@ -12,7 +12,7 @@ import type {
 } from "@/types/api.types";
 import { api } from "./api";
 
-const USE_MOCK_POSTS = true;
+const USE_MOCK_POSTS = false;
 const MOCK_DELAY_MS = 350;
 
 const wait = (delay: number) =>

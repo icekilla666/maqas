@@ -1,4 +1,4 @@
-import type { PostFeed } from "@/types/api.types";
+import type { PostFeed, PostTag } from "@/types/api.types";
 
 // роуты
 export const HOME_PAGE = "/";
@@ -17,6 +17,30 @@ export const EDIT_PAGE = `${SETTINGS_PAGE}/edit`;
 export const BLACKLIST_PAGE = `${SETTINGS_PAGE}/blacklist`;
 export const VERIFY_EMAIL_PAGE = "/verify-email";
 export const VERIFY_EMAIL_PENDING_PAGE = "/verify-email/pending";
+
+export const POST_TAGS: PostTag[] = [
+  "спорт",
+  "искусство",
+  "музыка",
+  "кино",
+  "игры",
+  "книги",
+  "наука",
+  "технологии",
+  "бизнес",
+  "путешествия",
+  "еда",
+  "мода",
+  "фотография",
+  "фитнес",
+  "здоровье",
+  "семья",
+  "отношения",
+  "юмор",
+  "лайфхаки",
+  "новости",
+  "политика",
+];
 
 // ключи кэша
 export const userKeys = {

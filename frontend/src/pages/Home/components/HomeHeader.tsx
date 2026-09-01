@@ -3,6 +3,7 @@ import ActionMenu, {
 } from "@/components/ui/ActionMenu/ActionMenu";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
 import type { PostTag, HomeSort } from "@/types/api.types";
+import { POST_TAGS } from "@/utils/constants";
 import {
   ArrowUpDown,
   Clock3,
@@ -12,30 +13,6 @@ import {
   UsersRound,
 } from "lucide-react";
 import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
-
-const postTags: PostTag[] = [
-  "спорт",
-  "искусство",
-  "музыка",
-  "кино",
-  "игры",
-  "книги",
-  "наука",
-  "технологии",
-  "бизнес",
-  "путешествия",
-  "еда",
-  "мода",
-  "фотография",
-  "фитнес",
-  "здоровье",
-  "семья",
-  "отношения",
-  "юмор",
-  "лайфхаки",
-  "новости",
-  "политика",
-];
 
 interface HomeHeaderProps {
   setSearch: (search: string) => void;
@@ -113,7 +90,7 @@ const HomeHeader = ({
 
   const filterActions: ActionMenuItem[] = [
     {
-      actions: postTags.map((tag) => ({
+      actions: POST_TAGS.map((tag) => ({
         text: tag,
         isActive: selectedTags.includes(tag),
         onClick: () => toggleTag(tag),

@@ -1,10 +1,13 @@
 import TitlePage from "@/components/common/TitlePage";
+import AddPostLayout from "./components/AddPostLayout";
 
 const AddPostPage = () => {
   return (
-    <section>
+    <section className="add-post-page">
       <div className="container">
-        <TitlePage title="Добавить пост" />
+        <TitlePage title="Новая публикация" />
+
+        <AddPostLayout />
       </div>
     </section>
   );
