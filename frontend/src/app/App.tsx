@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "../routes/router.tsx";
 import Loader from "@/components/ui/Loaders/Loader.tsx";
 import { useApplyTheme } from "@/store/theme.store.ts";
+import { Toaster } from "sonner";
 
 const App = () => {
   useApplyTheme();
@@ -39,6 +40,18 @@ const App = () => {
         компьютерная версия недоступна, переходи на мобилку лошок
       </h1>
       <RouterProvider router={router} />
+      <Toaster
+        className="app-toaster"
+        closeButton
+        duration={4500}
+        gap={10}
+        mobileOffset={16}
+        offset={24}
+        position="top-right"
+        toastOptions={{
+          className: "app-toast",
+        }}
+      />
     </>
   );
 };

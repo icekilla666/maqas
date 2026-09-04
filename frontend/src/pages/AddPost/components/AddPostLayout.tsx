@@ -4,6 +4,7 @@ import AddPostAction from "./AddPostAction";
 import { useState } from "react";
 import type { AddPostProps } from "@/types/api.types";
 import { useDraftStore } from "@/store/draft.store";
+import { toast } from "sonner";
 
 const AddPostLayout = () => {
   const {
@@ -29,6 +30,8 @@ const AddPostLayout = () => {
     setContent(formData.content);
     setTags(formData.tags);
     setHashtags(formData.hashtags);
+    
+    toast("Черновик сохранен")
   };
 
   return (
