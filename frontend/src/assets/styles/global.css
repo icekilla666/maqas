@@ -1602,6 +1602,33 @@ textarea {
   font-size: 12px;
 }
 
+.post-item__datetime {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  margin-left: 12px;
+  text-align: right;
+}
+
+.post-item__date {
+  color: color-mix(in oklab, var(--color-second) 64%, transparent);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.post-item__date--today {
+  color: var(--color-main);
+}
+
+.post-item__time {
+  color: color-mix(in oklab, var(--color-second) 42%, transparent);
+  font-size: 9px;
+  line-height: 1;
+}
+
 .post-item__poster {
   width: 100%;
   height: 285px;

@@ -58,6 +58,11 @@ const PostItem = ({
     date: post.created_at,
     onlyTime: true,
   });
+  const normalizedPostDate = normalizedDate({
+    date: post.created_at,
+    onlyDate: true,
+    relativeToday: true,
+  });
   const postContent = "preview" in post ? post.preview : post.content;
 
   return (
@@ -69,9 +74,10 @@ const PostItem = ({
     >
       <header className="flex justify-between items-center mb-1.5">
         <UserItem user={post.user} showName={false} />
-        <span className="text-second text-xs opacity-50">
-          {normalizedTime} pm
-        </span>
+        <time className="post-item__datetime" dateTime={post.created_at}>
+          <span className="post-item__date">{normalizedPostDate}</span>
+          <span className="post-item__time">{normalizedTime}</span>
+        </time>
       </header>
       <div className="flex flex-col gap-3">
         {post.image_url && (
