@@ -1,7 +1,8 @@
 import { postsApi } from "@/services/posts.api";
 import type { PostFeed } from "@/types/api.types";
 import { postsKeys } from "@/utils/constants";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { queryClient } from "./queryClient";
 
 export const usePostFeedQuery = ({
   feed_type,
@@ -52,5 +53,20 @@ export const useCommentsQuery = (id?: string) => {
     queryKey: postsKeys.postComments(id),
     queryFn: () => postsApi.getPostComments(id),
     enabled: Boolean(id),
+  });
+};
+
+// -------------
+
+export const useCreatePostMutation = () => {
+  return useMutation({
+    mutationKey: postsKeys.createPost(),
+    mutationFn: postsApi.createPost,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: postsKeys.all,
+      });
+    },
   });
 };

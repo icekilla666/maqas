@@ -2,13 +2,17 @@ import {
   mockFollowingUserIds,
   mockPostComments,
   mockPostLikers,
+  mockPostPreviews,
   mockPosts,
 } from "@/mocks/posts.mock";
 import type {
+  AddPostProps,
   CommentData,
+  CreatedPost,
   LikersData,
   PostFeed,
-  PostOut,
+  PostDetails,
+  PostPreview,
 } from "@/types/api.types";
 import { api } from "./api";
 
@@ -26,12 +30,12 @@ export const postsApi = {
     search_query,
     tags,
     sort,
-  }: PostFeed): Promise<PostOut[]> => {
+  }: PostFeed): Promise<PostPreview[]> => {
     if (USE_MOCK_POSTS) {
       await wait(MOCK_DELAY_MS);
 
       const normalizedSearch = search_query?.trim().toLocaleLowerCase("ru-RU");
-      let feed = [...mockPosts];
+      let feed = [...mockPostPreviews];
 
       if (feed_type === "following") {
         feed = feed.filter((post) =>
@@ -57,7 +61,7 @@ export const postsApi = {
             );
           }
 
-          return [post.title, post.content].some((value) =>
+          return [post.title, post.preview].some((value) =>
             value.toLocaleLowerCase("ru-RU").includes(normalizedSearch),
           );
         });
@@ -71,9 +75,7 @@ export const postsApi = {
         const firstDate = new Date(firstPost.created_at).getTime();
         const secondDate = new Date(secondPost.created_at).getTime();
 
-        return sort === "old"
-          ? firstDate - secondDate
-          : secondDate - firstDate;
+        return sort === "old" ? firstDate - secondDate : secondDate - firstDate;
       });
 
       return feed;
@@ -90,24 +92,24 @@ export const postsApi = {
     return response.data.data;
   },
 
-  getMyPosts: async (): Promise<PostOut[]> => {
+  getMyPosts: async (): Promise<PostPreview[]> => {
     if (USE_MOCK_POSTS) {
       await wait(MOCK_DELAY_MS);
-      return mockPosts;
+      return mockPostPreviews;
     }
 
     const response = await api.get("/api/posts/me");
     return response.data.data;
   },
-  getUserPosts: async (id?: string): Promise<PostOut[]> => {
+  getUserPosts: async (id?: string): Promise<PostPreview[]> => {
     if (USE_MOCK_POSTS) {
       await wait(MOCK_DELAY_MS);
-      return mockPosts;
+      return mockPostPreviews;
     }
     const response = await api.get(`/api/posts/me/${id}`);
     return response.data.data;
   },
-  getPost: async (id?: string): Promise<PostOut> => {
+  getPost: async (id?: string): Promise<PostDetails> => {
     if (USE_MOCK_POSTS) {
       await wait(MOCK_DELAY_MS);
       return mockPosts.find((post) => post.id === id) ?? mockPosts[0];
@@ -134,6 +136,21 @@ export const postsApi = {
     }
 
     const response = await api.get(`/api/comments/post/${id}`);
+    return response.data.data;
+  },
+
+  createPost: async (data: AddPostProps): Promise<CreatedPost> => {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("content", data.content);
+    data.tags.forEach((tag) => {
+      formData.append("tags", tag);
+    });
+    if (data.image) {
+      formData.append("image", data.image);
+    }
+
+    const response = await api.post("/api/posts/create", formData);
     return response.data.data;
   },
 };

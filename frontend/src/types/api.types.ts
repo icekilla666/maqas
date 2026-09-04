@@ -85,10 +85,9 @@ export type PostHashtagData = {
 
 export type PostUserData = BlackListUserData;
 
-export type PostOut = {
+type PostBase = {
   id: string;
   title: string;
-  content: string;
   tags: PostTagData[];
   hashtags: PostHashtagData[] | null;
   image_url: string | null;
@@ -97,6 +96,14 @@ export type PostOut = {
   likes_count: number;
   comments_count: number;
   is_liked: boolean;
+};
+
+export type PostPreview = PostBase & {
+  preview: string;
+};
+
+export type PostDetails = PostBase & {
+  content: string;
 };
 
 export type LikersData = BlackListUserData;
@@ -123,6 +130,7 @@ export type AddPostProps = {
   title: string;
   content: string;
   tags: PostTag[];
-  hashtags?: string;
   image: File | null;
 };
+
+export type CreatedPost = PostDetails;

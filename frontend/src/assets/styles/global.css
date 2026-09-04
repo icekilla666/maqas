@@ -2300,24 +2300,6 @@ textarea {
   outline-offset: 2px;
 }
 
-.add-post-hashtags {
-  position: relative;
-}
-
-.add-post-hashtags > svg {
-  position: absolute;
-  top: 50%;
-  left: 17px;
-  z-index: 1;
-  color: color-mix(in oklab, var(--color-second) 38%, transparent);
-  pointer-events: none;
-  transform: translateY(-50%);
-}
-
-.add-post-hashtags .add-post-field__input {
-  padding-left: 44px;
-}
-
 .add-post-media__input {
   position: absolute;
   width: 1px;
@@ -2434,7 +2416,7 @@ textarea {
 }
 
 .add-post-actions__publish {
-  min-height: 50px;
+  min-height: 60px;
   font-size: 13px;
 }
 

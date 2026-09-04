@@ -6,12 +6,10 @@ interface DraftState {
   title: string;
   content: string;
   tags: PostTag[];
-  hashtags?: string;
 
   setTitle: (title: string) => void;
   setContent: (content: string) => void;
   setTags: (tags: PostTag[]) => void;
-  setHashtags: (hashtags?: string) => void;
 
   resetDraft: () => void;
 }
@@ -20,7 +18,6 @@ const initialState = {
   title: "",
   content: "",
   tags: [] as PostTag[],
-  hashtags: "",
 };
 
 export const useDraftStore = create<DraftState>()(
@@ -31,7 +28,6 @@ export const useDraftStore = create<DraftState>()(
       setTitle: (title) => set({ title }),
       setContent: (content) => set({ content }),
       setTags: (tags) => set({ tags }),
-      setHashtags: (hashtags) => set({ hashtags }),
       resetDraft: () => set(initialState),
     }),
     {

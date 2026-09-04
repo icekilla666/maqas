@@ -1,19 +1,26 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
+import Loader from "@/components/ui/Loaders/Loader";
 import { Bookmark, Send } from "lucide-react";
 
-const AddPostAction = ({ handleDraft }: { handleDraft: () => void }) => {
+interface ActionProps {
+  handleDraft: () => void;
+  isPending: boolean;
+}
+
+const AddPostAction = ({ handleDraft, isPending }: ActionProps) => {
   return (
     <div className="add-post-actions">
       <MainButton
         align="center"
         className="add-post-actions__publish"
-        icon={<Send size={18} />}
+        icon={!isPending && <Send size={18} />}
         type="submit"
-        typesBtn="primary"
+        typesBtn="primary-outline"
         form="add-post-form"
+        disabled={isPending}
       >
-        Опубликовать
+        {isPending ? <Loader width={32} /> : "Опубликовать"}
       </MainButton>
       <StrokeButton
         onClick={handleDraft}

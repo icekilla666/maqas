@@ -1,7 +1,7 @@
 import MainInput from "@/components/ui/Inputs/MainInput";
 import Textarea from "@/components/ui/Inputs/Textarea";
-import { POST_TAGS } from "@/utils/constants";
-import { Check, Hash, ImagePlus, Trash2 } from "lucide-react";
+import { HOME_PAGE, POST_TAGS } from "@/utils/constants";
+import { Check, ImagePlus, Trash2 } from "lucide-react";
 import AddPostEditorHeader from "./AddPostEditorHeader";
 import {
   useRef,
@@ -15,24 +15,40 @@ import type { AddPostProps, PostTag } from "@/types/api.types";
 import IconButton from "@/components/ui/Buttons/IconButton";
 import { addPostSchema } from "@/utils/validation/validation.add";
 import { useDraftStore } from "@/store/draft.store";
+import { useDraft } from "@/hooks/useDraft";
+import { useCreatePostMutation } from "@/lib/postsQueries";
+import { useNavigate } from "react-router-dom";
 
+type CreatePostMutation = ReturnType<typeof useCreatePostMutation>;
 interface AddPostEditorProps {
   formData: AddPostProps;
   setFormData: Dispatch<SetStateAction<AddPostProps>>;
+  createPost: CreatePostMutation;
 }
 
-const AddPostEditor = ({ formData, setFormData }: AddPostEditorProps) => {
+const AddPostEditor = ({
+  formData,
+  setFormData,
+  createPost,
+}: AddPostEditorProps) => {
   const imageRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState("");
   const { resetDraft } = useDraftStore();
+  const { saveDraftWithDebounce } = useDraft(formData);
+  const navigate = useNavigate();
 
   const updateField = (field: keyof typeof formData) => (value: string) => {
     setError("");
-    setFormData((prev) => ({
-      ...prev,
+
+    const updatedFormData = {
+      ...formData,
       [field]: value,
-    }));
+    };
+
+    setFormData(updatedFormData);
+
+    saveDraftWithDebounce();
   };
 
   const toggleTag = (tag: PostTag) => {
@@ -75,20 +91,25 @@ const AddPostEditor = ({ formData, setFormData }: AddPostEditorProps) => {
       imageRef.current.value = "";
     }
   };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = addPostSchema.safeParse(formData);
     if (!result.success) return setError(result.error?.issues[0].message);
-
-    setError("");
-    setFormData({
-      title: "",
-      content: "",
-      tags: [],
-      hashtags: "",
-      image: null,
+    createPost.mutate(result.data, {
+      onSuccess: () => {
+        setError("");
+        setFormData({
+          title: "",
+          content: "",
+          tags: [],
+          image: null,
+        });
+        resetDraft();
+        setPreview(null);
+        navigate(HOME_PAGE);
+      },
     });
-    resetDraft();
   };
 
   return (
@@ -160,23 +181,6 @@ const AddPostEditor = ({ formData, setFormData }: AddPostEditorProps) => {
             ))}
           </div>
         </fieldset>
-
-        <label className="add-post-field">
-          <span className="add-post-field__label">Хэштеги</span>
-          <span className="add-post-field__description">
-            Введите через пробел — символ # добавлять необязательно
-          </span>
-          <div className="add-post-hashtags">
-            <Hash aria-hidden="true" size={19} />
-            <MainInput
-              className="add-post-field__input"
-              name="hashtags"
-              value={formData.hashtags}
-              onChange={(e) => updateField("hashtags")(e.target.value)}
-              placeholder="дизайн вдохновение интерфейсы"
-            />
-          </div>
-        </label>
 
         <div className="add-post-field">
           <span className="add-post-field__label">Изображение</span>

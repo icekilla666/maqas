@@ -18,7 +18,7 @@ type ToggleFollowContext = {
   previousMe?: AccountData;
 };
 
-// get запросы
+
 export const useBlackListQuery = () => {
   return useQuery({
     queryKey: userKeys.blacklist(),
@@ -75,7 +75,8 @@ export const useUsersFindQuery = (username: string) => {
   });
 };
 
-// post запросы
+// -------------
+
 export const useBlockUserMutation = () => {
   const queryClient = useQueryClient();
 

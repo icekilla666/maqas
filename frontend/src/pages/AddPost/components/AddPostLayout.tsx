@@ -4,43 +4,33 @@ import AddPostAction from "./AddPostAction";
 import { useState } from "react";
 import type { AddPostProps } from "@/types/api.types";
 import { useDraftStore } from "@/store/draft.store";
-import { toast } from "sonner";
+import { useDraft } from "@/hooks/useDraft";
+import { useCreatePostMutation } from "@/lib/postsQueries";
 
 const AddPostLayout = () => {
-  const {
-    title,
-    content,
-    tags,
-    hashtags,
-    setTitle,
-    setContent,
-    setTags,
-    setHashtags,
-  } = useDraftStore();
+  const { title, content, tags } = useDraftStore();
   const [formData, setFormData] = useState<AddPostProps>({
     title: title ?? "",
     content: content ?? "",
     tags: tags ?? [],
-    hashtags: hashtags ?? "",
     image: null,
   });
-
-  const handleDraft = () => {
-    setTitle(formData.title);
-    setContent(formData.content);
-    setTags(formData.tags);
-    setHashtags(formData.hashtags);
-    
-    toast("Черновик сохранен")
-  };
+  const { handleDraft } = useDraft(formData);
+  const createPost = useCreatePostMutation();
 
   return (
     <div className="add-post-layout">
-      <AddPostEditor formData={formData} setFormData={setFormData} />
+      <AddPostEditor
+        createPost={createPost}
+        formData={formData}
+        setFormData={setFormData}
+      />
       <aside className="add-post-sidebar">
         <AddPostTip />
-
-        <AddPostAction handleDraft={handleDraft} />
+        <AddPostAction
+          isPending={createPost.isPending}
+          handleDraft={handleDraft}
+        />
       </aside>
     </div>
   );

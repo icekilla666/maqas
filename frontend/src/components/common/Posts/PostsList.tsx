@@ -1,8 +1,8 @@
-import type { PostOut } from "@/types/api.types";
+import type { PostPreview } from "@/types/api.types";
 import PostItem from "./PostItem";
 import { useNavigate } from "react-router-dom";
 interface PostListProps {
-  posts: PostOut[];
+  posts: PostPreview[];
   count?: number;
 }
 const PostsList = ({ posts, count }: PostListProps) => {

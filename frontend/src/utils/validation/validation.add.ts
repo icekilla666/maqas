@@ -1,12 +1,12 @@
-import z, { array } from "zod";
+import z from "zod";
+import { POST_TAGS } from "../constants";
 
 export const addPostSchema = z
   .object({
     title: z.string().max(120),
     content: z.string().max(2500),
     image: z.instanceof(File).nullable(),
-    tags: array(z.string()).max(5),
-    hashtags: z.string().optional(),
+    tags: z.array(z.enum(POST_TAGS)).max(5),
   })
   .refine(
     (data) =>

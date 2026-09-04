@@ -1,11 +1,11 @@
-import type { PostOut } from "@/types/api.types";
+import type { PostDetails, PostPreview } from "@/types/api.types";
 import UserItem from "../UsersList/UserItem";
 import { normalizedDate } from "@/utils/normalizedDate";
 import { CornerUpRight, Ellipsis, Heart, MessageSquare } from "lucide-react";
 import PostAction, { type PostActionProps } from "./PostAction";
 
 interface PostItemProps {
-  post: PostOut;
+  post: PostPreview | PostDetails;
   onClick?: () => void;
   onCommentsClick?: () => void;
   onLikeClick?: () => void;
@@ -58,6 +58,8 @@ const PostItem = ({
     date: post.created_at,
     onlyTime: true,
   });
+  const postContent = "preview" in post ? post.preview : post.content;
+
   return (
     <article
       className={`post-item post-item--${variant} ${
@@ -79,7 +81,7 @@ const PostItem = ({
         )}
         <div className="post-item__text flex flex-col gap-1.5">
           <h2>{post.title}</h2>
-          <p className="post-item__content">{post.content}</p>
+          <p className="post-item__content break-all">{postContent}</p>
         </div>
         <div className="flex gap-1 items-center flex-wrap">
           {post.tags.map((t) => (

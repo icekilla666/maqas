@@ -1,7 +1,8 @@
 import type {
   CommentData,
   LikersData,
-  PostOut,
+  PostDetails,
+  PostPreview,
   PostUserData,
 } from "@/types/api.types";
 
@@ -61,7 +62,7 @@ export const mockFollowingUserIds = mockUsers
   .slice(1)
   .map((user) => user.id);
 
-export const mockPosts: PostOut[] = [
+export const mockPosts: PostDetails[] = [
   {
     id: "0611126c-4fc5-48c1-8c28-0638b265aa40",
     title: "Минималистичный сетап для ночной разработки",
@@ -164,6 +165,13 @@ export const mockPosts: PostOut[] = [
     is_liked: false,
   },
 ];
+
+export const mockPostPreviews: PostPreview[] = mockPosts.map(
+  ({ content, ...post }) => ({
+    ...post,
+    preview: content.slice(0, 150),
+  }),
+);
 
 export const mockPostLikers: LikersData[] = mockLikerUsers;
 
