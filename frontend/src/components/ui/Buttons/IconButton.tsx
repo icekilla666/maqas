@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  typeBtn?: "default" | "primary" | "outline";
+  typeBtn?: "default" | "primary" | "outline" | "danger";
   className?: string;
   size?: "small" | "medium" | "large";
 }

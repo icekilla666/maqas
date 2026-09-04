@@ -53,11 +53,11 @@ body {
   color: var(--color-second);
 }
 
-main {
+section {
   padding-top: 40px;
 }
 
-main.main--post-detail {
+section.main--post-detail {
   padding: 0;
 }
 
@@ -67,6 +67,10 @@ h1 {
 
 p {
   line-height: 1;
+}
+
+textarea {
+  resize: none;
 }
 
 .lucide {
@@ -303,6 +307,10 @@ p {
   border: 1px solid var(--color-main);
   padding: 18px;
   border-radius: 30px;
+}
+
+.icon-btn.danger {
+  background-color: var(--color-red);
 }
 
 .btn-list {
@@ -641,7 +649,6 @@ p {
 .report-modal__textarea {
   width: 100%;
   min-height: 112px;
-  resize: vertical;
   padding: 14px;
   color: var(--color-second);
   font: inherit;
@@ -1806,7 +1813,6 @@ p {
   width: 100%;
   min-height: 38px;
   max-height: 132px;
-  resize: vertical;
   padding: 10px 8px 8px 10px;
   font: inherit;
   font-size: 14px;
@@ -2021,16 +2027,19 @@ p {
   line-height: 1.2;
 }
 
+.input__hint,
 .add-post-field__description,
-.add-post-field__hint,
 .ui-textarea__hint {
   color: color-mix(in oklab, var(--color-second) 48%, transparent);
   font-size: 11px;
   line-height: 1.35;
 }
 
-.add-post-field__hint,
-.ui-textarea__hint {
+.input__hint {
+  align-self: center;
+}
+.ui-textarea__hint,
+.add-post-field .input__hint {
   align-self: flex-end;
 }
 
@@ -2046,7 +2055,6 @@ p {
   font-family: inherit;
   font-size: 14px;
   line-height: 1.55;
-  resize: vertical;
   background-color: var(--color-wrapper);
   border: 1px solid transparent;
   border-radius: 20px;
@@ -2061,7 +2069,8 @@ p {
   border-color: var(--color-main);
 }
 
-.ui-textarea__hint--error {
+.ui-textarea__hint--error,
+.input__hint--error {
   color: var(--color-red);
 }
 
@@ -2238,13 +2247,13 @@ p {
 }
 
 .add-post-media__action {
-  padding: 9px 12px;
-  color: var(--color-second);
   font-size: 11px;
-  font-weight: 500;
   line-height: 1;
-  background-color: var(--color-primary);
-  border-radius: 16px;
+  justify-content: center;
+}
+
+.add-post-media__action.delete {
+  background-color: var(--color-red);
 }
 
 .add-post-sidebar {
@@ -2368,7 +2377,7 @@ p {
     color: var(--color-second);
     background-color: var(--color-primary);
     border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
   }
 
   .nav__wrapper .lucide {
@@ -2377,6 +2386,7 @@ p {
   }
 
   .nav__wrapper.active {
+    filter: brightness(1.1);
     color: var(--color-main);
   }
 
@@ -2388,8 +2398,14 @@ p {
     stroke-width: 2px;
   }
 
-  .nav__wrapper--add-post:active {
-    transform: scale(0.9);
+  .nav__wrapper svg {
+    transition: transform 0.2s ease;
+  }
+  .nav__wrapper:active {
+    filter: brightness(0.9);
+  }
+  .nav__wrapper:active svg {
+    transform: scale(1.05);
   }
 
   .nav__wrapper:focus-visible {
@@ -2479,12 +2495,6 @@ p {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  .post-action span {
-    font-size: 10px;
-    font-weight: 300;
-    color: var(--color-second);
   }
 }
 

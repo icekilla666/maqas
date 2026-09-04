@@ -7,8 +7,8 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    username: z.string().min(3, "Имя пользователя минимум 3 символа"),
-    name: z.string().min(2, "Имя минимум 2 символа"),
+    username: z.string().min(3, "Имя пользователя должно быть минимум 3 символа"),
+    name: z.string().min(2, "Имя должно быть минимум 2 символа"),
     email: z.email("Неверный формат email"),
     password: z.string().min(8, "Пароль должен быть минимум 8 символов"),
     password_confirm: z.string(),

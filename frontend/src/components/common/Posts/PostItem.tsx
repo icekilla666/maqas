@@ -1,7 +1,7 @@
 import type { PostOut } from "@/types/api.types";
 import UserItem from "../UsersList/UserItem";
 import { normalizedDate } from "@/utils/normalizedDate";
-import { Ellipsis, Heart, MessageSquare, Send } from "lucide-react";
+import { CornerUpRight, Ellipsis, Heart, MessageSquare } from "lucide-react";
 import PostAction, { type PostActionProps } from "./PostAction";
 
 interface PostItemProps {
@@ -23,7 +23,7 @@ const PostItem = ({
 }: PostItemProps) => {
   const postActions: PostActionProps[] = [
     {
-      icon: <Heart size={16} />,
+      icon: <Heart size={18} />,
       ariaLabel: post.is_liked ? "Убрать лайк" : "Поставить лайк",
       value: post.likes_count,
       onClick: () => {
@@ -36,7 +36,7 @@ const PostItem = ({
       },
     },
     {
-      icon: <MessageSquare size={16} />,
+      icon: <MessageSquare size={18} />,
       ariaLabel: "Комментарии",
       value: post.comments_count,
       onClick: () => {
@@ -49,7 +49,7 @@ const PostItem = ({
       },
     },
     {
-      icon: <Send size={16} />,
+      icon: <CornerUpRight size={18} />,
       ariaLabel: "Поделиться постом",
       onClick: () => console.log("send"),
     },

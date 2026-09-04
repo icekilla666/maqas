@@ -118,3 +118,11 @@ export type PostFeed = {
   tags?: PostTag[];
   sort?: "old" | "new" | "popular";
 };
+
+export type AddPostProps = {
+  title: string;
+  content: string;
+  tags: PostTag[];
+  hashtags?: string;
+  image: File | null;
+};

@@ -3,7 +3,7 @@ import {
   formatZodErrors,
   loginSchema,
   registerSchema,
-} from "../utils/validation";
+} from "../utils/validation/validation.auth";
 
 export const useAuth = (isLogin: boolean) => {
   const [formData, setFormData] = useState(() => ({

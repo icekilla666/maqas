@@ -21,7 +21,7 @@ const PostAction = ({ icon, ariaLabel, value, onClick }: PostActionProps) => {
       type="button"
     >
       {icon}
-      {value && <span>{value}</span>}
+      <span>{value}</span>
     </button>
   );
 };

@@ -45,7 +45,7 @@ const PostPage = () => {
   }
 
   return (
-    <section>
+    <section className="main--post-detail">
       {post && !isError ? (
         <div className="post-detail">
           <PostItem

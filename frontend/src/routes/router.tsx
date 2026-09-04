@@ -64,8 +64,16 @@ export const router = createBrowserRouter([
         path: relativePath(POSTS_PAGE),
         element: <Navigate to={HOME_PAGE} replace />,
       },
-      { path: relativePath(POST_DETAIL), element: <PostPage /> },
-      { path: relativePath(ADD_POSTS_PAGE), element: <AddPostPage /> },
+      {
+        path: relativePath(POST_DETAIL),
+        element: <PostPage />,
+        handle: { hideNavigation: true },
+      },
+      {
+        path: relativePath(ADD_POSTS_PAGE),
+        element: <AddPostPage />,
+        handle: { hideNavigation: true },
+      },
       { path: relativePath(FAQ_PAGE), element: <FaqPage /> },
       { path: relativePath(EDIT_PAGE), element: <EditPage /> },
       { path: relativePath(BLACKLIST_PAGE), element: <BlackListPage /> },
