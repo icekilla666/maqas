@@ -49,7 +49,7 @@ const UserPage = () => {
   };
   if (isLoading) return <Loader />; // скелет
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         {profile ? (
           profile.is_blocked ? (

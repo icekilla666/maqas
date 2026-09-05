@@ -53,12 +53,8 @@ body {
   color: var(--color-second);
 }
 
-section {
+section.wrapper {
   padding-top: 40px;
-}
-
-section.main--post-detail {
-  padding: 0;
 }
 
 h1 {
@@ -1114,6 +1110,7 @@ textarea {
   width: var(--avatar-width);
   height: var(--avatar-width);
   overflow: hidden;
+  background-color: var(--color-primary);
 }
 
 .avatar_egit-btn {
@@ -1637,6 +1634,10 @@ textarea {
   background-color: var(--color-secondary);
 }
 
+.post-detail .post-item__poster {
+  height: 100%;
+}
+
 .post-item__poster img {
   display: block;
   width: 100%;
@@ -1698,6 +1699,15 @@ textarea {
   padding: 0;
 }
 
+.post-item--detail .user-list__avatar {
+  background-color: var(--color-wrapper);
+  box-shadow: 0 0 0 1px var(--color-grey);
+}
+
+.post-item--detail .user-list__avatar .account__avatar {
+  background-color: var(--color-wrapper);
+}
+
 .post-item--detail .post-item__content {
   color: var(--color-second);
   font-size: 14px;
@@ -1739,10 +1749,15 @@ textarea {
   cursor: pointer;
 }
 
+.post-detail-page {
+  min-height: 100dvh;
+}
+
 .post-detail {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
+  min-height: 100dvh;
   margin: 0 auto;
   background-color: var(--color-primary);
   padding: 14px;
@@ -1756,14 +1771,19 @@ textarea {
 
 .post-comments {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 10px;
+  padding: 20px 0 0;
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-second) 8%, transparent);
 }
 
 .post-comments__header {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding-bottom: 4px;
 }
 
 .post-comments__header h2 {
@@ -1773,13 +1793,8 @@ textarea {
   line-height: 1;
 }
 
-.post-comments__header span {
-  color: color-mix(in oklab, var(--color-second) 48%, transparent);
-  font-size: 13px;
-  line-height: 1;
-}
-
 .post-comments__list-wrapper {
+  flex: 1;
   min-height: 160px;
 }
 
@@ -1815,6 +1830,12 @@ textarea {
   gap: 8px;
 }
 
+.comments-list > .comment-item + .comment-item {
+  padding-top: 8px;
+  border-top: 1px solid
+    color-mix(in oklab, var(--color-second) 10%, transparent);
+}
+
 .comment-item__body {
   display: flex;
   align-items: flex-start;
@@ -1830,12 +1851,14 @@ textarea {
   height: 32px;
   overflow: hidden;
   border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--color-grey);
 }
 
 .comment-item__avatar .account__avatar {
   width: 32px;
   height: 32px;
   flex: 0 0 32px;
+  background-color: var(--color-wrapper);
 }
 
 .comment-item__content {
@@ -1928,6 +1951,11 @@ textarea {
   flex-direction: column;
   gap: 8px;
   padding: 20px 0 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-primary) 20px
+  );
 }
 
 .post-comments__replying {
@@ -1940,7 +1968,7 @@ textarea {
   color: color-mix(in oklab, var(--color-second) 70%, transparent);
   font-size: 12px;
   line-height: 1;
-  background-color: var(--color-primary);
+  background-color: var(--color-wrapper);
   border-radius: 16px;
 }
 

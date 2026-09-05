@@ -2,7 +2,7 @@ import FollowList from "./components/FollowList";
 
 const FollowPage = () => {
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         <FollowList />
       </div>

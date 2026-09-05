@@ -12,7 +12,7 @@ const ChatsPage = () => {
   const debouncedSearch = useDebounce(search, 500);
   const { data: users = [], isLoading } = useUsersFindQuery(debouncedSearch);
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         <TitlePage title="Чаты" />
         <SearchInput

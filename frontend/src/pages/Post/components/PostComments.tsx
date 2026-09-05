@@ -25,13 +25,10 @@ const PostComments = ({
   onReply,
   onSubmit,
 }: PostCommentsProps) => {
-  const rootCommentsCount = comments.filter((comment) => !comment.parent_id).length;
-
   return (
     <section className="post-comments">
       <div className="post-comments__header">
         <h2>Комментарии</h2>
-        <span>{rootCommentsCount}</span>
       </div>
 
       <div className="post-comments__list-wrapper">

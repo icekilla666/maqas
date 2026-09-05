@@ -3,7 +3,7 @@ import AddPostLayout from "./components/AddPostLayout";
 
 const AddPostPage = () => {
   return (
-    <section className="add-post-page">
+    <section className="add-post-page wrapper">
       <div className="container">
         <TitlePage title="Новая публикация" />
 

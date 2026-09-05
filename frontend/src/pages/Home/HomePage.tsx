@@ -45,7 +45,7 @@ const HomePage = () => {
   );
 
   return (
-    <section className="home-feed">
+    <section className="home-feed wrapper">
       <div className="container relative">
         <TitlePage title="Лента" />
 

@@ -33,7 +33,7 @@ const AccountPage = () => {
   };
   if (isLoading) return <Loader />; // в будущем здесь будет skeletonview
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         {profile ? (
           <div className="flex flex-col gap-3">

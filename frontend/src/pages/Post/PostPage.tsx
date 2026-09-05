@@ -36,7 +36,7 @@ const PostPage = () => {
 
   if (isLoading) {
     return (
-      <section>
+      <section className="post-detail-page">
         <div className="container post-detail__loader">
           <Loader />
         </div>
@@ -45,7 +45,7 @@ const PostPage = () => {
   }
 
   return (
-    <section className="main--post-detail">
+    <section className="post-detail-page">
       {post && !isError ? (
         <div className="post-detail">
           <PostItem

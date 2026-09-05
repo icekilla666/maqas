@@ -34,7 +34,7 @@ const CommentItem = ({
         <div className="comment-item__avatar">
           <Avatar
             avatar={comment.user.avatar_url}
-            size={32}
+            size={24}
             width={32}
             username={comment.user.username}
           />
