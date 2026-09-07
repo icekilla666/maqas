@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
 import Loader from "@/components/ui/Loaders/Loader";
-import { TriangleAlert } from "lucide-react";
+import { Bot, TriangleAlert } from "lucide-react";
 import UserActions from "./components/UserActions";
 import BlockedAccountHeader from "./components/BlockedAccountHeader";
 import { useFollowMutation, useUserQuery } from "@/lib/usersQueries";
@@ -18,8 +18,7 @@ const UserPage = () => {
   const followLockRef = useRef(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
-  const { data: posts = [], isPending } = useUserPostsQuery(id);
-
+  const { data: posts = [], isPending, isError } = useUserPostsQuery(id);
   useEffect(() => {
     return () => {
       if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
@@ -47,6 +46,7 @@ const UserPage = () => {
       },
     );
   };
+
   if (isLoading) return <Loader />; // скелет
   return (
     <section className="wrapper">
@@ -63,12 +63,23 @@ const UserPage = () => {
                 onFollow={handleFollow}
                 isFollowDisabled={isFollowDisabled}
               />
-              {isPending && <Loader />}
-
-              {posts ? (
+              {isPending ? (
+                // скелет
+                <Loader />
+              ) : isError ? (
+                <EmptyState
+                  variant="error"
+                  text="Не удалось загрузить посты"
+                  icon={<TriangleAlert />}
+                />
+              ) : posts.length > 0 ? (
                 <PostsList count={posts.length} posts={posts} />
               ) : (
-                <h1>постов нет</h1>
+                <EmptyState
+                  variant="default"
+                  text="Постов нет"
+                  icon={<Bot />}
+                />
               )}
             </div>
           )

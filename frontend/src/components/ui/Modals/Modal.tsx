@@ -12,6 +12,7 @@ interface ModalProps {
   onClose: () => void;
   fullscreen?: boolean;
   className?: string;
+  ariaLabel?: string;
 }
 
 const Modal = ({
@@ -20,6 +21,7 @@ const Modal = ({
   onClose,
   fullscreen = false,
   className = "",
+  ariaLabel,
 }: ModalProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -34,6 +36,25 @@ const Modal = ({
     if (!open && dialog.open) {
       dialog.close();
     }
+  }, [open]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const toastRoot = document.getElementById("app-toast-root");
+    if (!open || !dialog || !toastRoot) return;
+
+    const previousParent = toastRoot.parentElement;
+    // showModal puts the dialog above the page, regardless of z-index.
+    dialog.append(toastRoot);
+
+    return () => {
+      if (toastRoot.parentElement !== dialog) return;
+
+      const canRestore =
+        previousParent?.isConnected &&
+        (!(previousParent instanceof HTMLDialogElement) || previousParent.open);
+      (canRestore ? previousParent : document.body).append(toastRoot);
+    };
   }, [open]);
 
   const handleBackdropClick = (event: MouseEvent<HTMLDialogElement>) => {
@@ -57,6 +78,7 @@ const Modal = ({
 
   return (
     <dialog
+      aria-label={ariaLabel}
       className={modalClassName}
       onCancel={handleCancel}
       onClick={handleBackdropClick}

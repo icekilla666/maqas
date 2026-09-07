@@ -9,7 +9,7 @@ const EditPage = () => {
   const { data: profile, isLoading } = useMeQuery();
   if (isLoading) return <Loader />; // скелет
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         <TitlePage title="Редактирование профиля" />
         {profile ? (

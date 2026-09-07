@@ -1,7 +1,7 @@
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
 import Loader from "@/components/ui/Loaders/Loader";
-import { TriangleAlert } from "lucide-react";
+import { Bot, TriangleAlert } from "lucide-react";
 import { useMeQuery } from "@/lib/usersQueries";
 import SwitchButtons, {
   type SwitchButtonItem,
@@ -9,13 +9,16 @@ import SwitchButtons, {
 import { useState } from "react";
 import { useMyPostsQuery } from "@/lib/postsQueries";
 import PostsList from "@/components/common/Posts/PostsList";
+import { useMyLikedQueries } from "@/lib/likesQueries";
 
 type AccountActions = "posts" | "likes";
 
 const AccountPage = () => {
   const { data: profile, isLoading } = useMeQuery();
   const [action, setAction] = useState<AccountActions>("posts");
-  const { data: posts = [], isPending } = useMyPostsQuery();
+  const myPosts = useMyPostsQuery();
+  const likedPosts = useMyLikedQueries();
+  const activePosts = action === "posts" ? myPosts : likedPosts;
   const accountButtons: SwitchButtonItem[] = [
     {
       value: "posts",
@@ -31,6 +34,7 @@ const AccountPage = () => {
   const handleChangeAction = (value: string) => {
     setAction(value as AccountActions);
   };
+
   if (isLoading) return <Loader />; // в будущем здесь будет skeletonview
   return (
     <section className="wrapper">
@@ -46,9 +50,21 @@ const AccountPage = () => {
               items={accountButtons}
               className="text-[15px]"
             />
+
             {/* скелет */}
-            {isPending && <Loader />}
-            {posts ? <PostsList posts={posts} /> : <h1>постов нет</h1>}
+            {activePosts.isPending ? (
+              <Loader />
+            ) : activePosts.isError ? (
+              <EmptyState
+                variant="error"
+                text="Не удалось загрузить посты"
+                icon={<TriangleAlert />}
+              />
+            ) : activePosts.data.length ? (
+              <PostsList posts={activePosts.data} />
+            ) : (
+              <EmptyState variant="default" text="Постов нет" icon={<Bot />} />
+            )}
           </div>
         ) : (
           <EmptyState

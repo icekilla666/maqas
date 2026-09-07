@@ -37,7 +37,7 @@ const BlackListPage = () => {
   if (isLoading || isFetching) return <Loader />; // скелет
 
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         <TitlePage title="Черный список" count={users.length} />
         <SearchInput className="w-full mb-3" placeholder="введите юзернейм" />

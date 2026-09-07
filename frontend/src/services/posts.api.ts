@@ -95,7 +95,7 @@ export const postsApi = {
       await wait(MOCK_DELAY_MS);
       return mockPostPreviews;
     }
-    const response = await api.get(`/api/posts/me/${id}`);
+    const response = await api.get(`/api/posts/users/${id}`);
     return response.data.data;
   },
   getPost: async (id?: string): Promise<PostDetails> => {

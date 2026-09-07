@@ -43,7 +43,6 @@ const HomePage = () => {
         : feed,
     [feed, selectedSort],
   );
-
   return (
     <section className="home-feed wrapper">
       <div className="container relative">

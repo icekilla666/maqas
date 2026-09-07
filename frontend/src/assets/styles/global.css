@@ -2053,6 +2053,154 @@ textarea {
   transform: scale(0.96);
 }
 
+.modal--post-share {
+  width: min(360px, calc(100% - 32px));
+}
+
+.modal--post-share .modal__window {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.post-share-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-share-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.post-share-modal__header h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.post-share-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-wrapper);
+  cursor: pointer;
+}
+
+.post-share-modal__label {
+  margin-bottom: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--color-second) 60%, transparent);
+}
+
+.post-share-modal__avatars {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 3px 3px 8px;
+  scrollbar-width: thin;
+}
+
+.post-share-modal__avatars .account__avatar {
+  background-color: var(--color-wrapper);
+}
+
+.post-share-modal__recipient {
+  position: relative;
+  flex-shrink: 0;
+  padding: 3px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.post-share-modal__recipient[aria-pressed="true"] {
+  border-color: var(--color-main);
+}
+
+.post-share-modal__check {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-main);
+  color: #282b2a;
+}
+
+.post-share-modal__check .lucide {
+  stroke-width: 2px;
+}
+
+.post-share-modal__status {
+  --loader: 28px;
+  display: flex;
+  min-height: 65px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  color: color-mix(in oklab, var(--color-second) 65%, transparent);
+}
+
+.post-share-modal__status p {
+  line-height: 1.4;
+}
+
+.post-share-modal__copy,
+.post-share-modal__send {
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.post-share-modal__copy {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in oklab, var(--color-second) 18%, transparent);
+}
+
+.post-share-modal__copy:hover:not(:disabled) {
+  background: var(--color-wrapper);
+}
+
+.post-share-modal button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.post-share-modal button:focus-visible,
+.post-share-modal__link:focus-visible {
+  outline: 2px solid var(--color-main);
+  outline-offset: 2px;
+}
+
+.post-share-modal__link {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--color-grey);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
 .modal--post-likers {
   width: min(420px, calc(100% - 32px));
 }

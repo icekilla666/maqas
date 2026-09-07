@@ -41,7 +41,6 @@ const PostPage = () => {
       </section>
     );
   }
-
   return (
     <section className="post-detail-page">
       {post && !isError ? (

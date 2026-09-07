@@ -43,7 +43,7 @@ const FaqPage = () => {
   };
 
   return (
-    <section>
+    <section className="wrapper">
       <div className="container">
         <TitlePage title="Часто задаваемые вопросы" />
         <div className="faq-list">
