@@ -1,13 +1,14 @@
-import type { MouseEvent, ReactNode } from "react";
+import type { PostActionProps } from "@/types/entities";
+import type { MouseEvent } from "react";
 
-export interface PostActionProps {
-  icon: ReactNode;
-  ariaLabel: string;
-  value?: number;
-  onClick: () => void;
-}
-
-const PostAction = ({ icon, ariaLabel, value, onClick }: PostActionProps) => {
+const PostAction = ({
+  icon,
+  ariaLabel,
+  value,
+  onClick,
+  className = "",
+  disabled = false,
+}: PostActionProps) => {
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     onClick();
@@ -16,8 +17,9 @@ const PostAction = ({ icon, ariaLabel, value, onClick }: PostActionProps) => {
   return (
     <button
       aria-label={ariaLabel}
-      className="post-action"
+      className={`post-action ${className}`.trim()}
       onClick={handleClick}
+      disabled={disabled}
       type="button"
     >
       {icon}

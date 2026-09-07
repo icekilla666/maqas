@@ -2,7 +2,9 @@ import type { PostDetails, PostPreview } from "@/types/api.types";
 import UserItem from "../UsersList/UserItem";
 import { normalizedDate } from "@/utils/normalizedDate";
 import { CornerUpRight, Ellipsis, Heart, MessageSquare } from "lucide-react";
-import PostAction, { type PostActionProps } from "./PostAction";
+import PostAction from "./PostAction";
+import type { PostActionProps } from "@/types/entities";
+import { usePostLikeMutation } from "@/lib/likesQueries";
 
 interface PostItemProps {
   post: PostPreview | PostDetails;
@@ -21,18 +23,37 @@ const PostItem = ({
   onLikersClick,
   variant = "card",
 }: PostItemProps) => {
+  const setPostLike = usePostLikeMutation();
+  const pendingLike =
+    setPostLike.isPending && setPostLike.variables.id === post.id
+      ? setPostLike.variables
+      : undefined;
+  const isLiked = pendingLike?.nextIsLiked ?? post.is_liked;
+  const likeCount = pendingLike?.nextLikesCount ?? post.likes_count;
+
   const postActions: PostActionProps[] = [
     {
       icon: <Heart size={18} />,
-      ariaLabel: post.is_liked ? "Убрать лайк" : "Поставить лайк",
-      value: post.likes_count,
+      ariaLabel: isLiked ? "Убрать лайк" : "Поставить лайк",
+      value: likeCount,
+      className: isLiked ? "liked" : "",
+      disabled: setPostLike.isPending,
       onClick: () => {
+        if (setPostLike.isPending) return;
+
         if (onLikeClick) {
           onLikeClick();
           return;
         }
 
-        console.log("like");
+        setPostLike.mutate({
+          id: post.id,
+          nextIsLiked: !post.is_liked,
+          nextLikesCount: Math.max(
+            0,
+            post.likes_count + (post.is_liked ? -1 : 1),
+          ),
+        });
       },
     },
     {
@@ -54,15 +75,18 @@ const PostItem = ({
       onClick: () => console.log("send"),
     },
   ];
+
   const normalizedTime = normalizedDate({
     date: post.created_at,
     onlyTime: true,
   });
+
   const normalizedPostDate = normalizedDate({
     date: post.created_at,
     onlyDate: true,
     relativeToday: true,
   });
+
   const postContent = "preview" in post ? post.preview : post.content;
 
   return (
@@ -102,10 +126,12 @@ const PostItem = ({
               {postActions.map((action) => (
                 <PostAction
                   ariaLabel={action.ariaLabel}
+                  className={action.className}
                   key={action.ariaLabel}
                   value={action.value}
                   icon={action.icon}
                   onClick={action.onClick}
+                  disabled={action.disabled}
                 />
               ))}
             </div>
@@ -120,7 +146,7 @@ const PostItem = ({
               <Ellipsis size={24} />
             </button>
           </div>
-          {variant === "detail" && post.likes_count > 0 && (
+          {variant === "detail" && likeCount > 0 && (
             <button
               className="post-item__likers-link"
               onClick={(event) => {
@@ -129,7 +155,7 @@ const PostItem = ({
               }}
               type="button"
             >
-              {post.likes_count} отметок нравится
+              {likeCount} отметок нравится
             </button>
           )}
         </div>

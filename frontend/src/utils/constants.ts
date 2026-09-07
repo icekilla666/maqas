@@ -79,7 +79,19 @@ export const postsKeys = {
   myPosts: () => [...postsKeys.all, "my-posts"] as const,
   userPosts: (id?: string) => [...postsKeys.all, "user-posts", id] as const,
   post: (id?: string) => [...postsKeys.all, "post", id] as const,
-  postLikers: (id?: string) => [...postsKeys.all, "post-likers", id] as const,
-  postComments: (id?: string) => [...postsKeys.all, "post-comments", id] as const,
-  createPost: () => [...postsKeys.all, "create-post"] as const
+  createPost: () => [...postsKeys.all, "create-post"] as const,
+};
+
+export const likesKeys = {
+  all: ["likes"] as const,
+  likers: (id?: string) => [...likesKeys.all, "post-likers", id] as const,
+  myLiked: () => [...likesKeys.all, "my-liked"] as const,
+  likePost: (id?: string) => [...likesKeys.all, "like-post", id] as const,
+  unlikePost: (id?: string) => [...likesKeys.all, "unlike-post", id] as const,
+};
+
+export const commentsKeys = {
+  all: ["comments"] as const,
+  comments: (id?: string) =>
+    [...commentsKeys.all, "post-comments", id] as const,
 };

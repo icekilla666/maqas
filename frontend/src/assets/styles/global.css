@@ -1732,6 +1732,15 @@ textarea {
   line-height: 1;
 }
 
+.post-action.liked svg {
+  fill: var(--color-red);
+  color: var(--color-red);
+}
+
+.post-action.liked span {
+  color: var(--color-red);
+}
+
 .post-item__likers-link {
   width: max-content;
   max-width: 100%;

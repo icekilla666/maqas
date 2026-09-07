@@ -40,22 +40,6 @@ export const usePostQuery = (id?: string) => {
   });
 };
 
-export const useLikersQuery = (id?: string) => {
-  return useQuery({
-    queryKey: postsKeys.postLikers(id),
-    queryFn: () => postsApi.getPostLikers(id),
-    enabled: Boolean(id),
-  });
-};
-
-export const useCommentsQuery = (id?: string) => {
-  return useQuery({
-    queryKey: postsKeys.postComments(id),
-    queryFn: () => postsApi.getPostComments(id),
-    enabled: Boolean(id),
-  });
-};
-
 // -------------
 
 export const useCreatePostMutation = () => {

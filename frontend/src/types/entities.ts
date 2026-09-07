@@ -1,8 +1,8 @@
+import type { ReactNode } from "react";
 import type { BlackListUserData, FindUsers } from "./api.types";
 
 export type CountType = "followers" | "followings" | "publications";
 export type FollowTab = "followers" | "followings";
-
 
 export type FollowUser = {
   id: string;
@@ -14,3 +14,12 @@ export type FollowUser = {
 };
 
 export type ListUser = FollowUser | BlackListUserData | FindUsers;
+
+export type PostActionProps = {
+  icon: ReactNode;
+  ariaLabel: string;
+  value?: number;
+  onClick: () => void;
+  className?: string;
+  disabled?: boolean;
+};

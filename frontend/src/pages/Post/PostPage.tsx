@@ -2,16 +2,14 @@ import EmptyState from "@/components/common/EmptyState";
 import PostItem from "@/components/common/Posts/PostItem";
 import PostLikersModal from "@/pages/Post/components/PostLikersModal";
 import Loader from "@/components/ui/Loaders/Loader";
-import {
-  useCommentsQuery,
-  useLikersQuery,
-  usePostQuery,
-} from "@/lib/postsQueries";
+import { usePostQuery } from "@/lib/postsQueries";
 import type { CommentData } from "@/types/api.types";
 import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PostComments from "./components/PostComments";
+import { useCommentsQuery } from "@/lib/commentsQueries";
+import { useLikersQuery } from "@/lib/likesQueries";
 
 const PostPage = () => {
   const { id } = useParams();

@@ -1,28 +1,17 @@
 import {
   mockFollowingUserIds,
-  mockPostComments,
-  mockPostLikers,
   mockPostPreviews,
   mockPosts,
 } from "@/mocks/posts.mock";
 import type {
   AddPostProps,
-  CommentData,
   CreatedPost,
-  LikersData,
   PostFeed,
   PostDetails,
   PostPreview,
 } from "@/types/api.types";
 import { api } from "./api";
-
-const USE_MOCK_POSTS = false;
-const MOCK_DELAY_MS = 350;
-
-const wait = (delay: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, delay);
-  });
+import { MOCK_DELAY_MS, USE_MOCK_POSTS, wait } from "@/utils/settingsMock";
 
 export const postsApi = {
   getPostFeed: async ({
@@ -116,26 +105,6 @@ export const postsApi = {
     }
 
     const response = await api.get(`/api/posts/${id}`);
-    return response.data.data;
-  },
-
-  getPostLikers: async (id?: string): Promise<LikersData[]> => {
-    if (USE_MOCK_POSTS) {
-      await wait(MOCK_DELAY_MS);
-      return mockPostLikers;
-    }
-
-    const response = await api.get(`/api/likes/${id}`);
-    return response.data.data;
-  },
-
-  getPostComments: async (id?: string): Promise<CommentData[]> => {
-    if (USE_MOCK_POSTS) {
-      await wait(MOCK_DELAY_MS);
-      return mockPostComments;
-    }
-
-    const response = await api.get(`/api/comments/post/${id}`);
     return response.data.data;
   },
 
