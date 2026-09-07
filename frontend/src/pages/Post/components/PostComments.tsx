@@ -26,7 +26,7 @@ const PostComments = ({
   onSubmit,
 }: PostCommentsProps) => {
   return (
-    <section className="post-comments">
+    <section id="comments" className="post-comments anchor-section">
       <div className="post-comments__header">
         <h2>Комментарии</h2>
       </div>

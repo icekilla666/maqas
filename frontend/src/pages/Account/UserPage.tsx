@@ -9,6 +9,7 @@ import { useFollowMutation, useUserQuery } from "@/lib/usersQueries";
 import { useEffect, useRef, useState } from "react";
 import { useUserPostsQuery } from "@/lib/postsQueries";
 import PostsList from "@/components/common/Posts/PostsList";
+import { useAnchorScroll } from "@/hooks/useAnchorScroll";
 
 const UserPage = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const UserPage = () => {
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
   const { data: posts = [], isPending, isError } = useUserPostsQuery(id);
+  useAnchorScroll("publications", Boolean(profile) && !profile?.is_blocked && !isPending);
   useEffect(() => {
     return () => {
       if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
@@ -63,24 +65,26 @@ const UserPage = () => {
                 onFollow={handleFollow}
                 isFollowDisabled={isFollowDisabled}
               />
-              {isPending ? (
-                // скелет
-                <Loader />
-              ) : isError ? (
-                <EmptyState
-                  variant="error"
-                  text="Не удалось загрузить посты"
-                  icon={<TriangleAlert />}
-                />
-              ) : posts.length > 0 ? (
-                <PostsList count={posts.length} posts={posts} />
-              ) : (
-                <EmptyState
-                  variant="default"
-                  text="Постов нет"
-                  icon={<Bot />}
-                />
-              )}
+              <div id="publications" className="anchor-section">
+                {isPending ? (
+                  // скелет
+                  <Loader />
+                ) : isError ? (
+                  <EmptyState
+                    variant="error"
+                    text="Не удалось загрузить посты"
+                    icon={<TriangleAlert />}
+                  />
+                ) : posts.length > 0 ? (
+                  <PostsList count={posts.length} posts={posts} />
+                ) : (
+                  <EmptyState
+                    variant="default"
+                    text="Постов нет"
+                    icon={<Bot />}
+                  />
+                )}
+              </div>
             </div>
           )
         ) : (

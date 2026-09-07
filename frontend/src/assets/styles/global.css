@@ -57,6 +57,15 @@ section.wrapper {
   padding-top: 40px;
 }
 
+.anchor-section {
+  scroll-margin-top: 12px;
+}
+
+/* Leave enough room to align even a short discussion or post list at the top. */
+.anchor-section:target {
+  min-height: calc(100dvh - 12px);
+}
+
 h1 {
   color: var(--color-second);
 }

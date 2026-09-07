@@ -6,13 +6,15 @@ import { usePostQuery } from "@/lib/postsQueries";
 import type { CommentData } from "@/types/api.types";
 import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PostComments from "./components/PostComments";
 import { useCommentsQuery } from "@/lib/commentsQueries";
 import { useLikersQuery } from "@/lib/likesQueries";
+import { useAnchorScroll } from "@/hooks/useAnchorScroll";
 
 const PostPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: post, isLoading, isError } = usePostQuery(id);
   const { data: comments = [], isLoading: isCommentsLoading } =
     useCommentsQuery(id);
@@ -20,6 +22,8 @@ const PostPage = () => {
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
+
+  useAnchorScroll("comments", Boolean(post) && !isError && !isCommentsLoading);
 
   const handleCommentSubmit = (content: string) => {
     console.log("comment submit", {
@@ -46,6 +50,7 @@ const PostPage = () => {
       {post && !isError ? (
         <div className="post-detail">
           <PostItem
+            onCommentsClick={() => navigate({ hash: "#comments" })}
             onLikersClick={() => setIsLikersModalOpen(true)}
             post={post}
             variant="detail"

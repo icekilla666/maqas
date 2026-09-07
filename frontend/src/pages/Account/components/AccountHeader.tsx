@@ -2,7 +2,6 @@ import type { CountType } from "@/types/entities";
 import CountInfo from "./CountInfo";
 import { useNavigate } from "react-router-dom";
 import { FOLLOW_PAGE } from "@/utils/constants";
-import { anchor } from "@/utils/anchor";
 import AccountInfo from "./AccountInfo";
 import Avatar from "@/components/common/Avatar/Avatar";
 import AccountMenu from "./AccountMenu";
@@ -19,6 +18,7 @@ interface AccountHeaderProps {
   posts_count: number;
   is_blocked?: boolean;
   isOwnProfile?: boolean;
+  onPublicationsClick?: () => void;
 }
 
 const AccountHeader = ({
@@ -32,6 +32,7 @@ const AccountHeader = ({
   followings_count,
   posts_count,
   isOwnProfile = false,
+  onPublicationsClick,
 }: AccountHeaderProps) => {
   const navigate = useNavigate();
   const switchCount = (type: CountType) => {
@@ -52,7 +53,8 @@ const AccountHeader = ({
         });
         break;
       case "publications":
-        anchor("publications");
+        if (onPublicationsClick) onPublicationsClick();
+        else navigate({ hash: "#publications" });
         break;
     }
   };

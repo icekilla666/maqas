@@ -15,6 +15,7 @@ const PostsList = ({ posts, count }: PostListProps) => {
           key={post.id}
           post={post}
           onClick={() => navigate(`/posts/${post.id}`)}
+          onCommentsClick={() => navigate(`/posts/${post.id}#comments`)}
         />
       ))}
     </div>
