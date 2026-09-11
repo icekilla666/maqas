@@ -1,13 +1,10 @@
-import ActionMenu, {
-  type ActionMenuItem,
-} from "@/components/ui/ActionMenu/ActionMenu";
+import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenu";
+import ItemMenu from "@/components/common/ItemMenu";
 import {
   useBlockUserMutation,
   useUnblockUserMutation,
 } from "@/lib/usersQueries";
-import { Ellipsis, Flag, X } from "lucide-react";
-import { useState } from "react";
-import ReportModal from "./ReportModal";
+import { X } from "lucide-react";
 
 interface AccountMenuProps {
   id: string;
@@ -15,21 +12,10 @@ interface AccountMenuProps {
 }
 
 const AccountMenu = ({ id, className = "" }: AccountMenuProps) => {
-  const [reportOpen, setReportOpen] = useState(false);
   const blockMutation = useBlockUserMutation();
   const unblockMutation = useUnblockUserMutation();
 
-  const handleReportClick = () => {
-    setReportOpen(true);
-  };
-
   const actions: ActionMenuItem[] = [
-    {
-      icon: <Flag />,
-      text: "пожаловаться",
-      onClick: handleReportClick,
-      className: "text-red",
-    },
     {
       icon: <X />,
       text: "добавить в чс",
@@ -45,19 +31,12 @@ const AccountMenu = ({ id, className = "" }: AccountMenuProps) => {
   ];
 
   return (
-    <>
-      <ActionMenu
-        actions={actions}
-        ariaLabel="Открыть меню действий"
-        className={className}
-        icon={<Ellipsis size={17} />}
-      />
-      <ReportModal
-        open={reportOpen}
-        userId={id}
-        onClose={() => setReportOpen(false)}
-      />
-    </>
+    <ItemMenu
+      reportTarget="account"
+      actions={actions}
+      ariaLabel="Меню аккаунта"
+      className={className}
+    />
   );
 };
 

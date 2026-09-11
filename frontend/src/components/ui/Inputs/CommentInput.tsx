@@ -1,6 +1,7 @@
 import { SendHorizontal } from "lucide-react";
 import {
   type FormEvent,
+  type Ref,
   type TextareaHTMLAttributes,
   useId,
 } from "react";
@@ -15,6 +16,7 @@ interface CommentInputProps
   onSubmit: (value: string) => void;
   submitLabel?: string;
   className?: string;
+  inputRef?: Ref<HTMLTextAreaElement>;
 }
 
 const CommentInput = ({
@@ -23,6 +25,7 @@ const CommentInput = ({
   onSubmit,
   submitLabel = "Отправить",
   className = "",
+  inputRef,
   disabled,
   placeholder = "Написать комментарий",
   ...props
@@ -43,6 +46,7 @@ const CommentInput = ({
         Комментарий
       </label>
       <textarea
+        ref={inputRef}
         className="comment-input__field input"
         disabled={disabled}
         id={inputId}

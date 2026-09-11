@@ -1,30 +1,62 @@
 import Avatar from "@/components/common/Avatar/Avatar";
-import { useRepliesComment } from "@/lib/commentsQueries";
+import {
+  useCommentDeleteMutation,
+  useFullComment,
+  useRepliesComment,
+} from "@/lib/commentsQueries";
 import type { CommentPreview } from "@/types/api.types";
-import { normalizedDate } from "@/utils/normalizedDate";
-import { ChevronDown, Reply } from "lucide-react";
+import DateTime from "@/components/common/DateTime";
+import { ChevronDown, Pencil, Reply, Trash2 } from "lucide-react";
 import { useId, useState } from "react";
+import ItemMenu from "@/components/common/ItemMenu";
+import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenu";
+import ModalActions from "@/components/ui/Modals/ModalActions";
 
 interface CommentItemProps {
   comment: CommentPreview;
   replies?: CommentPreview[];
   level?: 0 | 1;
   onReply: (comment: CommentPreview) => void;
+  onEdit: (comment: CommentPreview) => void;
 }
 
-const CommentItem = ({ comment, level = 0, onReply }: CommentItemProps) => {
+const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) => {
   const [isRepliesOpen, setIsRepliesOpen] = useState(false);
+  const [isFullComment, setIsFullComment] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
   const isReplies = level === 0 && comment.replies_count > 0;
-  const { data: replies = [] } = useRepliesComment(comment.id);
-
-  const normalizedTime = normalizedDate({
-    date: comment.created_at,
-    onlyTime: true,
-  });
+  const { data: full } = useFullComment(comment.id, isFullComment);
+  const { data: replies = [] } = useRepliesComment(comment.id, isReplies);
   const commentText = comment.is_deleted
     ? "Комментарий удален"
-    : comment.preview;
+    : isFullComment
+      ? (full?.content ?? comment.preview)
+      : comment.preview;
+
+  const actions: ActionMenuItem[] = [
+    {
+      text: "Ответить",
+      icon: <Reply size={17} />,
+      onClick: () => onReply(comment),
+    },
+    ...(comment.is_owner
+      ? [
+          {
+            text: "Редактировать",
+            icon: <Pencil size={17} />,
+            onClick: () => onEdit(comment),
+          },
+          {
+            text: "Удалить комментарий",
+            icon: <Trash2 size={17} />,
+            onClick: () => setIsDeleteOpen(true),
+            className: "text-red",
+          },
+        ]
+      : []),
+  ];
 
   return (
     <li
@@ -49,7 +81,21 @@ const CommentItem = ({ comment, level = 0, onReply }: CommentItemProps) => {
             {comment.is_owner && (
               <span className="comment-item__badge">вы</span>
             )}
-            <span className="comment-item__time">{normalizedTime}</span>
+
+            <div className="comment-item__aside">
+              <DateTime
+                date={comment.created_at}
+                className="comment-item__time"
+              />
+              {!comment.is_deleted && (
+                <ItemMenu
+                  reportTarget="comment"
+                  actions={actions}
+                  ariaLabel="Меню комментария"
+                  className="comment-item__menu"
+                />
+              )}
+            </div>
           </div>
           <p
             className={`comment-item__text ${
@@ -57,17 +103,21 @@ const CommentItem = ({ comment, level = 0, onReply }: CommentItemProps) => {
             }`.trim()}
           >
             {commentText}
+            {!isFullComment &&
+              comment.preview &&
+              comment.preview.length > 40 && (
+                <>
+                  {"… "}
+                  <button
+                    className="comment-item__read-more"
+                    type="button"
+                    onClick={() => setIsFullComment(true)}
+                  >
+                    Читать дальше
+                  </button>
+                </>
+              )}
           </p>
-          {!comment.is_deleted && (
-            <button
-              className="comment-item__reply-button"
-              onClick={() => onReply(comment)}
-              type="button"
-            >
-              <Reply size={14} />
-              <span>Ответить</span>
-            </button>
-          )}
           {isReplies && (
             <button
               className="comment-item__replies-toggle"
@@ -99,9 +149,25 @@ const CommentItem = ({ comment, level = 0, onReply }: CommentItemProps) => {
               key={reply.id}
               level={1}
               onReply={onReply}
+              onEdit={onEdit}
             />
           ))}
         </ul>
+      )}
+      {isDeleteOpen && comment.is_owner && !comment.is_deleted && (
+        <ModalActions
+          open
+          text="Удалить комментарий?"
+          confirmText={deleteComment.isPending ? "Удаление…" : "Удалить"}
+          cancelText="Отмена"
+          isPending={deleteComment.isPending}
+          onCancel={() => setIsDeleteOpen(false)}
+          onConfirm={() =>
+            deleteComment.mutate(comment.id, {
+              onSuccess: () => setIsDeleteOpen(false),
+            })
+          }
+        />
       )}
     </li>
   );

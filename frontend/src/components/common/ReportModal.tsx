@@ -1,27 +1,41 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import Modal from "@/components/ui/Modals/Modal";
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { toast } from "sonner";
 
-const reportReasons = [
+const commonReasons = [
   { value: "spam", label: "Спам или реклама" },
   { value: "harassment", label: "Оскорбления или травля" },
   { value: "hate", label: "Разжигание ненависти" },
-  { value: "fake", label: "Фейковый аккаунт" },
   { value: "adult", label: "Неприемлемый контент" },
   { value: "scam", label: "Мошенничество" },
+  { value: "privacy", label: "Публикация личных данных" },
 ] as const;
 
-type ReportReason = (typeof reportReasons)[number]["value"];
+export type ReportTarget = "account" | "post" | "comment";
+
+const reportTitles: Record<ReportTarget, string> = {
+  account: "Жалоба на аккаунт",
+  post: "Жалоба на пост",
+  comment: "Жалоба на комментарий",
+};
 
 interface ReportModalProps {
   open: boolean;
-  userId: string;
+  targetType: ReportTarget;
   onClose: () => void;
 }
 
-const ReportModal = ({ open, userId, onClose }: ReportModalProps) => {
-  const [selectedReasons, setSelectedReasons] = useState<ReportReason[]>([]);
+const ReportModal = ({ open, targetType, onClose }: ReportModalProps) => {
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [comment, setComment] = useState("");
+  const reportReasons = [
+    ...commonReasons,
+    ...(targetType === "account"
+      ? [{ value: "fake", label: "Выдаёт себя за другого человека" }]
+      : [{ value: "violence", label: "Угрозы или призывы к насилию" }]),
+    { value: "other", label: "Другая причина" },
+  ];
 
   const resetForm = () => {
     setSelectedReasons([]);
@@ -33,7 +47,7 @@ const ReportModal = ({ open, userId, onClose }: ReportModalProps) => {
     onClose();
   };
 
-  const toggleReason = (reason: ReportReason) => {
+  const toggleReason = (reason: string) => {
     setSelectedReasons((prev) =>
       prev.includes(reason)
         ? prev.filter((selectedReason) => selectedReason !== reason)
@@ -48,21 +62,15 @@ const ReportModal = ({ open, userId, onClose }: ReportModalProps) => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const reportData = {
-      userId,
-      reasons: selectedReasons,
-      comment: comment.trim(),
-    };
-
-    console.log("report", reportData);
-    handleClose();
+    if (!selectedReasons.length) return;
+    toast.info("Отправка жалоб пока недоступна");
   };
 
   return (
-    <Modal open={open} onClose={handleClose} className="modal--report">
+    <Modal open={open} onClose={handleClose} className="modal--report" ariaLabel={reportTitles[targetType]}>
       <form className="report-modal" onSubmit={handleSubmit}>
         <div className="report-modal__header">
-          <h2 className="report-modal__title">Жалоба на аккаунт</h2>
+          <h2 className="report-modal__title">{reportTitles[targetType]}</h2>
           <p className="report-modal__subtitle">
             Выберите одну или несколько причин
           </p>

@@ -25,8 +25,14 @@ export const commentsApi = {
     return response;
   },
 
-  updatePostComment: async (comment_id?: string) => {
-    const response = await api.patch(`/api/comments/${comment_id}`);
+  updatePostComment: async ({
+    comment_id,
+    content,
+  }: {
+    comment_id: string;
+    content: string;
+  }): Promise<CommentFull> => {
+    const response = await api.patch(`/api/comments/${comment_id}`, { content });
     return response.data.data;
   },
 

@@ -11,6 +11,7 @@ interface ModalActionsProps {
   cancelText: string;
   onConfirm: () => void;
   onCancel: () => void;
+  isPending?: boolean;
 }
 
 const ModalActions = ({
@@ -22,6 +23,7 @@ const ModalActions = ({
   cancelText,
   onConfirm,
   onCancel,
+  isPending = false,
 }: ModalActionsProps) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isInfoPinned, setIsInfoPinned] = useState(false);
@@ -43,11 +45,13 @@ const ModalActions = ({
   };
 
   const handleCancel = () => {
+    if (isPending) return;
     resetInfo();
     onCancel();
   };
 
   const handleConfirm = () => {
+    if (isPending) return;
     resetInfo();
     onConfirm();
   };
@@ -74,6 +78,7 @@ const ModalActions = ({
         <div className="modal-actions__buttons">
           <button
             className="modal-actions__button modal-actions__button--cancel"
+            disabled={isPending}
             onClick={handleCancel}
             type="button"
           >
@@ -81,6 +86,7 @@ const ModalActions = ({
           </button>
           <button
             className="modal-actions__button modal-actions__button--confirm"
+            disabled={isPending}
             onClick={handleConfirm}
             type="button"
           >

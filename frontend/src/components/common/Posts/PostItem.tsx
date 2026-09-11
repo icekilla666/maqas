@@ -1,7 +1,8 @@
 import type { PostDetails, PostPreview } from "@/types/api.types";
 import UserItem from "../UsersList/UserItem";
-import { normalizedDate } from "@/utils/normalizedDate";
-import { CornerUpRight, Ellipsis, Heart, MessageSquare } from "lucide-react";
+import DateTime from "../DateTime";
+import { CornerUpRight, Heart, MessageSquare } from "lucide-react";
+import ItemMenu from "../ItemMenu";
 import PostAction from "./PostAction";
 import type { PostActionProps } from "@/types/entities";
 import { usePostLikeMutation } from "@/lib/likesQueries";
@@ -78,17 +79,6 @@ const PostItem = ({
     },
   ];
 
-  const normalizedTime = normalizedDate({
-    date: post.created_at,
-    onlyTime: true,
-  });
-
-  const normalizedPostDate = normalizedDate({
-    date: post.created_at,
-    onlyDate: true,
-    relativeToday: true,
-  });
-
   const postContent = "preview" in post ? post.preview : post.content;
 
   return (
@@ -101,10 +91,7 @@ const PostItem = ({
       >
         <header className="flex justify-between items-center mb-1.5">
           <UserItem user={post.user} showName={false} />
-          <time className="post-item__datetime" dateTime={post.created_at}>
-            <span className="post-item__date">{normalizedPostDate}</span>
-            <span className="post-item__time">{normalizedTime}</span>
-          </time>
+          <DateTime date={post.created_at} className="post-item__datetime" />
         </header>
         <div className="flex flex-col gap-3">
           {post.image_url && (
@@ -138,16 +125,7 @@ const PostItem = ({
                   />
                 ))}
               </div>
-              <button
-                aria-label="Меню поста"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  console.log("menu");
-                }}
-                type="button"
-              >
-                <Ellipsis size={24} />
-              </button>
+              <ItemMenu reportTarget="post" ariaLabel="Меню поста" />
             </div>
             {variant === "detail" && likeCount > 0 && (
               <button

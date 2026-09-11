@@ -3,6 +3,7 @@ interface normalizedDateProps {
   onlyTime?: boolean;
   onlyDate?: boolean;
   relativeToday?: boolean;
+  timeIfToday?: boolean;
 }
 
 const TIME_ZONE = "Europe/Moscow";
@@ -24,7 +25,8 @@ export const normalizedDate = ({
   onlyTime,
   onlyDate,
   relativeToday,
-}: normalizedDateProps) => {
+  timeIfToday,
+}: normalizedDateProps): string => {
   const newDate = new Date(date);
 
   if (onlyTime) {
@@ -39,6 +41,10 @@ export const normalizedDate = ({
     const now = new Date();
     const isToday =
       calendarDayFormatter.format(newDate) === calendarDayFormatter.format(now);
+
+    if (timeIfToday && isToday) {
+      return normalizedDate({ date, onlyTime: true });
+    }
 
     if (relativeToday && isToday) return "сегодня";
 

@@ -691,6 +691,24 @@ textarea {
   gap: 20px;
 }
 
+.modal--report .modal__window {
+  overflow-y: auto;
+}
+
+.report-modal__reason:has(.report-modal__checkbox:focus-visible) {
+  outline: 2px solid var(--color-main);
+  outline-offset: 2px;
+}
+
+.modal-actions__button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.item-menu {
+  display: inline-flex;
+}
+
 .report-modal__header {
   display: flex;
   flex-direction: column;
@@ -1009,12 +1027,6 @@ textarea {
   border: 0;
   border-radius: 12px;
   cursor: pointer;
-}
-
-.action-menu__item:hover,
-.action-menu__item:focus-visible {
-  background-color: var(--color-wrapper);
-  outline: none;
 }
 
 .action-menu__item.active {
@@ -1608,31 +1620,17 @@ textarea {
   font-size: 12px;
 }
 
-.post-item__datetime {
-  display: flex;
+.content-datetime {
   flex: 0 0 auto;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
+  color: color-mix(in oklab, var(--color-second) 42%, transparent);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.post-item__datetime {
   margin-left: 12px;
   text-align: right;
-}
-
-.post-item__date {
-  color: color-mix(in oklab, var(--color-second) 64%, transparent);
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 1;
-}
-
-.post-item__date--today {
-  color: var(--color-main);
-}
-
-.post-item__time {
-  color: color-mix(in oklab, var(--color-second) 42%, transparent);
-  font-size: 9px;
-  line-height: 1;
 }
 
 .post-item__poster {
@@ -1915,40 +1913,56 @@ textarea {
 }
 
 .comment-item__time {
-  flex: 0 0 auto;
+  text-align: right;
+}
+
+.comment-item__aside {
+  display: flex;
+  align-items: center;
   margin-left: auto;
-  color: color-mix(in oklab, var(--color-second) 42%, transparent);
-  font-size: 11px;
-  line-height: 1;
+  gap: 10px;
+}
+
+.comment-item__menu {
+  width: 30px;
+  height: 30px;
+  color: color-mix(in oklab, var(--color-second) 58%, transparent);
+  background: transparent;
+  box-shadow: none;
+}
+
+.action-menu__trigger:focus-visible {
+  outline: 2px solid var(--color-main);
+  outline-offset: 2px;
 }
 
 .comment-item__text {
+  overflow-wrap: anywhere;
   color: color-mix(in oklab, var(--color-second) 82%, transparent);
   font-size: 13px;
   line-height: 1.35;
 }
 
-.comment-item__text--deleted {
-  color: color-mix(in oklab, var(--color-second) 42%, transparent);
-  font-style: italic;
-}
-
-.comment-item__reply-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  width: max-content;
+.comment-item__read-more {
+  font-weight: 300;
+  display: inline;
   padding: 0;
-  color: color-mix(in oklab, var(--color-second) 56%, transparent);
-  font-size: 12px;
-  line-height: 1;
-  background-color: transparent;
   border: 0;
+  background: transparent;
+  color: color-mix(in oklab, var(--color-second) 56%, transparent);
+  white-space: nowrap;
   cursor: pointer;
 }
 
-.comment-item__reply-button .lucide {
-  stroke-width: 1.2px;
+.comment-item__read-more:focus-visible {
+  outline: 2px solid var(--color-main);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.comment-item__text--deleted {
+  color: color-mix(in oklab, var(--color-second) 42%, transparent);
+  font-style: italic;
 }
 
 .comment-item__replies-toggle {
@@ -2079,6 +2093,21 @@ textarea {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.post-comments__composer-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.post-comments__composer-status svg {
+  flex-shrink: 0;
+}
+
+.post-comments__replying button:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .post-comments__replying button {

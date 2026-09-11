@@ -8,23 +8,22 @@ export const useCommentsQuery = (id?: string) => {
   return useQuery({
     queryKey: commentsKeys.comments(id),
     queryFn: () => commentsApi.getPostComments(id),
-    enabled: Boolean(id),
   });
 };
 
-export const useFullComment = (comment_id?: string) => {
+export const useFullComment = (comment_id: string, enabled: boolean) => {
   return useQuery({
     queryKey: commentsKeys.fullComment(comment_id),
     queryFn: () => commentsApi.getFullComment(comment_id),
-    enabled: Boolean(comment_id),
+    enabled,
   });
 };
 
-export const useRepliesComment = (comment_id?: string) => {
+export const useRepliesComment = (comment_id: string, enabled: boolean) => {
   return useQuery({
     queryKey: commentsKeys.repliesComment(comment_id),
     queryFn: () => commentsApi.getRepliesComment(comment_id),
-    enabled: Boolean(comment_id),
+    enabled,
   });
 };
 
@@ -70,7 +69,7 @@ export const useCommentUpdateMutation = () => {
       toast.error("Что-то пошло не так");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commentsKeys.all });
+      return queryClient.invalidateQueries({ queryKey: commentsKeys.all });
     },
   });
 };

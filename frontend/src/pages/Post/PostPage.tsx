@@ -3,7 +3,6 @@ import PostItem from "@/components/common/Posts/PostItem";
 import PostLikersModal from "@/pages/Post/components/PostLikersModal";
 import Loader from "@/components/ui/Loaders/Loader";
 import { usePostQuery } from "@/lib/postsQueries";
-import type { CommentData } from "@/types/api.types";
 import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,17 +19,8 @@ const PostPage = () => {
     useCommentsQuery(id);
   const { data: likers = [] } = useLikersQuery(id);
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
-  const [commentValue, setCommentValue] = useState("");
-  const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
 
   useAnchorScroll("comments", Boolean(post) && !isError && !isCommentsLoading);
-
-  const handleCommentSubmit = (content: string) => {
-    console.log(content);
-
-    setCommentValue("");
-    setReplyingTo(null);
-  };
 
   if (isLoading) {
     return (
@@ -52,14 +42,10 @@ const PostPage = () => {
             variant="detail"
           />
           <PostComments
+            key={post.id}
+            postId={post.id}
             comments={comments}
             isLoading={isCommentsLoading}
-            onCancelReply={() => setReplyingTo(null)}
-            onChange={setCommentValue}
-            onReply={setReplyingTo}
-            onSubmit={handleCommentSubmit}
-            replyingTo={replyingTo}
-            value={commentValue}
           />
         </div>
       ) : (
