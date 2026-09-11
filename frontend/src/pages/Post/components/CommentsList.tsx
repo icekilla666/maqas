@@ -1,22 +1,13 @@
-import type { CommentData } from "@/types/api.types";
+import type { CommentPreview } from "@/types/api.types";
 import CommentItem from "./CommentItem";
 
 interface CommentsListProps {
-  comments: CommentData[];
-  onReply: (comment: CommentData) => void;
+  comments: CommentPreview[];
+  onReply: (comment: CommentPreview) => void;
 }
 
 const CommentsList = ({ comments, onReply }: CommentsListProps) => {
   const rootComments = comments.filter((comment) => !comment.parent_id);
-  const repliesByParent = comments.reduce<Record<string, CommentData[]>>(
-    (acc, comment) => {
-      if (!comment.parent_id) return acc;
-
-      acc[comment.parent_id] = [...(acc[comment.parent_id] ?? []), comment];
-      return acc;
-    },
-    {},
-  );
 
   if (!rootComments.length) {
     return (
@@ -29,12 +20,7 @@ const CommentsList = ({ comments, onReply }: CommentsListProps) => {
   return (
     <ul className="comments-list">
       {rootComments.map((comment) => (
-        <CommentItem
-          comment={comment}
-          key={comment.id}
-          onReply={onReply}
-          replies={repliesByParent[comment.id] ?? []}
-        />
+        <CommentItem comment={comment} key={comment.id} onReply={onReply} />
       ))}
     </ul>
   );

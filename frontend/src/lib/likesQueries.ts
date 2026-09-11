@@ -36,6 +36,7 @@ const invalidateLikeRelatedQueries = async () => {
 
 export const usePostLikeMutation = () => {
   return useMutation({
+    mutationKey: likesKeys.likePost(),
     mutationFn: ({ id, nextIsLiked }: SetPostLikeVariables) => {
       return nextIsLiked ? likesApi.likePost(id) : likesApi.unlikePost(id);
     },

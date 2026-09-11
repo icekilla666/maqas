@@ -1,11 +1,11 @@
 import CommentInput from "@/components/ui/Inputs/CommentInput";
 import Loader from "@/components/ui/Loaders/Loader";
-import type { CommentData } from "@/types/api.types";
+import type { CommentData, CommentPreview } from "@/types/api.types";
 import { X } from "lucide-react";
 import CommentsList from "./CommentsList";
 
 interface PostCommentsProps {
-  comments: CommentData[];
+  comments: CommentPreview[];
   value: string;
   isLoading?: boolean;
   replyingTo: CommentData | null;

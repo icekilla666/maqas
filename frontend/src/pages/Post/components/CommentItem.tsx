@@ -1,21 +1,23 @@
 import Avatar from "@/components/common/Avatar/Avatar";
-import type { CommentData } from "@/types/api.types";
+import { useRepliesComment } from "@/lib/commentsQueries";
+import type { CommentPreview } from "@/types/api.types";
 import { normalizedDate } from "@/utils/normalizedDate";
-import { Reply } from "lucide-react";
+import { ChevronDown, Reply } from "lucide-react";
+import { useId, useState } from "react";
 
 interface CommentItemProps {
-  comment: CommentData;
-  replies?: CommentData[];
+  comment: CommentPreview;
+  replies?: CommentPreview[];
   level?: 0 | 1;
-  onReply: (comment: CommentData) => void;
+  onReply: (comment: CommentPreview) => void;
 }
 
-const CommentItem = ({
-  comment,
-  replies = [],
-  level = 0,
-  onReply,
-}: CommentItemProps) => {
+const CommentItem = ({ comment, level = 0, onReply }: CommentItemProps) => {
+  const [isRepliesOpen, setIsRepliesOpen] = useState(false);
+  const repliesId = useId();
+  const isReplies = level === 0 && comment.replies_count > 0;
+  const { data: replies = [] } = useRepliesComment(comment.id);
+
   const normalizedTime = normalizedDate({
     date: comment.created_at,
     onlyTime: true,
@@ -44,7 +46,9 @@ const CommentItem = ({
             <span className="comment-item__username">
               {comment.user.username}
             </span>
-            {comment.is_owner && <span className="comment-item__badge">вы</span>}
+            {comment.is_owner && (
+              <span className="comment-item__badge">вы</span>
+            )}
             <span className="comment-item__time">{normalizedTime}</span>
           </div>
           <p
@@ -64,11 +68,31 @@ const CommentItem = ({
               <span>Ответить</span>
             </button>
           )}
+          {isReplies && (
+            <button
+              className="comment-item__replies-toggle"
+              type="button"
+              aria-expanded={isRepliesOpen}
+              aria-controls={repliesId}
+              onClick={() => setIsRepliesOpen((previous) => !previous)}
+            >
+              <span className="comment-item__replies-line" aria-hidden="true" />
+              <span>{isRepliesOpen ? "Скрыть ответы" : "Показать ответы"}</span>
+              <span className="comment-item__replies-count">
+                {comment.replies_count}
+              </span>
+              <ChevronDown size={14} aria-hidden="true" />
+            </button>
+          )}
         </div>
       </div>
 
-      {level === 0 && replies.length > 0 && (
-        <ul className="comment-item__replies">
+      {isReplies && (
+        <ul
+          id={repliesId}
+          className="comment-item__replies"
+          hidden={!isRepliesOpen}
+        >
           {replies.map((reply) => (
             <CommentItem
               comment={reply}

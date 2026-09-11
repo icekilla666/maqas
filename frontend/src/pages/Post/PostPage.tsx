@@ -26,11 +26,7 @@ const PostPage = () => {
   useAnchorScroll("comments", Boolean(post) && !isError && !isCommentsLoading);
 
   const handleCommentSubmit = (content: string) => {
-    console.log("comment submit", {
-      postId: id,
-      parentId: replyingTo?.id ?? null,
-      content,
-    });
+    console.log(content);
 
     setCommentValue("");
     setReplyingTo(null);

@@ -86,12 +86,19 @@ export const likesKeys = {
   all: ["likes"] as const,
   likers: (id?: string) => [...likesKeys.all, "post-likers", id] as const,
   myLiked: () => [...likesKeys.all, "my-liked"] as const,
-  likePost: (id?: string) => [...likesKeys.all, "like-post", id] as const,
-  unlikePost: (id?: string) => [...likesKeys.all, "unlike-post", id] as const,
+  likePost: () => [...likesKeys.all, "like-post"] as const,
+  unlikePost: () => [...likesKeys.all, "unlike-post"] as const,
 };
 
 export const commentsKeys = {
   all: ["comments"] as const,
   comments: (id?: string) =>
     [...commentsKeys.all, "post-comments", id] as const,
+  fullComment: (comment_id?: string) =>
+    [...commentsKeys.all, "full-comment", comment_id] as const,
+  repliesComment: (comment_id?: string) =>
+    [...commentsKeys.all, "replies-comment", comment_id] as const,
+  sendComment: () => [...commentsKeys.all, "send-comment"] as const,
+  updateComment: () => [...commentsKeys.all, "update-comment"] as const,
+  deleteComment: () => [...commentsKeys.all, "delete-comment"] as const,
 };

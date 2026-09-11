@@ -108,15 +108,28 @@ export type PostDetails = PostBase & {
 
 export type LikersData = BlackListUserData;
 
+export type SendCommentsProps = {
+  id?: string;
+  parent_id: string | null;
+  content?: string;
+};
+
 export type CommentData = {
   id: string;
-  preview: string | null;
   is_deleted: boolean;
   replies_count: number;
   parent_id: string | null;
   created_at: string;
   is_owner: boolean;
   user: PostUserData;
+};
+
+export type CommentPreview = CommentData & {
+  preview: string | null;
+};
+
+export type CommentFull = CommentData & {
+  content: string | null;
 };
 
 export type PostFeed = {
