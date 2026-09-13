@@ -1,5 +1,5 @@
 import type {
-  CommentData,
+  CommentPreview,
   LikersData,
   PostDetails,
   PostPreview,
@@ -58,9 +58,7 @@ const mockLikerUsers: PostUserData[] = [
   },
 ];
 
-export const mockFollowingUserIds = mockUsers
-  .slice(1)
-  .map((user) => user.id);
+export const mockFollowingUserIds = mockUsers.slice(1).map((user) => user.id);
 
 export const mockPosts: PostDetails[] = [
   {
@@ -175,7 +173,7 @@ export const mockPostPreviews: PostPreview[] = mockPosts.map(
 
 export const mockPostLikers: LikersData[] = mockLikerUsers;
 
-export const mockPostComments: CommentData[] = [
+export const mockPostComments: CommentPreview[] = [
   {
     id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
     preview:
@@ -199,7 +197,8 @@ export const mockPostComments: CommentData[] = [
   },
   {
     id: "9526c2a1-16cf-4575-bc30-285d408c4f2e",
-    preview: "Монитор какой модели? По фото выглядит прям удобно для двух окон.",
+    preview:
+      "Монитор какой модели? По фото выглядит прям удобно для двух окон.",
     is_deleted: false,
     replies_count: 0,
     parent_id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
