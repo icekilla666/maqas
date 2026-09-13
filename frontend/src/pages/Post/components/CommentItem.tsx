@@ -26,7 +26,7 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
-  const isReplies = level === 0 && comment.replies_count > 0;
+  const isReplies = comment.replies_count > 0;
   const { data: full } = useFullComment(comment.id, isFullComment);
   const { data: replies = [] } = useRepliesComment(comment.id, isReplies);
   const commentText = comment.is_deleted
