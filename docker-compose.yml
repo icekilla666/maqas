@@ -1,41 +1,90 @@
 networks:
   dev:
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   nginx:
     image: nginx:stable-alpine
+    restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - "./nginx.conf:/etc/nginx/nginx.conf"
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
     depends_on:
-      - backend
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging: *default-logging
     networks:
       - dev
+
   db:
     image: postgres:16
     container_name: maqas_postgres
-    restart: always
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: popa2007
-      POSTGRES_DB: maqas_database
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-myuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+      POSTGRES_DB: ${POSTGRES_DB:-maqas_database}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    logging: *default-logging
     networks:
       - dev
+
   backend:
     build:
       context: ./backend
+    restart: unless-stopped
     env_file:
       - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-myuser}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}@db:5432/${POSTGRES_DB:-maqas_database}
+      VERIFY_EMAIL_URL: https://maqas.ru/verify-email
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/openapi.json', timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 5
+      start_period: 40s
+    logging: *default-logging
     networks:
       - dev
+
   frontend:
     build:
       context: ./frontend
+      args:
+        VITE_API_URL: ""
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    logging: *default-logging
     networks:
       - dev
 

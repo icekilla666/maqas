@@ -1,1 +1,9 @@
 .DS_Store
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+/deploy/certs/*
+!/deploy/certs/.gitkeep
+/deploy/backups/

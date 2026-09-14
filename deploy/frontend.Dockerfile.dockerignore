@@ -1,0 +1,5 @@
+# This runtime-only build needs dist (the main frontend/.dockerignore excludes it).
+**
+!dist
+!dist/**
+!nginx.conf
