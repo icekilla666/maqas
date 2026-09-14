@@ -1,5 +1,20 @@
 # React + TypeScript + Vite
 
+## Локальный запуск
+
+В `frontend/.env` укажи:
+
+```dotenv
+VITE_API_URL=/
+API_PROXY_TARGET=https://maqas.ru
+```
+
+Запусти `npm run dev` и открой адрес localhost из терминала. Браузер обращается к `/api` на локальном адресе, а прокси Vite передаёт запросы на сервер. Поэтому междоменные запросы из браузера не нужны. Это **рабочий backend**: создание и изменение данных из локального интерфейса происходит в серверной базе.
+
+Для собственного локального backend замени `API_PROXY_TARGET` на `http://127.0.0.1:8000`. После изменения `.env` перезапусти Vite. В production запросы обслуживает nginx, прокси Vite там не используется.
+
+Описание настройки: [server.proxy в документации Vite](https://vite.dev/config/server-options#server-proxy).
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

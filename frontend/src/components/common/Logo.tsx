@@ -1,12 +1,16 @@
 import logoLight from "@/assets/images/logo-light.svg";
 import logoDark from "@/assets/images/logo-dark.svg";
+import { useThemeStore } from "@/store/theme.store";
 
 const Logo = () => {
+  const theme = useThemeStore((state) => state.theme);
+
   return (
-    <>
-      <img src={logoLight} alt="logo" className="block dark:hidden" />
-      <img src={logoDark} alt="logo" className="hidden dark:block" />
-    </>
+    <img
+      src={theme === "dark" ? logoDark : logoLight}
+      alt="maqas"
+      className="block"
+    />
   );
 };
 
