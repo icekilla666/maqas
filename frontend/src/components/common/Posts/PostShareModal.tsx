@@ -15,8 +15,12 @@ interface PostShareModalProps {
 }
 
 const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
-  const { data: followers = [], isPending, isError, refetch } =
-    useFollowQuery("followings");
+  const {
+    data: followers = [],
+    isPending,
+    isError,
+    refetch,
+  } = useFollowQuery("followings");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isCopied, setIsCopied] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
@@ -103,7 +107,10 @@ const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
                     size={24}
                   />
                   {selectedIds.includes(follower.id) && (
-                    <span className="post-share-modal__check" aria-hidden="true">
+                    <span
+                      className="post-share-modal__check"
+                      aria-hidden="true"
+                    >
                       <Check size={12} />
                     </span>
                   )}
@@ -140,7 +147,7 @@ const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
           className="post-share-modal__send"
           icon={<Send size={18} />}
           disabled={selectedIds.length === 0 || isError || isPending}
-          onClick={() => toast.info("Отправил")}
+          onClick={onClose}
         >
           Отправить{selectedIds.length > 0 ? ` · ${selectedIds.length}` : ""}
         </MainButton>

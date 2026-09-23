@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -62,6 +62,14 @@ const applyThemePreferences = ({ theme, mainColor }: ThemePreferences) => {
   root.dataset.theme = theme;
   root.style.setProperty("--color-main", mainColor);
   root.style.colorScheme = theme;
+
+  // Берём цвет из CSS уже после установки выбранной темы.
+  const wrapperColor = getComputedStyle(root)
+    .getPropertyValue("--color-wrapper")
+    .trim();
+  document
+    .querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    ?.setAttribute("content", wrapperColor);
 };
 
 export const useThemeStore = create<ThemeState>()(
@@ -107,7 +115,7 @@ export const useApplyTheme = () => {
   const theme = useThemeStore((state) => state.theme);
   const mainColor = useThemeStore((state) => state.mainColor);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     applyThemePreferences({ theme, mainColor });
   }, [theme, mainColor]);
 };
