@@ -4,7 +4,7 @@ from fastapi import status, HTTPException
 
 from src.comments.repository import CommentsRepository
 from src.posts.repository import PostsRepository
-from src.comments.schemas import CommentCreate, CommentOutFull, CommentUpdate, CommentOutShort
+from src.comments.schemas import CommentCreate, CommentOut, CommentUpdate
 from src.users.models import UsersModel
 from src.comments.models import CommentsModel
 from src.users.repository import UsersRepository
@@ -26,7 +26,7 @@ class CommentsService:
                     "error": "POST_NOT_FOUND"
                 }
             )
-        post, is_liked = post_rows
+        post, _ = post_rows
         block = await self.users_repo.get_block(post.user_id, current_user.id, session)
         if block:
             raise HTTPException(
@@ -39,13 +39,22 @@ class CommentsService:
             )
         if comment.parent_id:
             parent = await self.comments_repo.get_by_id(comment.parent_id, session)
-            if not parent:
+            if not parent or parent.is_deleted:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail={
                         "success": False,
                         "message": "Комментарий не найден",
                         "error": "PARENT_COMMENT_NOT_FOUND"
+                    }
+                )
+            if parent.post_id != post_id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail={
+                        "success": False,
+                        "message": "Комментарий принадлежит другому посту",
+                        "error": "OTHER_POST_ID"
                     }
                 )
             parent.replies_count += 1
@@ -65,7 +74,7 @@ class CommentsService:
         created_comment = await self.comments_repo.create_comment(comment_model, session)
         created_comment_full_rows = await self.comments_repo.get_by_id_with_owner(created_comment.id, current_user, session)
         created_comment_full, is_owner = created_comment_full_rows
-        created_comment_full_validated = CommentOutFull.model_validate(created_comment_full)
+        created_comment_full_validated = CommentOut.model_validate(created_comment_full)
         created_comment_full_validated.is_owner = is_owner
         return {
             "success": True,
@@ -139,20 +148,28 @@ class CommentsService:
                     "error": "ANOTHER_USER'S_COMMENT"
                 }
             )
+        if comment.is_deleted:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "success": False,
+                    "message": "Нельзя редактировать удаленный комментарий",
+                    "error": "DELETED_COMMENT"
+                }
+            )
         if comment_data.content:
             comment.content = comment_data.content
             await session.commit()
-        comment_full = CommentOutFull.model_validate(comment)
+        comment_full = CommentOut.model_validate(comment)
         comment_full.is_owner = is_owner
         return {
             "success": True,
             "data": comment_full
         }
-    def _convert_rows_to_comments(self, rows: None | list[tuple[CommentsModel, str, str]]):
+    def _convert_rows_to_comments(self, rows: None | list[tuple[CommentsModel, bool]]):
         comments = []
-        for comment, preview, is_owner in rows:
-            comment_complete = CommentOutShort.model_validate(comment)
-            comment_complete.preview = preview
+        for comment, is_owner in rows:
+            comment_complete = CommentOut.model_validate(comment)
             comment_complete.is_owner = is_owner
             comments.append(comment_complete)
         return comments
@@ -168,7 +185,6 @@ class CommentsService:
                     "error": "POST_NOT_FOUND"
                 }
             )
-        post, is_liked = post_rows
         comments_rows, count = await self.comments_repo.get_post_comments(post_id, optional_user, skip, limit, session)
         comments = self._convert_rows_to_comments(comments_rows)
         return {
@@ -177,25 +193,6 @@ class CommentsService:
             "total": count,
             "skip": skip,
             "limit": limit
-        }
-    
-    async def get_full_comment(self, comment_id: UUID, optional_user: None | UsersModel, session: AsyncSession):
-        comment_rows = await self.comments_repo.get_by_id_with_owner(comment_id, optional_user, session)
-        if not comment_rows:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={
-                    "success": False,
-                    "message": "Комментарий не найден",
-                    "error": "COMMENT_NOT_FOUND"
-                }
-            )
-        comment, is_owner = comment_rows
-        comment = CommentOutFull.model_validate(comment)
-        comment.is_owner = is_owner
-        return {
-            "success": True,
-            "data": comment
         }
 
     async def get_comment_replies(self, comment_id: UUID, optional_user: None | UsersModel, skip: int, limit: int, session: AsyncSession):

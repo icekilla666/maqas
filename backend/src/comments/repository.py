@@ -43,7 +43,7 @@ class CommentsRepository:
             is_owner = exists().where(UsersModel.id == CommentsModel.user_id, UsersModel.id == optional_user.id).label("is_owner")
         else:
             is_owner = literal(False).label("is_owner")
-        query = select(CommentsModel, func.left(CommentsModel.content, 50).label("preview"), is_owner).where(CommentsModel.post_id == post_id, CommentsModel.parent_id.is_(None)).options(selectinload(CommentsModel.user)).offset(skip).limit(limit)
+        query = select(CommentsModel, is_owner).where(CommentsModel.post_id == post_id, CommentsModel.parent_id.is_(None)).options(selectinload(CommentsModel.user)).offset(skip).limit(limit)
         result = await session.execute(query)
         comments = result.all()
         count_query = select(func.count(CommentsModel.id)).where(CommentsModel.post_id == post_id, CommentsModel.parent_id.is_(None))
@@ -56,7 +56,7 @@ class CommentsRepository:
             is_owner = exists().where(UsersModel.id == CommentsModel.user_id, UsersModel.id == optional_user.id).label("is_owner")
         else:
             is_owner = literal(False).label("is_owner")
-        query = select(CommentsModel, func.left(CommentsModel.content, 50).label("preview"), is_owner).where(CommentsModel.parent_id == comment_id).options(selectinload(CommentsModel.user)).offset(skip).limit(limit)
+        query = select(CommentsModel, is_owner).where(CommentsModel.parent_id == comment_id).options(selectinload(CommentsModel.user)).offset(skip).limit(limit)
         result = await session.execute(query)
         replies = result.all()
         return replies
