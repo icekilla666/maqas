@@ -42,7 +42,8 @@ class UsersModel(Base):
             return Level.loshok_0
         elif self.followers_count <= 1:
             return Level.loshok_1
-
+        else:
+            return Level.loshok_1
 class FollowsModel(Base):
     __tablename__ = "follows"
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)

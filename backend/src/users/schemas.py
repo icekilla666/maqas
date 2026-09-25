@@ -11,6 +11,7 @@ class UserStatus(str, Enum):
 class Level(str, Enum):
     loshok_0 = "лошок 0"
     loshok_1 = "лошок 1"
+    loshok_pro = "лошок про"
 
 class UserOutShort(BaseModel):
     id: UUID

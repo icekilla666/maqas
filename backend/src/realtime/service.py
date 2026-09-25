@@ -1,10 +1,11 @@
 from uuid import UUID
-from fastapi import WebSocket, status, WebSocketDisconnect
+from fastapi import WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.realtime.manager import RealtimeConnectionManager
 from src.users.repository import UsersRepository
 from src.auth.jwt import decode_token
+from src.realtime.events import RealtimeEventType
 
 class RealtimeService:
     def __init__(self, manager: RealtimeConnectionManager, users_repo: UsersRepository):
@@ -28,6 +29,46 @@ class RealtimeService:
             user_id = UUID(raw_user_id)
             await self.manager.connect(user_id, websocket)
             while True:
-                await websocket.receive_text()
+                message = await websocket.receive_json()
+                event_type = message.get("type")
+                data = message.get("data", {})
+                if event_type == RealtimeEventType.CHAT_TYPING_STARTED:
+                    await self.handle_typing_started(user_id, data, session)
+                elif event_type == RealtimeEventType.CHAT_TYPING_STOPPED:
+                    await self.handle_typing_stopped(user_id, data, session)
         except Exception:
             return
+        
+    async def handle_typing_started(self, user_id: UUID, data: dict, session: AsyncSession):
+        chat_id = UUID(data["chat_id"])
+        chat = await self.chats_repo.get_chat_by_id(chat_id, session)
+        if not chat:
+            return
+        if chat.user1_id != user_id and chat.user2_id != user_id:
+            return
+        target_user_id = chat.user2_id if chat.user1_id == user_id else chat.user1_id
+        await self.notify_user(
+            user_id=target_user_id,
+            event_type=RealtimeEventType.CHAT_TYPING_STARTED,
+            data={
+                "chat_id": str(chat_id),
+                "user_id": str(user_id)
+            }
+        )
+
+    async def handle_typing_stopped(self, user_id: UUID, data: dict, session: AsyncSession):
+        chat_id = UUID(data["chat_id"])
+        chat = await self.chats_repo.get_chat_by_id(chat_id, session)
+        if not chat:
+            return
+        if chat.user1_id != user_id and chat.user2_id != user_id:
+            return
+        target_user_id = chat.user2_id if chat.user1_id == user_id else chat.user1_id
+        await self.notify_user(
+            user_id=target_user_id,
+            event_type=RealtimeEventType.CHAT_TYPING_STOPPED,
+            data={
+                "chat_id": str(chat_id),
+                "user_id": str(user_id)
+            }
+        )
