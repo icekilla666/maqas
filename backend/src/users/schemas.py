@@ -38,7 +38,8 @@ class UserOutFull(UserOutShort):
     bio: None | str = Field(default=None, max_length=200)
     followers_count: int
     followings_count: int
-    is_blocked: bool = Field(default=False)
+    blocked_user: bool = Field(default=False)
+    blocked_by_user: bool = Field(default=False)
     is_following: bool = Field(default=False)
     posts_count: int
     class Config:

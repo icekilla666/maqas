@@ -173,6 +173,7 @@ class PostsService:
                     created_at=post.created_at,
                     user=post.user,
                     likes_count=post.likes_count,
+                    comments_count=post.comments_count,
                     is_liked=is_liked
                 )
             )

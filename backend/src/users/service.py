@@ -79,10 +79,12 @@ class UsersService:
                 }
             )
         if optional_user:
-            is_blocked = await self.users_repo.get_block(user.id, optional_user.id, session)
-            if is_blocked:
+            is_blocked = bool(await self.users_repo.get_block(optional_user.id, user.id, session))
+            is_blocked_by = await self.users_repo.get_block(user.id, optional_user.id, session)
+            if is_blocked_by:
                 user_data = UserOutFull.model_validate(user)
-                user_data.is_blocked = True
+                user_data.blocked_by_user = True
+                user_data.blocked_user = is_blocked
                 return {
                     "success": True,
                     "data": user_data
@@ -90,9 +92,11 @@ class UsersService:
             user_data, status = await self.users_repo.get_by_id_with_follow_status(user_id, optional_user.id, session)
             user_with_follow_status = UserOutFull.model_validate(user_data)
             user_with_follow_status.is_following = status
+            full_user = user_with_follow_status
+            full_user.blocked_user = is_blocked
             return {
                 "success": True,
-                "data": user_with_follow_status
+                "data": full_user
             }
         return {
                 "success": True,
