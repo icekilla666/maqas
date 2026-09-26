@@ -18,7 +18,7 @@ def configure_cloudinary():
     )
 
 ALLOWED_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"}
-MAX_SIZE = 5 * 1024 * 1024  
+MAX_SIZE = 15 * 1024 * 1024  
 
 async def upload_image(file: UploadFile, folder: str, owner_id: UUID):
     configure_cloudinary()
