@@ -12,6 +12,7 @@ class CommentsModel(Base):
     content: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_edited: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     replies_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     post_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
     user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)

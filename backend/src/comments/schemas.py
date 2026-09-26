@@ -12,6 +12,7 @@ class CommentOut(BaseModel):
     id: UUID
     content: None | str = Field(default=None, max_length=1000)
     is_deleted: bool = Field(default=False)
+    is_edited: bool = Field(default=False)
     replies_count: int = Field(default=0, ge=0)
     parent_id: UUID | None = Field(default=None)
     created_at: datetime

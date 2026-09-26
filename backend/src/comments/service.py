@@ -159,6 +159,7 @@ class CommentsService:
             )
         if comment_data.content:
             comment.content = comment_data.content
+            comment.is_edited = True
             await session.commit()
         comment_full = CommentOut.model_validate(comment)
         comment_full.is_owner = is_owner
