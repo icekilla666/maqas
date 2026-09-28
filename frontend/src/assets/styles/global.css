@@ -3628,3 +3628,21 @@ textarea {
     font-size: 10px;
   }
 }
+
+@media screen and (max-width: 767px), screen and (pointer: coarse) {
+  input:not([type]),
+  input:is(
+    [type="text"],
+    [type="search"],
+    [type="email"],
+    [type="password"],
+    [type="tel"],
+    [type="url"],
+    [type="number"]
+  ),
+  textarea,
+  select {
+    /* Override smaller component fonts to prevent iOS focus zoom. */
+    font-size: 16px !important;
+  }
+}

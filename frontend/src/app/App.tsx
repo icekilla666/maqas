@@ -6,9 +6,11 @@ import { router } from "../routes/router.tsx";
 import Loader from "@/components/ui/Loaders/Loader.tsx";
 import { useApplyTheme } from "@/store/theme.store.ts";
 import AppToaster from "@/components/ui/AppToaster";
+import { useChatsRealtime } from "@/hooks/useChatsRealtime.ts";
 
 const App = () => {
   useApplyTheme();
+  useChatsRealtime();
 
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
