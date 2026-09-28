@@ -40,10 +40,10 @@ const UserItem = ({
       <div className="user-list__avatar">
         <Avatar size={24} avatar={user.avatar_url} username={user.username} />
       </div>
-      <div className="w-full flex justify-between">
-        <div className="user__info">
+      <div className="user-list__user">
+        <div className="user-list__info">
           <div className="user-list__info-row">
-            <p className="user-list__username">{user.username}</p>
+            <p className="user-list__username" title={user.username}>{user.username}</p>
             <span className="user-list__level">{user.level}</span>
             {!isActive && (
               <span className="user-list__status">
@@ -51,10 +51,11 @@ const UserItem = ({
               </span>
             )}
           </div>
-          {showName && <p className="user-list__name">{user.name}</p>}
+          {showName && <p className="user-list__name" title={user.name}>{user.name}</p>}
         </div>
         {button && (
           <button
+            className="user-list__action"
             type="button"
             onClick={(event) => {
               event.stopPropagation();

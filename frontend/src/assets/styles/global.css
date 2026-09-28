@@ -1245,12 +1245,16 @@ textarea {
 .user-list__items {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .user-list__item {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+  max-width: 100%;
   min-height: 64px;
   padding: 9px 0;
 }
@@ -1290,8 +1294,21 @@ textarea {
 }
 
 .user-list__user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   min-width: 0;
   flex: 1;
+}
+
+.user-list__info {
+  min-width: 0;
+  flex: 1;
+}
+
+.user-list__action {
+  flex: 0 0 auto;
 }
 
 .user-list__info-row {
@@ -1302,6 +1319,7 @@ textarea {
 }
 
 .user-list__username {
+  min-width: 0;
   overflow: hidden;
   color: var(--color-second);
   font-size: 15px;
