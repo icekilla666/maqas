@@ -12,3 +12,5 @@ class RealtimeEventType(StrEnum):
     CHAT_CONNECTED = "chat.connected"
     CHAT_USER_ONLINE = "chat.user.online"
     CHAT_USER_OFFLINE = "chat.user.offline"
+
+    CHAT_LIST_UPDATED = "chat.list.updated"

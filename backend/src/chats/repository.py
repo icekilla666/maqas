@@ -1,7 +1,7 @@
 from sqlalchemy import select, or_, func, update, exists
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, aliased
 
 from src.chats.models import ChatsModel, MessagesModel
 from src.users.models import UsersModel
@@ -19,19 +19,79 @@ class ChatsRepository:
         await session.refresh(chat)
         return chat
     
-    async def get_user_chats(self, user_id: UUID, skip: int, limit: int, session: AsyncSession):
-        unread_messages_count = select(func.count(MessagesModel.id)).where(
-            MessagesModel.chat_id == ChatsModel.id, MessagesModel.sender_id != user_id, MessagesModel.is_read.is_(False)).scalar_subquery().label(
-                "unread_messages_count")
-        query = select(ChatsModel, unread_messages_count).where(
-            or_(ChatsModel.user1_id == user_id, ChatsModel.user2_id == user_id)).options(
-                selectinload(ChatsModel.user1), selectinload(ChatsModel.user2)).offset(skip).limit(limit)
+    async def get_user_chats(
+        self,
+        user_id: UUID,
+        skip: int,
+        limit: int,
+        session: AsyncSession
+    ):
+        LastMessage = aliased(MessagesModel)
+
+        last_message_id = (
+            select(LastMessage.id)
+            .where(LastMessage.chat_id == ChatsModel.id)
+            .order_by(LastMessage.created_at.desc())
+            .limit(1)
+            .correlate(ChatsModel)
+            .scalar_subquery()
+        )
+
+        unread_messages_count = (
+            select(func.count(MessagesModel.id))
+            .where(
+                MessagesModel.chat_id == ChatsModel.id,
+                MessagesModel.sender_id != user_id,
+                MessagesModel.is_read.is_(False)
+            )
+            .correlate(ChatsModel)
+            .scalar_subquery()
+            .label("unread_messages_count")
+        )
+
+        query = (
+            select(
+                ChatsModel,
+                unread_messages_count,
+                LastMessage
+            )
+            .join(
+                LastMessage,
+                LastMessage.id == last_message_id
+            )
+            .where(
+                or_(
+                    ChatsModel.user1_id == user_id,
+                    ChatsModel.user2_id == user_id
+                )
+            )
+            .options(
+                selectinload(ChatsModel.user1),
+                selectinload(ChatsModel.user2)
+            )
+            .order_by(LastMessage.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+
         result = await session.execute(query)
         chats = result.all()
+
+        has_messages = exists().where(
+            MessagesModel.chat_id == ChatsModel.id
+        )
+
         count_query = select(func.count(ChatsModel.id)).where(
-            or_(ChatsModel.user1_id == user_id, ChatsModel.user2_id == user_id))
+            or_(
+                ChatsModel.user1_id == user_id,
+                ChatsModel.user2_id == user_id
+            ),
+            has_messages
+        )
+
         count_result = await session.execute(count_query)
         count = count_result.scalar_one()
+
         return chats, count
     
     async def get_chat_by_id(self, chat_id: UUID, session: AsyncSession):
@@ -94,3 +154,8 @@ class ChatsRepository:
         query = update(MessagesModel).where(MessagesModel.chat_id == chat_id, MessagesModel.sender_id != current_user_id, MessagesModel.is_read.is_(False)).values(is_read=True)
         await session.execute(query)
         await session.commit()
+    
+    async def get_unread_count(self, chat_id: UUID, user_id: UUID, session: AsyncSession) -> int:
+        query = (select(func.count(MessagesModel.id)).where(MessagesModel.chat_id == chat_id, MessagesModel.sender_id != user_id, MessagesModel.is_read.is_(False)))
+        result = await session.execute(query)
+        return result.scalar_one()

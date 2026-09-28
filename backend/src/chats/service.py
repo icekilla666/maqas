@@ -6,7 +6,7 @@ from src.chats.repository import ChatsRepository
 from src.users.repository import UsersRepository
 from src.users.models import UsersModel
 from src.chats.models import ChatsModel, MessagesModel
-from src.chats.schemas import ChatOutFull, MessageCreate, MessageOut, ChatOutShort, MessageUpdate
+from src.chats.schemas import ChatOutFull, MessageCreate, MessageOut, ChatOutShort, MessageUpdate, LastMessageOut
 from src.common.images import delete_image, upload_image
 from src.realtime.service import RealtimeService
 from src.realtime.events import RealtimeEventType
@@ -73,7 +73,7 @@ class ChatsService:
     async def get_my_chats(self, current_user: UsersModel, skip: int, limit: int, session: AsyncSession):
         chats_rows, count = await self.chats_repo.get_user_chats(current_user.id, skip, limit, session)
         chats = []
-        for chat, unread_messages_count in chats_rows:
+        for chat, unread_messages_count, last_message in chats_rows:
             if chat.user1_id == current_user.id:
                 target_user = chat.user2
             else:
@@ -81,8 +81,14 @@ class ChatsService:
             chats.append(
                 ChatOutFull(
                     id=chat.id,
-                    unread_messages_count=unread_messages_count,
-                    target_user=target_user
+                    unread_count=unread_messages_count,
+                    target_user=target_user,
+                    last_message=LastMessageOut(
+                    content=last_message.content,
+                    image_url=last_message.image_url,
+                    created_at=last_message.created_at,
+                    is_owner=last_message.sender_id == current_user.id
+                )
                 )
             )
         return {
@@ -133,6 +139,10 @@ class ChatsService:
                     "error": "CHAT_NOT_FOUND"
                 }
             )
+        print("CURRENT USER:", current_user.id)
+        print("CHAT USER 1:", chat.user1_id)
+        print("CHAT USER 2:", chat.user2_id)
+        print("CHAT ID:", chat.id)
         if chat.user1_id != current_user.id and chat.user2_id != current_user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -193,6 +203,7 @@ class ChatsService:
                 await session.rollback()
                 raise
         await session.commit()
+        unread_count = await self.chats_repo.get_unread_count(chat.id, target_user_id, session)
         owner_message = MessageOut(
             id=created_message.id,
             chat_id=created_message.chat_id,
@@ -220,7 +231,8 @@ class ChatsService:
             event_type=RealtimeEventType.CHAT_MESSAGE_CREATED,
             data={
                 "chat_id": str(chat.id),
-                "message": target_message.model_dump(mode="json")
+                "message": target_message.model_dump(mode="json"),
+                "unread_count": unread_count
             }
         )
         return {

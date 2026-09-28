@@ -23,7 +23,16 @@ class RealtimeConnectionManager:
         connections = self.active_connections.get(user_id)
         if not connections:
             return
+
+        dead_connections = []
+
         for websocket in connections:
-            await websocket.send_json(event)
+            try:
+                await websocket.send_json(event)
+            except Exception:
+                dead_connections.append(websocket)
+
+        for websocket in dead_connections:
+            self.disconnect(user_id, websocket)
 
 realtime_manager = RealtimeConnectionManager()

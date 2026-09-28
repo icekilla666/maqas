@@ -4,6 +4,12 @@ from datetime import datetime
 
 from src.users.schemas import UserOutShort
 
+class LastMessageOut(BaseModel):
+    content: str | None
+    image_url: str | None
+    created_at: datetime
+    is_owner: bool
+
 class ChatOutShort(BaseModel):
     id: UUID
     is_blocking: None | bool = Field(default=False)
@@ -12,8 +18,9 @@ class ChatOutShort(BaseModel):
     
 class ChatOutFull(BaseModel):
     id: UUID
-    unread_messages_count: int = Field(default=0, ge=0)
+    unread_count: int = Field(ge=0)
     target_user: UserOutShort
+    last_message: LastMessageOut | None
     model_config = ConfigDict(from_attributes=True)
 
 class MessageOut(BaseModel):

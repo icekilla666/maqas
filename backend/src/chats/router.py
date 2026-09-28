@@ -61,7 +61,7 @@ async def mark_messages_as_read(
     session: SessionDep,
     chats_service: ChatsServiceDep
 ):
-    marked_messages_data = await chats_service.mark_message_as_read(chat_id, current_user, session)
+    marked_messages_data = await chats_service.mark_messages_as_read(chat_id, current_user, session)
     return marked_messages_data
 
 @chats_router.post("/{chat_id}/messages/create", response_model=ResponseSchema[MessageOut])
