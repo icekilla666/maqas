@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { Check, Copy, Send, X } from "lucide-react";
 import { toast } from "sonner";
 import Avatar from "../Avatar/Avatar";
@@ -19,6 +20,7 @@ const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
     data: followers = [],
     isPending,
     isError,
+    error,
     refetch,
   } = useFollowQuery("followings");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -79,7 +81,7 @@ const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
             </div>
           ) : isError ? (
             <div className="post-share-modal__status" role="status">
-              <p>Не удалось загрузить подписчиков</p>
+              <p>{getApiErrorMessage(error, "Не удалось загрузить подписчиков")}</p>
               <StrokeButton type="button" onClick={() => void refetch()}>
                 Повторить
               </StrokeButton>

@@ -6,6 +6,7 @@ import {
   ADD_POSTS_PAGE,
   BLACKLIST_PAGE,
   CHATS_PAGE,
+  CHAT_DETAIL,
   EDIT_PAGE,
   FAQ_PAGE,
   FOLLOW_PAGE,
@@ -22,6 +23,7 @@ import {
 import AccountPage from "../pages/Account/AccountPage";
 import AuthPage from "../pages/Auth/AuthPage";
 import ChatsPage from "../pages/Chats/ChatsPage";
+import ChatPage from "../pages/Chats/ChatPage";
 import SettingPage from "../pages/Settings/SettingPage";
 import VerifyEmailPage from "../pages/VerifyEmail/VerifyEmailPage";
 import VerifyEmailPendingPage from "../pages/VerifyEmail/VerifyEmailPendingPage";
@@ -78,6 +80,11 @@ export const router = createBrowserRouter([
       { path: relativePath(EDIT_PAGE), element: <EditPage /> },
       { path: relativePath(BLACKLIST_PAGE), element: <BlackListPage /> },
       { path: relativePath(CHATS_PAGE), element: <ChatsPage /> },
+      {
+        path: relativePath(CHAT_DETAIL),
+        element: <ChatPage />,
+        handle: { hideNavigation: true },
+      },
       { path: relativePath(SETTINGS_PAGE), element: <SettingPage /> },
     ],
   },

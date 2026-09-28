@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import { getApiErrorMessage } from "@/utils/apiError";
 import {
   formatZodErrors,
   loginSchema,
@@ -62,18 +63,13 @@ export const useAuth = (isLogin: boolean) => {
         await submitFn();
         clearForm();
         setShowErrors(false);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
+      } catch (error) {
         setFormData((prev) => ({
           ...prev,
           password: "",
           password_confirm: "",
         }));
-        if (error) {
-          setServerError(error.response?.data?.detail.message);
-        } else {
-          setServerError("Неизвестная ошибка");
-        }
+        setServerError(getApiErrorMessage(error));
       } finally {
         setIsLoading(false);
       }

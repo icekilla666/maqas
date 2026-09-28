@@ -147,3 +147,51 @@ export type AddPostProps = {
 };
 
 export type CreatedPost = PostDetails;
+
+
+export type ChatUserData = {
+  id: string;
+  username: string;
+  name: string;
+  avatar_url: string | null;
+  level: string;
+  status: string;
+};
+
+export type ChatShortData = {
+  id: string;
+  is_blocking: boolean | null;
+  is_blocked: boolean | null;
+};
+
+export type ChatData = {
+  id: string;
+  unread_messages_count: number;
+  target_user: ChatUserData;
+};
+
+export type ChatMessageData = {
+  id: string;
+  chat_id: string;
+  content: string | null;
+  image_url: string | null;
+  is_read: boolean;
+  created_at: string;
+  parent_id: string | null;
+  sender: ChatUserData;
+  is_owner: boolean | null;
+};
+
+export type CreateChatMessageProps = {
+  chat_id: string;
+  content?: string | null;
+  parent_id?: string | null;
+  image?: File | null;
+};
+
+export type UpdateChatMessageProps = {
+  message_id: string;
+  content?: string | null;
+  image?: File | null;
+  image_removed: boolean;
+};

@@ -5,6 +5,7 @@ import StrokeButton from "@/components/ui/Buttons/StrokeButton";
 import { authApi } from "@/services/auth.api";
 import { useEffect, useState } from "react";
 import Loader from "@/components/ui/Loaders/Loader";
+import { getApiErrorMessage } from "@/utils/apiError";
 
 interface VerifyEmailProps {
   variant: "wait" | "success" | "error";
@@ -44,8 +45,8 @@ const VerifyEmailWrapper = ({
       const response = await authApi.resendEmail(email);
       setMessage(response.message);
       setCooldown(60);
-    } catch {
-      setMessage("Что-то пошло не так. Попробуйте позже");
+    } catch (error) {
+      setMessage(getApiErrorMessage(error, "Что-то пошло не так. Попробуйте позже"));
     } finally {
       setLoading(false);
     }

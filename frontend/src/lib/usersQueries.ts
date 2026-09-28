@@ -1,3 +1,4 @@
+import { showApiError } from "@/utils/apiError";
 import { usersApi } from "@/services/users.api";
 import type {
   AccountData,
@@ -66,12 +67,12 @@ export const useFollowQuery = (tab: FollowTab, userId?: string) => {
   });
 };
 
-export const useUsersFindQuery = (username: string) => {
+export const useUsersFindQuery = (username: string, minLength = 2) => {
   const normalizedUsername = username.trim();
   return useQuery({
     queryKey: userKeys.search(normalizedUsername),
     queryFn: () => usersApi.findUser({ username: normalizedUsername }),
-    enabled: normalizedUsername.length >= 2,
+    enabled: normalizedUsername.length >= minLength,
   });
 };
 
@@ -82,6 +83,7 @@ export const useBlockUserMutation = () => {
 
   return useMutation({
     mutationFn: usersApi.blockUser,
+    onError: showApiError,
     onSuccess: (_, userId) => {
       queryClient.invalidateQueries({ queryKey: userKeys.blacklist() });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
@@ -99,6 +101,7 @@ export const useUnblockUserMutation = () => {
 
   return useMutation({
     mutationFn: usersApi.unblockUser,
+    onError: showApiError,
     onSuccess: (_, userId) => {
       queryClient.setQueryData<BlackListUserData[]>(
         userKeys.blacklist(),
@@ -153,7 +156,8 @@ export const useFollowMutation = () => {
       return { previousUser, previousMe };
     },
 
-    onError: (_error, { userId }, context) => {
+    onError: (error, { userId }, context) => {
+      showApiError(error);
       if (context?.previousUser) {
         queryClient.setQueryData(userKeys.detail(userId), context.previousUser);
       }
@@ -177,6 +181,7 @@ export const useUnfollowMutation = () => {
 
   return useMutation({
     mutationFn: usersApi.unfollowUser,
+    onError: showApiError,
     onSuccess: (_, userId) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
@@ -190,6 +195,7 @@ export const useUpdateMeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: usersApi.updateMe,
+    onError: showApiError,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
@@ -200,6 +206,7 @@ export const useUploadAvatarMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: usersApi.uploadAvatar,
+    onError: showApiError,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
@@ -210,6 +217,7 @@ export const useDeleteAvatarMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: usersApi.deleteAvatar,
+    onError: showApiError,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },

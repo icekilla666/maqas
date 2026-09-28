@@ -32,6 +32,7 @@ const FollowList = () => {
     data: users,
     isLoading,
     isError,
+    error,
     isFetching,
   } = useFollowQuery(activeTab, targetUserId);
   const { data: profile } = useMeQuery();
@@ -94,6 +95,7 @@ const FollowList = () => {
         <EmptyState
           icon={<TriangleAlert />}
           text="Не удалось загрузить список"
+          error={error}
           variant="error"
         />
       ) : users.length === 0 ? (

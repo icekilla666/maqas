@@ -3,7 +3,7 @@ import TitlePage from "@/components/common/TitlePage";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
 import Loader from "@/components/ui/Loaders/Loader";
 import ModalActions from "@/components/ui/Modals/ModalActions";
-import { Ban, CircleX } from "lucide-react";
+import { Ban, CircleX, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import UsersList from "@/components/common/UsersList/UsersList";
 import {
@@ -14,7 +14,7 @@ import {
 import type { BlackListUserData } from "@/types/api.types";
 
 const BlackListPage = () => {
-  const { data: users = [], isLoading, isFetching } = useBlackListQuery();
+  const { data: users = [], isLoading, isFetching, isError, error, refetch } = useBlackListQuery();
   const { data: profile } = useMeQuery();
   const unblockMutation = useUnblockUserMutation();
   const [selectedUser, setSelectedUser] = useState<BlackListUserData | null>(
@@ -59,7 +59,10 @@ const BlackListPage = () => {
           профиль и оставлять вам комментарии. Вы не будете видеть их посты в
           ленте рекомендаций.
         </p>
-        {!users.length && (
+        {isError && (
+          <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить чёрный список" error={error} isError onRefetch={() => void refetch()} />
+        )}
+        {!isError && !users.length && (
           <EmptyState
             icon={<Ban />}
             text="Черный список пуст. Здесь будут аккаунты, которые ты заблокируешь"

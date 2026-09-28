@@ -2,7 +2,7 @@ import { commentsApi } from "@/services/comments.api";
 import { commentsKeys, postsKeys } from "@/utils/constants";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
-import { toast } from "sonner";
+import { showApiError } from "@/utils/apiError";
 
 export const useCommentsQuery = (id?: string) => {
   return useQuery({
@@ -41,9 +41,7 @@ export const useCommentSendMutation = () => {
     mutationKey: commentsKeys.sendComment(),
     mutationFn: commentsApi.sendPostComment,
 
-    onError: () => {
-      toast.error("Что-то пошло не так");
-    },
+    onError: showApiError,
     onSuccess: invalidateCommentRelatedQueries,
   });
 };
@@ -53,9 +51,7 @@ export const useCommentDeleteMutation = () => {
     mutationKey: commentsKeys.deleteComment(),
     mutationFn: commentsApi.deletePostComment,
 
-    onError: () => {
-      toast.error("Что-то пошло не так");
-    },
+    onError: showApiError,
     onSuccess: invalidateCommentRelatedQueries,
   });
 };
@@ -65,9 +61,7 @@ export const useCommentUpdateMutation = () => {
     mutationKey: commentsKeys.updateComment(),
     mutationFn: commentsApi.updatePostComment,
 
-    onError: () => {
-      toast.error("Что-то пошло не так");
-    },
+    onError: showApiError,
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: commentsKeys.all });
     },

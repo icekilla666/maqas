@@ -6,7 +6,7 @@ import Loader from "@/components/ui/Loaders/Loader";
 import EditForm from "./components/EditForm";
 
 const EditPage = () => {
-  const { data: profile, isLoading } = useMeQuery();
+  const { data: profile, isLoading, error } = useMeQuery();
   if (isLoading) return <Loader />; // скелет
   return (
     <section className="wrapper">
@@ -18,6 +18,7 @@ const EditPage = () => {
           <EmptyState
             icon={<TriangleAlert />}
             text={"Не удалось загрузить профиль"}
+            error={error}
             variant="error"
           />
         )}

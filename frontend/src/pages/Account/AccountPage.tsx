@@ -17,7 +17,7 @@ type AccountActions = "posts" | "likes";
 
 const AccountPage = () => {
   const navigate = useNavigate();
-  const { data: profile, isLoading } = useMeQuery();
+  const { data: profile, isLoading, error: profileError } = useMeQuery();
   const [action, setAction] = useState<AccountActions>("posts");
   const myPosts = useMyPostsQuery();
   const likedPosts = useMyLikedQueries();
@@ -75,6 +75,7 @@ const AccountPage = () => {
                 <EmptyState
                   variant="error"
                   text="Не удалось загрузить посты"
+                  error={activePosts.error}
                   icon={<TriangleAlert />}
                 />
               ) : activePosts.data.length ? (
@@ -88,6 +89,7 @@ const AccountPage = () => {
           <EmptyState
             icon={<TriangleAlert />}
             text={"Не удалось загрузить профиль"}
+            error={profileError}
             variant="error"
           />
         )}

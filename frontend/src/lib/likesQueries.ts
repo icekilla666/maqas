@@ -2,7 +2,7 @@ import { likesApi } from "@/services/likes.api";
 import { likesKeys, postsKeys } from "@/utils/constants";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
-import { toast } from "sonner";
+import { showApiError } from "@/utils/apiError";
 
 type SetPostLikeVariables = {
   id: string;
@@ -40,9 +40,7 @@ export const usePostLikeMutation = () => {
     mutationFn: ({ id, nextIsLiked }: SetPostLikeVariables) => {
       return nextIsLiked ? likesApi.likePost(id) : likesApi.unlikePost(id);
     },
-    onError: () => {
-      toast.error("Что-то пошло не так");
-    },
+    onError: showApiError,
     onSettled: invalidateLikeRelatedQueries,
   });
 };

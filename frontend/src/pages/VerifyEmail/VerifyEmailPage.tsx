@@ -3,7 +3,7 @@ import VerifyEmailWrapper from "./components/VerifyEmailWrapper";
 import { LOGIN_PAGE } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import { authApi } from "@/services/auth.api";
-import axios from "axios";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { useAuthStore } from "@/store/auth.store";
 
 const VerifyEmailPage = () => {
@@ -38,14 +38,7 @@ const VerifyEmailPage = () => {
           setError(response.message);
         }
       } catch (error) {
-        if (
-          axios.isAxiosError(error) &&
-          typeof error.response?.data?.detail.message === "string"
-        ) {
-          setError(error.response?.data?.detail.message);
-        } else {
-          setError("Неизвестная ошибка! Попробуйте позже");
-        }
+        setError(getApiErrorMessage(error, "Неизвестная ошибка! Попробуйте позже"));
         setPendingEmail(null);
         setStatus("error");
       }

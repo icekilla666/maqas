@@ -1,28 +1,42 @@
+import { MessageCircle, TriangleAlert } from "lucide-react";
 import TitlePage from "@/components/common/TitlePage";
-import UsersList from "@/components/common/UsersList/UsersList";
-import SearchInput from "@/components/ui/Inputs/SearchInput";
-import Loader from "@/components/ui/Loaders/Loader";
-import { useDebounce } from "@/hooks/useDebounce";
+import EmptyState from "@/components/common/EmptyState";
+import { useMyChatsQuery } from "@/lib/chatsQueries";
+import ChatList from "./components/ChatList";
 
-import { useUsersFindQuery } from "@/lib/usersQueries";
-import { useState } from "react";
+import Loader from "@/components/ui/Loaders/Loader";
+import ChatSearch from "./components/ChatSearch";
 
 const ChatsPage = () => {
-  const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
-  const { data: users = [], isLoading } = useUsersFindQuery(debouncedSearch);
+  const { data: chats, isPending, isError, error, refetch } = useMyChatsQuery();
   return (
-    <section className="wrapper">
-      <div className="container">
+    <section className="wrapper chats-page">
+      <div className="container chats-page__container">
         <TitlePage title="Чаты" />
-        <SearchInput
-          className="w-full mb-3"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="введите юзернейм"
-        />
-        {isLoading && <Loader />}
-        {users ? <UsersList users={users} /> : <h1>ниче не надйено</h1>}
+        <ChatSearch chats={chats ?? []} />
+        {isError && (
+          <EmptyState
+            icon={<TriangleAlert />}
+            text="Не удалось загрузить чаты"
+            error={error}
+            isError={isError}
+            onRefetch={() => void refetch()}
+          />
+        )}
+        {/* скелет */}
+        {isPending && <Loader />}
+
+        {chats &&
+          (chats.length ? (
+            <ChatList chats={chats} />
+          ) : (
+            <div className="chats-page__empty">
+              <EmptyState
+                icon={<MessageCircle />}
+                text={"Здесь будут ваши переписки"}
+              />
+            </div>
+          ))}
       </div>
     </section>
   );

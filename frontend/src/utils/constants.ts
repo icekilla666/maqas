@@ -11,6 +11,7 @@ export const ADD_POSTS_PAGE = "/add-post";
 export const POSTS_PAGE = "/posts";
 export const POST_DETAIL = `${POSTS_PAGE}/:id`;
 export const CHATS_PAGE = "/chats";
+export const CHAT_DETAIL = `${CHATS_PAGE}/:chat_id`;
 export const SETTINGS_PAGE = "/settings";
 export const FAQ_PAGE = `${SETTINGS_PAGE}/faq`;
 export const EDIT_PAGE = `${SETTINGS_PAGE}/edit`;
@@ -18,6 +19,7 @@ export const BLACKLIST_PAGE = `${SETTINGS_PAGE}/blacklist`;
 export const VERIFY_EMAIL_PAGE = "/verify-email";
 export const VERIFY_EMAIL_PENDING_PAGE = "/verify-email/pending";
 
+// тэги
 export const POST_TAGS: PostTag[] = [
   "спорт",
   "искусство",
@@ -101,4 +103,17 @@ export const commentsKeys = {
   sendComment: () => [...commentsKeys.all, "send-comment"] as const,
   updateComment: () => [...commentsKeys.all, "update-comment"] as const,
   deleteComment: () => [...commentsKeys.all, "delete-comment"] as const,
+};
+
+export const chatsKeys = {
+  all: ["chats"] as const,
+  myChats: () => [...chatsKeys.all, "my-chats"] as const,
+  chatMessages: (chat_id?: string) =>
+    [...chatsKeys.all, "chat-messages", chat_id] as const,
+  createChat: () => [...chatsKeys.all, "create-chat"] as const,
+  createMessage: () => [...chatsKeys.all, "create-message"] as const,
+  updateMessage: () => [...chatsKeys.all, "update-message"] as const,
+  deleteMessage: () => [...chatsKeys.all, "delete-message"] as const,
+  markMessagesAsRead: () => [...chatsKeys.all, "mark-messages-as-read"] as const,
+  deleteChat: () => [...chatsKeys.all, "delete-chat"] as const,
 };

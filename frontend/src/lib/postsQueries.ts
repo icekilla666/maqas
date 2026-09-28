@@ -1,3 +1,4 @@
+import { showApiError } from "@/utils/apiError";
 import { postsApi } from "@/services/posts.api";
 import type { PostFeed } from "@/types/api.types";
 import { postsKeys } from "@/utils/constants";
@@ -47,6 +48,7 @@ export const useCreatePostMutation = () => {
     mutationKey: postsKeys.createPost(),
     mutationFn: postsApi.createPost,
 
+    onError: showApiError,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: postsKeys.all,

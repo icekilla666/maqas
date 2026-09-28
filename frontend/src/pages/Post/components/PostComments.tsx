@@ -1,4 +1,5 @@
 import CommentInput from "@/components/ui/Inputs/CommentInput";
+import EmptyState from "@/components/common/EmptyState";
 import Loader from "@/components/ui/Loaders/Loader";
 import {
   useCommentSendMutation,
@@ -8,15 +9,17 @@ import { queryClient } from "@/lib/queryClient";
 import { commentsApi } from "@/services/comments.api";
 import type { CommentPreview } from "@/types/api.types";
 import { commentsKeys } from "@/utils/constants";
-import { Pencil, X } from "lucide-react";
+import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import CommentsList from "./CommentsList";
 
 interface PostCommentsProps {
   postId: string;
   comments: CommentPreview[];
   isLoading?: boolean;
+  error?: unknown;
 }
 
 type ComposerTarget = {
@@ -28,6 +31,7 @@ const PostComments = ({
   postId,
   comments,
   isLoading = false,
+  error,
 }: PostCommentsProps) => {
   const [value, setValue] = useState("");
   const [target, setTarget] = useState<ComposerTarget | null>(null);
@@ -90,10 +94,10 @@ const PostComments = ({
       }
       setValue(full.content);
       setIsEditLoading(false);
-    } catch {
+    } catch (error) {
       if (request !== editRequest.current) return;
       resetComposer();
-      toast.error("Не удалось загрузить текст комментария");
+      toast.error(getApiErrorMessage(error, "Не удалось загрузить текст комментария"));
     }
   };
 
@@ -123,6 +127,8 @@ const PostComments = ({
           <div className="post-comments__loader">
             <Loader width={34} />
           </div>
+        ) : error ? (
+          <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить комментарии" error={error} isError />
         ) : (
           <CommentsList
             comments={comments}

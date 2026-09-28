@@ -1,6 +1,8 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
+import { useCreateChatMutation } from "@/lib/chatsQueries";
 import type { UserData } from "@/types/api.types";
 import { MessageCircle, UserRoundPlus, UserRoundX } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface UserActionsProps {
   profile: UserData;
@@ -8,11 +10,21 @@ interface UserActionsProps {
   isFollowDisabled?: boolean;
 }
 
-const UserActions = ({ profile, onFollow, isFollowDisabled }: UserActionsProps) => {
+const UserActions = ({
+  profile,
+  onFollow,
+  isFollowDisabled,
+}: UserActionsProps) => {
+  const navigate = useNavigate();
+  const createChat = useCreateChatMutation();
+  const handleChat = () => {
+    createChat.mutate(profile.id);
+    navigate(`/chats/`);
+  };
   return (
     <div className="flex w-full gap-2.5">
       <MainButton
-        onClick={() => console.log("chat")}
+        onClick={handleChat}
         icon={<MessageCircle />}
         size="small"
         align="center"

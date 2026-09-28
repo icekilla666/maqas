@@ -1,3 +1,4 @@
+import { showApiError } from "@/utils/apiError";
 import { authApi } from "@/services/auth.api";
 import { usersApi } from "@/services/users.api";
 import { useAuthStore } from "@/store/auth.store";
@@ -49,6 +50,7 @@ export const useLogoutMutation = () => {
   return useMutation({
     mutationKey: authKeys.logout(),
     mutationFn: authApi.logout,
+    onError: showApiError,
     onSettled: async () => {
       setUser(false, null);
       await clearServerCache(queryClient);
@@ -63,6 +65,7 @@ export const useLogoutAllMutation = () => {
   return useMutation({
     mutationKey: authKeys.logoutAll(),
     mutationFn: authApi.logoutAll,
+    onError: showApiError,
     onSettled: async () => {
       setUser(false, null);
       await clearServerCache(queryClient);
@@ -77,6 +80,7 @@ export const useDeleteMeMutation = () => {
   return useMutation({
     mutationKey: authKeys.deleteMe(),
     mutationFn: usersApi.deleteMe,
+    onError: showApiError,
     onSuccess: async () => {
       setUser(false, null);
       await clearServerCache(queryClient);
@@ -88,5 +92,6 @@ export const useResendEmailMutation = () => {
   return useMutation({
     mutationKey: authKeys.resendEmail(),
     mutationFn: (email: string) => authApi.resendEmail(email),
+    onError: showApiError,
   });
 };

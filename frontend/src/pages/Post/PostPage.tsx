@@ -14,10 +14,10 @@ import { useAnchorScroll } from "@/hooks/useAnchorScroll";
 const PostPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: post, isLoading, isError } = usePostQuery(id);
-  const { data: comments = [], isLoading: isCommentsLoading } =
+  const { data: post, isLoading, isError, error } = usePostQuery(id);
+  const { data: comments = [], isLoading: isCommentsLoading, error: commentsError } =
     useCommentsQuery(id);
-  const { data: likers = [] } = useLikersQuery(id);
+  const { data: likers = [], error: likersError } = useLikersQuery(id);
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
 
   useAnchorScroll("comments", Boolean(post) && !isError && !isCommentsLoading);
@@ -46,17 +46,20 @@ const PostPage = () => {
             postId={post.id}
             comments={comments}
             isLoading={isCommentsLoading}
+            error={commentsError}
           />
         </div>
       ) : (
         <EmptyState
           icon={<TriangleAlert />}
           text="Не удалось загрузить пост"
+          error={error}
           variant="error"
         />
       )}
       <PostLikersModal
         likers={likers}
+        error={likersError}
         onClose={() => setIsLikersModalOpen(false)}
         open={isLikersModalOpen}
       />

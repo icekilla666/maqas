@@ -13,13 +13,13 @@ import { useAnchorScroll } from "@/hooks/useAnchorScroll";
 
 const UserPage = () => {
   const { id } = useParams();
-  const { isLoading, data: profile } = useUserQuery(id);
+  const { isLoading, data: profile, error: profileError } = useUserQuery(id);
   const toggleFollowMutation = useFollowMutation();
   const [isFollowLocked, setIsFollowLocked] = useState(false);
   const followLockRef = useRef(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
-  const { data: posts = [], isPending, isError } = useUserPostsQuery(id);
+  const { data: posts = [], isPending, isError, error: postsError } = useUserPostsQuery(id);
   useAnchorScroll("publications", Boolean(profile) && !profile?.is_blocked && !isPending);
   useEffect(() => {
     return () => {
@@ -73,6 +73,7 @@ const UserPage = () => {
                   <EmptyState
                     variant="error"
                     text="Не удалось загрузить посты"
+                    error={postsError}
                     icon={<TriangleAlert />}
                   />
                 ) : posts.length > 0 ? (
@@ -91,6 +92,7 @@ const UserPage = () => {
           <EmptyState
             icon={<TriangleAlert />}
             text={"Не удалось загрузить профиль"}
+            error={profileError}
             variant="error"
           />
         )}

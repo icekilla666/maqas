@@ -25,6 +25,7 @@ const HomePage = () => {
   const {
     data: feed = [],
     isError,
+    error,
     isPending,
   } = usePostFeedQuery({
     feed_type: followingOnly ? "following" : "all",
@@ -66,6 +67,7 @@ const HomePage = () => {
           <EmptyState
             icon={<TriangleAlert />}
             text="Не удалось загрузить публикации"
+            error={error}
             variant="error"
           />
         ) : posts.length ? (

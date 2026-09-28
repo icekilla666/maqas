@@ -1,4 +1,5 @@
 import Avatar from "@/components/common/Avatar/Avatar";
+import EmptyState from "@/components/common/EmptyState";
 import {
   useCommentDeleteMutation,
   useFullComment,
@@ -6,7 +7,7 @@ import {
 } from "@/lib/commentsQueries";
 import type { CommentPreview } from "@/types/api.types";
 import DateTime from "@/components/common/DateTime";
-import { ChevronDown, Pencil, Reply, Trash2 } from "lucide-react";
+import { ChevronDown, Pencil, Reply, Trash2, TriangleAlert } from "lucide-react";
 import { useId, useState } from "react";
 import ItemMenu from "@/components/common/ItemMenu";
 import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenu";
@@ -27,8 +28,8 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
   const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
   const isReplies = comment.replies_count > 0;
-  const { data: full } = useFullComment(comment.id, isFullComment);
-  const { data: replies = [] } = useRepliesComment(comment.id, isReplies);
+  const { data: full, error: fullError, refetch: refetchFull } = useFullComment(comment.id, isFullComment);
+  const { data: replies = [], error: repliesError, refetch: refetchReplies } = useRepliesComment(comment.id, isReplies);
   const commentText = comment.is_deleted
     ? "Комментарий удален"
     : isFullComment
@@ -118,6 +119,9 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
                 </>
               )}
           </p>
+          {isFullComment && fullError && (
+            <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить комментарий" error={fullError} isError onRefetch={() => void refetchFull()} />
+          )}
           {isReplies && (
             <button
               className="comment-item__replies-toggle"
@@ -143,6 +147,9 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
           className="comment-item__replies"
           hidden={!isRepliesOpen}
         >
+          {repliesError && (
+            <li><EmptyState icon={<TriangleAlert />} text="Не удалось загрузить ответы" error={repliesError} isError onRefetch={() => void refetchReplies()} /></li>
+          )}
           {replies.map((reply) => (
             <CommentItem
               comment={reply}

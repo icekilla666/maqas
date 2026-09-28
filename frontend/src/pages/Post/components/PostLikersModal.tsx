@@ -1,18 +1,21 @@
 import UsersList from "@/components/common/UsersList/UsersList";
+import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/ui/Modals/Modal";
 import type { LikersData } from "@/types/api.types";
-import { Heart, X } from "lucide-react";
+import { Heart, TriangleAlert, X } from "lucide-react";
 
 interface PostLikersModalProps {
   open: boolean;
   likers: LikersData[];
   onClose: () => void;
+  error?: unknown;
 }
 
 const PostLikersModal = ({
   open,
   likers,
   onClose,
+  error,
 }: PostLikersModalProps) => {
   return (
     <Modal className="modal--post-likers" onClose={onClose} open={open}>
@@ -32,7 +35,9 @@ const PostLikersModal = ({
           </button>
         </div>
 
-        {likers.length > 0 ? (
+        {error ? (
+          <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить список лайкнувших" error={error} isError />
+        ) : likers.length > 0 ? (
           <UsersList users={likers} />
         ) : (
           <p className="post-likers-modal__empty">Лайков пока нет</p>
