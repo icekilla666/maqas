@@ -11,7 +11,7 @@ export const useChatsRealtime = () => {
 
     const url = new URL("/api/ws/chats", window.location.origin);
 
-    url.protocol = window.location.protocol === "https" ? "wss" : "ws";
+    url.protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     url.searchParams.set("token", accessToken);
 
     const socket = new WebSocket(url);
