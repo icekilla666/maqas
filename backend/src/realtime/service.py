@@ -46,10 +46,7 @@ class RealtimeService:
             await self.manager.connect(user_id, websocket)
 
             while True:
-                try:
-                    message = await websocket.receive_json()
-                except Exception:
-                    continue
+                message = await websocket.receive_json()
 
                 event_type = message.get("type")
                 data = message.get("data", {})
