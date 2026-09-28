@@ -4,7 +4,6 @@ import { CHAT_DETAIL } from "@/utils/constants";
 import ChatUserInfo from "./ChatUserInfo";
 
 const ChatList = ({ chats }: { chats: ChatData[] }) => {
-  console.log(chats)
   return (
     <ul className="chat-list">
       {chats.map((chat) => (

@@ -83,8 +83,6 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
       <ChatHeader
         user={user}
         onDelete={() => setIsDeleteChatOpen(true)}
-        onRefresh={() => void messagesQuery.refetch()}
-        isRefreshing={messagesQuery.isFetching}
         disabled={isBusy}
       />
       <ChatMessages

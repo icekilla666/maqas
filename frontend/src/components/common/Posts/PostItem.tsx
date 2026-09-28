@@ -68,8 +68,6 @@ const PostItem = ({
           onCommentsClick();
           return;
         }
-        console.log(post.comments_count)
-        console.log("comm");
       },
     },
     {
