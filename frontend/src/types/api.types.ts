@@ -116,20 +116,14 @@ export type SendCommentsProps = {
 
 export type CommentData = {
   id: string;
+  content: string | null;
   is_deleted: boolean;
+  is_edited: boolean;
   replies_count: number;
   parent_id: string | null;
   created_at: string;
   is_owner: boolean;
   user: PostUserData;
-};
-
-export type CommentPreview = CommentData & {
-  preview: string | null;
-};
-
-export type CommentFull = CommentData & {
-  content: string | null;
 };
 
 export type PostFeed = {

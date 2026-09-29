@@ -1,10 +1,10 @@
-import type { CommentPreview } from "@/types/api.types";
+import type { CommentData } from "@/types/api.types";
 import CommentItem from "./CommentItem";
 
 interface CommentsListProps {
-  comments: CommentPreview[];
-  onReply: (comment: CommentPreview) => void;
-  onEdit: (comment: CommentPreview) => void;
+  comments: CommentData[];
+  onReply: (comment: CommentData) => void;
+  onEdit: (comment: CommentData) => void;
 }
 
 const CommentsList = ({ comments, onReply, onEdit }: CommentsListProps) => {

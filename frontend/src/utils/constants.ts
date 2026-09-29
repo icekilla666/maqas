@@ -96,8 +96,6 @@ export const commentsKeys = {
   all: ["comments"] as const,
   comments: (id?: string) =>
     [...commentsKeys.all, "post-comments", id] as const,
-  fullComment: (comment_id?: string) =>
-    [...commentsKeys.all, "full-comment", comment_id] as const,
   repliesComment: (comment_id?: string) =>
     [...commentsKeys.all, "replies-comment", comment_id] as const,
   sendComment: () => [...commentsKeys.all, "send-comment"] as const,

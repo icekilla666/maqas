@@ -1,5 +1,5 @@
 import type {
-  CommentPreview,
+  CommentData,
   LikersData,
   PostDetails,
   PostPreview,
@@ -173,11 +173,12 @@ export const mockPostPreviews: PostPreview[] = mockPosts.map(
 
 export const mockPostLikers: LikersData[] = mockLikerUsers;
 
-export const mockPostComments: CommentPreview[] = [
+export const mockPostComments: CommentData[] = [
   {
     id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
-    preview:
+    content:
       "Очень нравится, что сетап без лишних деталей. Сразу видно, где рабочая зона, а где просто декор.",
+    is_edited: false,
     is_deleted: false,
     replies_count: 2,
     parent_id: null,
@@ -187,7 +188,8 @@ export const mockPostComments: CommentPreview[] = [
   },
   {
     id: "8b7d9551-7311-4c0a-b944-4e9a4f0fd8c9",
-    preview: "Да, самое сложное было убрать все лишнее со стола.",
+    content: "Да, самое сложное было убрать все лишнее со стола.",
+    is_edited: false,
     is_deleted: false,
     replies_count: 0,
     parent_id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
@@ -197,8 +199,9 @@ export const mockPostComments: CommentPreview[] = [
   },
   {
     id: "9526c2a1-16cf-4575-bc30-285d408c4f2e",
-    preview:
+    content:
       "Монитор какой модели? По фото выглядит прям удобно для двух окон.",
+    is_edited: false,
     is_deleted: false,
     replies_count: 0,
     parent_id: "2f2e7c61-74b7-4980-9f0d-dbc5fbb3e4a8",
@@ -208,8 +211,9 @@ export const mockPostComments: CommentPreview[] = [
   },
   {
     id: "b80fd18b-e3c9-477a-a838-20b34f56e8f5",
-    preview:
+    content:
       "По цвету света плюсую. Холодная лампа вечером быстро убивает концентрацию.",
+    is_edited: false,
     is_deleted: false,
     replies_count: 1,
     parent_id: null,
@@ -219,7 +223,8 @@ export const mockPostComments: CommentPreview[] = [
   },
   {
     id: "2798462a-26fb-409f-bdd2-8065545b9dd5",
-    preview: "Я перешел на теплый свет и стало легче сидеть после полуночи.",
+    content: "Я перешел на теплый свет и стало легче сидеть после полуночи.",
+    is_edited: false,
     is_deleted: false,
     replies_count: 0,
     parent_id: "b80fd18b-e3c9-477a-a838-20b34f56e8f5",
@@ -229,7 +234,8 @@ export const mockPostComments: CommentPreview[] = [
   },
   {
     id: "2edcddcf-d8c9-453d-89b7-887fae94b30c",
-    preview: "Комментарий удален",
+    content: null,
+    is_edited: false,
     is_deleted: true,
     replies_count: 0,
     parent_id: null,

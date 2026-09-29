@@ -1,18 +1,13 @@
-import type { CommentFull, CommentPreview, SendCommentsProps } from "@/types/api.types";
+import type { CommentData, SendCommentsProps } from "@/types/api.types";
 import { api } from "./api";
 
 export const commentsApi = {
-  getPostComments: async (id?: string): Promise<CommentPreview[]> => {
+  getPostComments: async (id?: string): Promise<CommentData[]> => {
     const response = await api.get(`/api/comments/post/${id}`);
     return response.data.data;
   },
 
-  getFullComment: async (comment_id?: string): Promise<CommentFull> => {
-    const response = await api.get(`/api/comments/${comment_id}`);
-    return response.data.data;
-  },
-
-  getRepliesComment: async (comment_id?: string): Promise<CommentPreview[]> => {
+  getRepliesComment: async (comment_id?: string): Promise<CommentData[]> => {
     const response = await api.get(`/api/comments/${comment_id}/replies`);
     return response.data.data;
   },
@@ -31,7 +26,7 @@ export const commentsApi = {
   }: {
     comment_id: string;
     content: string;
-  }): Promise<CommentFull> => {
+  }): Promise<CommentData> => {
     const response = await api.patch(`/api/comments/${comment_id}`, { content });
     return response.data.data;
   },

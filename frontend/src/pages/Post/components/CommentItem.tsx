@@ -2,10 +2,9 @@ import Avatar from "@/components/common/Avatar/Avatar";
 import EmptyState from "@/components/common/EmptyState";
 import {
   useCommentDeleteMutation,
-  useFullComment,
   useRepliesComment,
 } from "@/lib/commentsQueries";
-import type { CommentPreview } from "@/types/api.types";
+import type { CommentData } from "@/types/api.types";
 import DateTime from "@/components/common/DateTime";
 import { ChevronDown, Pencil, Reply, Trash2, TriangleAlert } from "lucide-react";
 import { useId, useState } from "react";
@@ -14,12 +13,14 @@ import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenu";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 
 interface CommentItemProps {
-  comment: CommentPreview;
-  replies?: CommentPreview[];
+  comment: CommentData;
+  replies?: CommentData[];
   level?: 0 | 1;
-  onReply: (comment: CommentPreview) => void;
-  onEdit: (comment: CommentPreview) => void;
+  onReply: (comment: CommentData) => void;
+  onEdit: (comment: CommentData) => void;
 }
+
+const COMMENT_PREVIEW_LENGTH = 40;
 
 const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) => {
   const [isRepliesOpen, setIsRepliesOpen] = useState(false);
@@ -28,13 +29,14 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
   const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
   const isReplies = comment.replies_count > 0;
-  const { data: full, error: fullError, refetch: refetchFull } = useFullComment(comment.id, isFullComment);
   const { data: replies = [], error: repliesError, refetch: refetchReplies } = useRepliesComment(comment.id, isReplies);
+  const characters = Array.from(comment.content ?? "");
+  const isTruncated = !comment.is_deleted && !isFullComment && characters.length > COMMENT_PREVIEW_LENGTH;
   const commentText = comment.is_deleted
     ? "Комментарий удален"
-    : isFullComment
-      ? (full?.content ?? comment.preview)
-      : comment.preview;
+    : isTruncated
+      ? characters.slice(0, COMMENT_PREVIEW_LENGTH).join("").trimEnd()
+      : comment.content;
 
   const actions: ActionMenuItem[] = [
     {
@@ -104,24 +106,19 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
             }`.trim()}
           >
             {commentText}
-            {!isFullComment &&
-              comment.preview &&
-              comment.preview.length > 40 && (
-                <>
-                  {"… "}
-                  <button
-                    className="comment-item__read-more"
-                    type="button"
-                    onClick={() => setIsFullComment(true)}
-                  >
-                    Читать дальше
-                  </button>
-                </>
-              )}
+            {isTruncated && (
+              <>
+                {"… "}
+                <button
+                  className="comment-item__read-more"
+                  type="button"
+                  onClick={() => setIsFullComment(true)}
+                >
+                  Читать дальше
+                </button>
+              </>
+            )}
           </p>
-          {isFullComment && fullError && (
-            <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить комментарий" error={fullError} isError onRefetch={() => void refetchFull()} />
-          )}
           {isReplies && (
             <button
               className="comment-item__replies-toggle"

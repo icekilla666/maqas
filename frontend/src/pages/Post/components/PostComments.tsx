@@ -5,26 +5,21 @@ import {
   useCommentSendMutation,
   useCommentUpdateMutation,
 } from "@/lib/commentsQueries";
-import { queryClient } from "@/lib/queryClient";
-import { commentsApi } from "@/services/comments.api";
-import type { CommentPreview } from "@/types/api.types";
-import { commentsKeys } from "@/utils/constants";
+import type { CommentData } from "@/types/api.types";
 import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { getApiErrorMessage } from "@/utils/apiError";
 import CommentsList from "./CommentsList";
 
 interface PostCommentsProps {
   postId: string;
-  comments: CommentPreview[];
+  comments: CommentData[];
   isLoading?: boolean;
   error?: unknown;
 }
 
 type ComposerTarget = {
   type: "reply" | "edit";
-  comment: CommentPreview;
+  comment: CommentData;
 };
 
 const PostComments = ({
@@ -35,9 +30,7 @@ const PostComments = ({
 }: PostCommentsProps) => {
   const [value, setValue] = useState("");
   const [target, setTarget] = useState<ComposerTarget | null>(null);
-  const [isEditLoading, setIsEditLoading] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const editRequest = useRef(0);
   const sendComment = useCommentSendMutation();
   const updateComment = useCommentUpdateMutation();
   const isSubmitting = sendComment.isPending || updateComment.isPending;
@@ -45,64 +38,30 @@ const PostComments = ({
   const replyingTo = target?.type === "reply" ? target.comment : null;
 
   useEffect(() => {
-    return () => {
-      editRequest.current += 1;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!target || isEditLoading) return;
+    if (!target) return;
     inputRef.current?.focus({ preventScroll: true });
     inputRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [target, isEditLoading]);
+  }, [target]);
 
   const resetComposer = () => {
-    editRequest.current += 1;
     setTarget(null);
     setValue("");
-    setIsEditLoading(false);
   };
 
-  const handleReply = (comment: CommentPreview) => {
+  const handleReply = (comment: CommentData) => {
     if (isSubmitting) return;
-    editRequest.current += 1;
     if (isEditing) setValue("");
-    setIsEditLoading(false);
     setTarget({ type: "reply", comment });
   };
 
-  const handleEdit = async (comment: CommentPreview) => {
-    if (isSubmitting || !comment.is_owner || comment.is_deleted) return;
-    const request = ++editRequest.current;
+  const handleEdit = (comment: CommentData) => {
+    if (isSubmitting || !comment.is_owner || comment.is_deleted || comment.content === null) return;
     setTarget({ type: "edit", comment });
-    setValue("");
-    setIsEditLoading(true);
-
-    try {
-      // Для редактирования нужен полный текст, а не обрезанный preview.
-      const full = await queryClient.fetchQuery({
-        queryKey: commentsKeys.fullComment(comment.id),
-        queryFn: () => commentsApi.getFullComment(comment.id),
-        staleTime: 0,
-      });
-      // Не подставляем старый ответ после отмены или выбора другого комментария.
-      if (request !== editRequest.current) return;
-      if (!full.is_owner || full.is_deleted || full.content === null) {
-        resetComposer();
-        toast.error("Комментарий недоступен для редактирования");
-        return;
-      }
-      setValue(full.content);
-      setIsEditLoading(false);
-    } catch (error) {
-      if (request !== editRequest.current) return;
-      resetComposer();
-      toast.error(getApiErrorMessage(error, "Не удалось загрузить текст комментария"));
-    }
+    setValue(comment.content);
   };
 
   const handleSubmit = (content: string) => {
-    if (isSubmitting || isEditLoading || !content.trim()) return;
+    if (isSubmitting || !content.trim()) return;
     if (target?.type === "edit") {
       updateComment.mutate(
         { comment_id: target.comment.id, content },
@@ -144,9 +103,7 @@ const PostComments = ({
             <span className="post-comments__composer-status" role="status">
               {isEditing && <Pencil size={14} aria-hidden="true" />}
               {isEditing
-                ? isEditLoading
-                  ? "Загрузка комментария…"
-                  : "Редактирование комментария"
+                ? "Редактирование комментария"
                 : `Ответ @${replyingTo?.user.username}`}
             </span>
             <button
@@ -167,7 +124,7 @@ const PostComments = ({
           inputRef={inputRef}
           onChange={setValue}
           onSubmit={handleSubmit}
-          disabled={isEditLoading || isSubmitting}
+          disabled={isSubmitting}
           placeholder={
             isEditing
               ? "Редактировать комментарий"
