@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import {
@@ -6,6 +6,7 @@ import {
   useCreateMessageMutation,
   useDeleteChatMutation,
   useDeleteMessageMutation,
+  useMarkMessagesAsReadMutation,
   useMyChatsQuery,
   useUpdateMessageMutation,
 } from "@/lib/chatsQueries";
@@ -32,6 +33,11 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
   const [messageToDelete, setMessageToDelete] = useState<ChatMessageData>();
   const [isDeleteChatOpen, setIsDeleteChatOpen] = useState(false);
   const [scrollRequest, setScrollRequest] = useState(0);
+  const {
+    mutate: markAsRead,
+    isPending: isMarkingRead,
+    isError: isReadError,
+  } = useMarkMessagesAsReadMutation();
 
   const messages = useMemo(
     () =>
@@ -59,6 +65,26 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
     deleteMessage.isPending ||
     deleteChat.isPending;
   const canDeleteChat = messagesQuery.isSuccess && messages.length > 0;
+
+  const hasUnreadMessages =
+    !!me &&
+    messagesQuery.isSuccess &&
+    messages.some((message) => !message.is_owner && !message.is_read);
+
+  useEffect(() => {
+    if (!hasUnreadMessages || isMarkingRead || isReadError) return;
+
+    const markVisible = () => {
+      if (document.visibilityState === "visible") {
+        markAsRead(chatId);
+      }
+    };
+    markVisible();
+    document.addEventListener("visibilitychange", markVisible);
+    return () => {
+      document.removeEventListener("visibilitychange", markVisible);
+    };
+  }, [hasUnreadMessages, isMarkingRead, isReadError, markAsRead, chatId]);
 
   const handleSend = async (content: string, image: File | null) => {
     if (context?.type === "edit") {
