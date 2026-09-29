@@ -9,6 +9,7 @@ export interface ActionMenuItem {
   actions?: ActionMenuItem[];
   className?: string;
   isActive?: boolean;
+  disabled?: boolean;
 }
 
 interface ActionMenuListProps {
@@ -54,6 +55,7 @@ const ActionMenuList = ({
         {actions.map((action, index) => (
           <li key={`${action.text}-${index}`} role="none">
             <StrokeButton
+              disabled={action.disabled}
               aria-current={action.isActive ? "true" : undefined}
               aria-haspopup={action.actions?.length ? "menu" : undefined}
               className={[

@@ -54,7 +54,7 @@ const ContextMenu = ({ children, actions, ariaLabel, className = "", disabled = 
     const margin = 8;
     menu.style.left = `${Math.max(margin, Math.min(position.x, window.innerWidth - width - margin))}px`;
     menu.style.top = `${Math.max(margin, Math.min(position.y, window.innerHeight - height - margin))}px`;
-    menu.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus({ preventScroll: true });
+    menu.querySelector<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')?.focus({ preventScroll: true });
   }, [position]);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const ContextMenu = ({ children, actions, ariaLabel, className = "", disabled = 
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)') ?? []);
     if (!items.length) return;
     event.preventDefault();
     const current = items.indexOf(document.activeElement as HTMLButtonElement);

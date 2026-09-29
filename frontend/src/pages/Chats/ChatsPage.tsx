@@ -9,11 +9,12 @@ import ChatSearch from "./components/ChatSearch";
 
 const ChatsPage = () => {
   const { data: chats, isPending, isError, error, refetch } = useMyChatsQuery();
+  const visibleChats = (chats ?? []).filter((chat) => !!chat.last_message);
   return (
     <section className="wrapper chats-page">
       <div className="container chats-page__container">
         <TitlePage title="Чаты" />
-        <ChatSearch chats={chats ?? []} />
+        <ChatSearch chats={visibleChats} />
         {isError && (
           <EmptyState
             icon={<TriangleAlert />}
@@ -27,8 +28,8 @@ const ChatsPage = () => {
         {isPending && <Loader />}
 
         {chats &&
-          (chats.length ? (
-            <ChatList chats={chats} />
+          (visibleChats.length ? (
+            <ChatList chats={visibleChats} />
           ) : (
             <div className="chats-page__empty">
               <EmptyState

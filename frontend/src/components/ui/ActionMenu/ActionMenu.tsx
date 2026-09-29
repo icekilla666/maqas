@@ -33,7 +33,7 @@ const ActionMenu = ({
   const activeActions = activeMenu?.actions ?? actions;
 
   useEffect(() => {
-    if (isOpen) menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+    if (isOpen) menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')?.focus();
   }, [isOpen, menuStack]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -47,7 +47,7 @@ const ActionMenu = ({
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)') ?? []);
     if (!items.length) return;
     event.preventDefault();
     const current = items.indexOf(document.activeElement as HTMLButtonElement);

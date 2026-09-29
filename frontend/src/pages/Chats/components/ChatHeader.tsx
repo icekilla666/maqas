@@ -9,9 +9,10 @@ interface ChatHeaderProps {
   user?: ChatUserData;
   onDelete: () => void;
   disabled: boolean;
+  canDelete: boolean;
 }
 
-const ChatHeader = ({ user, onDelete, disabled }: ChatHeaderProps) => (
+const ChatHeader = ({ user, onDelete, disabled, canDelete }: ChatHeaderProps) => (
   <header className="chat-header">
     <Link
       className="chat-header__back"
@@ -41,6 +42,7 @@ const ChatHeader = ({ user, onDelete, disabled }: ChatHeaderProps) => (
             icon: <Trash2 size={18} />,
             className: "text-red",
             onClick: onDelete,
+            disabled: !canDelete,
           },
         ]}
       />

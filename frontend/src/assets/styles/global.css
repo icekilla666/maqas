@@ -2961,6 +2961,8 @@ textarea {
 
 .chat-user-info__name,
 .chat-user-info__username {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2977,17 +2979,43 @@ textarea {
   font-size: 12px;
 }
 
+.chat-user-info__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.chat-list__time-row {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 4px;
+  color: var(--chat-muted);
+  white-space: nowrap;
+}
+
+.chat-list__time {
+  color: inherit;
+  font-size: 10px;
+}
+
+.chat-list__read-status {
+  display: flex;
+  flex-shrink: 0;
+}
+
 .chat-list__badge {
   display: grid;
   place-items: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 7px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
   flex-shrink: 0;
   border-radius: 20px;
   background: var(--color-main);
-  color: #282b2a;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
 }
 
@@ -3304,7 +3332,6 @@ textarea {
 
 .chat-composer__row .chat-composer__send {
   background: var(--color-main);
-  color: #282b2a;
   border-radius: 50%;
 }
 
@@ -3475,6 +3502,7 @@ textarea {
 
   .nav__wrapper--add-post .lucide {
     stroke-width: 2px;
+    color: #fbfdff;
   }
 
   .nav__wrapper svg {

@@ -148,7 +148,6 @@ export type AddPostProps = {
 
 export type CreatedPost = PostDetails;
 
-
 export type ChatUserData = {
   id: string;
   username: string;
@@ -156,6 +155,15 @@ export type ChatUserData = {
   avatar_url: string | null;
   level: string;
   status: string;
+};
+
+export type LastMessage = {
+  content: string | null;
+  created_at: string;
+  image_url: string | null;
+  is_owner: boolean;
+  // Optional until the chat list API includes the read status.
+  is_read?: boolean;
 };
 
 export type ChatShortData = {
@@ -166,8 +174,9 @@ export type ChatShortData = {
 
 export type ChatData = {
   id: string;
-  unread_messages_count: number;
+  unread_count: number;
   target_user: ChatUserData;
+  last_message: LastMessage | null;
 };
 
 export type ChatMessageData = {

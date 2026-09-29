@@ -6,27 +6,26 @@ import ChatUserInfo from "./ChatUserInfo";
 const ChatList = ({ chats }: { chats: ChatData[] }) => {
   return (
     <ul className="chat-list">
-      {chats.map((chat) => (
-        <li key={chat.id}>
-          <Link
-            className="chat-list__item"
-            to={generatePath(CHAT_DETAIL, { chat_id: chat.id })}
-            state={{ user: chat.target_user }}
-          >
-            <ChatUserInfo user={chat.target_user} />
-            {chat.unread_messages_count > 0 && (
-              <span
-                className="chat-list__badge"
-                aria-label={`Непрочитанных сообщений: ${chat.unread_messages_count}`}
-              >
-                {chat.unread_messages_count > 99
-                  ? "99+"
-                  : chat.unread_messages_count}
-              </span>
-            )}
-          </Link>
-        </li>
-      ))}
+      {chats.map((chat) => {
+        const lastMessage = chat.last_message;
+        if (!lastMessage) return null;
+
+        return (
+          <li key={chat.id}>
+            <Link
+              className="chat-list__item"
+              to={generatePath(CHAT_DETAIL, { chat_id: chat.id })}
+              state={{ user: chat.target_user }}
+            >
+              <ChatUserInfo
+                last_message={lastMessage}
+                user={chat.target_user}
+                unread_count={chat.unread_count}
+              />
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 };

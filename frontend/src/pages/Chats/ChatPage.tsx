@@ -58,6 +58,7 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
     updateMessage.isPending ||
     deleteMessage.isPending ||
     deleteChat.isPending;
+  const canDeleteChat = messagesQuery.isSuccess && messages.length > 0;
 
   const handleSend = async (content: string, image: File | null) => {
     if (context?.type === "edit") {
@@ -84,6 +85,7 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
         user={user}
         onDelete={() => setIsDeleteChatOpen(true)}
         disabled={isBusy}
+        canDelete={canDeleteChat}
       />
       <ChatMessages
         messages={messages}
@@ -124,13 +126,14 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
         }}
       />
       <ModalActions
-        open={isDeleteChatOpen}
+        open={isDeleteChatOpen && canDeleteChat}
         text="Удалить чат и все сообщения у обоих участников?"
         confirmText="Удалить чат"
         cancelText="Отмена"
         isPending={deleteChat.isPending}
         onCancel={() => setIsDeleteChatOpen(false)}
         onConfirm={() => {
+          if (!canDeleteChat) return;
           deleteChat.mutate(chatId, {
             onSuccess: () => navigate(CHATS_PAGE, { replace: true }),
           });
