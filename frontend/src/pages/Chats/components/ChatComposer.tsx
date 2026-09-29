@@ -42,13 +42,23 @@ const ChatComposer = ({ context, onCancel, onSend, isPending, disabled }: ChatCo
     event.preventDefault();
     if (!canSubmit || submitting.current) return;
     submitting.current = true;
+    const draft = content;
+    const image = attachment?.file ?? null;
+    if (!isEditing) {
+      setContent("");
+      setAttachment(null);
+    }
     try {
-      await onSend(content.trim(), attachment?.file ?? null);
+      await onSend(draft.trim(), image);
       setContent("");
       setAttachment(null);
       inputRef.current?.focus();
     } catch {
-      // Мутация показывает ошибку. Сохраняем черновик и вложение для повтора.
+      // Мутация показывает ошибку; возвращаем текст и вложение для повтора.
+      if (!isEditing) {
+        setContent(draft);
+        if (image) setAttachment({ file: image, url: URL.createObjectURL(image) });
+      }
     } finally {
       submitting.current = false;
     }
@@ -91,7 +101,7 @@ const ChatComposer = ({ context, onCancel, onSend, isPending, disabled }: ChatCo
           }
         }} />
         <IconButton className="chat-composer__send" type="submit" aria-label={isEditing ? "Сохранить сообщение" : "Отправить сообщение"} disabled={!canSubmit}>
-          {isPending ? <LoaderCircle className="animate-spin" size={20} /> : isEditing ? <Check size={21} /> : <SendHorizontal size={21} />}
+          {isEditing && isPending ? <LoaderCircle className="animate-spin" size={20} /> : isEditing ? <Check size={21} /> : <SendHorizontal size={21} />}
         </IconButton>
       </div>
       {content.length >= 600 && <span className="chat-composer__counter">{content.length} / 700</span>}

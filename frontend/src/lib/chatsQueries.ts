@@ -3,6 +3,7 @@ import { chatsKeys } from "@/utils/constants";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { showApiError } from "@/utils/apiError";
 import { queryClient } from "./queryClient";
+import type { ChatMessageData } from "@/types/api.types";
 
 export const useMyChatsQuery = () => {
   return useQuery({
@@ -42,7 +43,16 @@ export const useCreateMessageMutation = () => {
     mutationFn: chatsApi.createMessage,
 
     onError: showApiError,
-    onSuccess: invalidateChatRelatedQueries,
+    onSuccess: async (message) => {
+      const queryKey = chatsKeys.chatMessages(message.chat_id);
+      await queryClient.cancelQueries({ queryKey, exact: true });
+      queryClient.setQueryData<ChatMessageData[]>(queryKey, (messages = []) =>
+        messages.some((item) => item.id === message.id)
+          ? messages
+          : [...messages, message],
+      );
+      void invalidateChatRelatedQueries();
+    },
   });
 };
 

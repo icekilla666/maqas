@@ -1,4 +1,4 @@
-import { Check, CheckCheck, Pencil, Reply, Trash2 } from "lucide-react";
+import { Check, CheckCheck, Clock3, Pencil, Reply, Trash2 } from "lucide-react";
 import DateTime from "@/components/common/DateTime";
 import ContextMenu from "@/components/ui/ActionMenu/ContextMenu";
 import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenuList";
@@ -12,9 +12,11 @@ interface ChatMessageItemProps {
   onDelete: (message: ChatMessageData) => void;
   onImageLoad: () => void;
   disabled: boolean;
+  isSending?: boolean;
 }
 
-const ChatMessageItem = ({ message, parent, onReply, onEdit, onDelete, onImageLoad, disabled }: ChatMessageItemProps) => {
+const ChatMessageItem = ({ message, parent, onReply, onEdit, onDelete, onImageLoad, disabled, isSending = false }: ChatMessageItemProps) => {
+  const statusLabel = isSending ? "Отправляется" : message.is_read ? "Прочитано" : "Отправлено";
   const actions: ActionMenuItem[] = [
     { text: "Ответить", icon: <Reply size={18} />, onClick: () => onReply(message) },
     ...(message.is_owner ? [
@@ -25,7 +27,7 @@ const ChatMessageItem = ({ message, parent, onReply, onEdit, onDelete, onImageLo
 
   return (
     <article className={`chat-message ${message.is_owner ? "chat-message--own" : ""}`} aria-label={message.is_owner ? "Ваше сообщение" : `Сообщение от ${message.sender.name || message.sender.username}`}>
-      <ContextMenu className="chat-message__bubble" actions={actions} disabled={disabled} ariaLabel="Сообщение. Меню действий: удержание, правая кнопка мыши или Shift+F10">
+      <ContextMenu className="chat-message__bubble" actions={actions} disabled={disabled || isSending} ariaLabel="Сообщение. Меню действий: удержание, правая кнопка мыши или Shift+F10">
         {message.parent_id && (
           <div className="chat-message__quote">
             <strong>{parent ? parent.sender.name || parent.sender.username : "Ответ на сообщение"}</strong>
@@ -36,7 +38,11 @@ const ChatMessageItem = ({ message, parent, onReply, onEdit, onDelete, onImageLo
         {message.content && <p className="chat-message__text">{message.content}</p>}
         <div className="chat-message__meta">
           <DateTime date={message.created_at} onlyTime />
-          {message.is_owner && <span aria-label={message.is_read ? "Прочитано" : "Отправлено"} title={message.is_read ? "Прочитано" : "Отправлено"}>{message.is_read ? <CheckCheck size={15} /> : <Check size={15} />}</span>}
+          {message.is_owner && (
+            <span aria-label={statusLabel} title={statusLabel}>
+              {isSending ? <Clock3 size={15} /> : message.is_read ? <CheckCheck size={15} /> : <Check size={15} />}
+            </span>
+          )}
         </div>
       </ContextMenu>
     </article>

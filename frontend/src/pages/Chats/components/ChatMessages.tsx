@@ -7,6 +7,7 @@ import ChatMessageItem from "./ChatMessageItem";
 
 interface ChatMessagesProps {
   messages: ChatMessageData[];
+  pendingMessageId?: string;
   isLoading: boolean;
   isError: boolean;
   error?: unknown;
@@ -20,6 +21,7 @@ interface ChatMessagesProps {
 
 const ChatMessages = ({
   messages,
+  pendingMessageId,
   isLoading,
   isError,
   error,
@@ -100,6 +102,7 @@ const ChatMessages = ({
             )}
             <ChatMessageItem
               message={message}
+              isSending={message.id === pendingMessageId}
               parent={messages.find(
                 (parent) => parent.id === message.parent_id,
               )}
