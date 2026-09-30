@@ -16,9 +16,7 @@ export const anchor = (id: string) => {
     frame = requestAnimationFrame(() => {
       if (!el.isConnected) return;
       el.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
+        behavior: "smooth",
         block: "start",
         inline: "nearest",
       });

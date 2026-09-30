@@ -1,9 +1,12 @@
 import { Link, generatePath } from "react-router-dom";
 import type { ChatData } from "@/types/api.types";
 import { CHAT_DETAIL } from "@/utils/constants";
+import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 import ChatUserInfo from "./ChatUserInfo";
 
 const ChatList = ({ chats }: { chats: ChatData[] }) => {
+  const typingByChat = useChatsRealtimeStore((state) => state.typingByChat);
+
   return (
     <ul className="chat-list">
       {chats.map((chat) => {
@@ -21,6 +24,7 @@ const ChatList = ({ chats }: { chats: ChatData[] }) => {
                 last_message={lastMessage}
                 user={chat.target_user}
                 unread_count={chat.unread_count}
+                isTyping={typingByChat[chat.id] === chat.target_user.id}
               />
             </Link>
           </li>
