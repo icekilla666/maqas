@@ -6,7 +6,13 @@ import {
 } from "@/lib/commentsQueries";
 import type { CommentData } from "@/types/api.types";
 import DateTime from "@/components/common/DateTime";
-import { ChevronDown, Pencil, Reply, Trash2, TriangleAlert } from "lucide-react";
+import {
+  ChevronDown,
+  Pencil,
+  Reply,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import { useId, useState } from "react";
 import ItemMenu from "@/components/common/ItemMenu";
 import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenu";
@@ -22,16 +28,28 @@ interface CommentItemProps {
 
 const COMMENT_PREVIEW_LENGTH = 40;
 
-const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) => {
+const CommentItem = ({
+  comment,
+  level = 0,
+  onReply,
+  onEdit,
+}: CommentItemProps) => {
   const [isRepliesOpen, setIsRepliesOpen] = useState(false);
   const [isFullComment, setIsFullComment] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
   const isReplies = comment.replies_count > 0;
-  const { data: replies = [], error: repliesError, refetch: refetchReplies } = useRepliesComment(comment.id, isReplies);
+  const {
+    data: replies = [],
+    error: repliesError,
+    refetch: refetchReplies,
+  } = useRepliesComment(comment.id, isReplies);
   const characters = Array.from(comment.content ?? "");
-  const isTruncated = !comment.is_deleted && !isFullComment && characters.length > COMMENT_PREVIEW_LENGTH;
+  const isTruncated =
+    !comment.is_deleted &&
+    !isFullComment &&
+    characters.length > COMMENT_PREVIEW_LENGTH;
   const commentText = comment.is_deleted
     ? "Комментарий удален"
     : isTruncated
@@ -100,25 +118,30 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
               )}
             </div>
           </div>
-          <p
-            className={`comment-item__text ${
-              comment.is_deleted ? "comment-item__text--deleted" : ""
-            }`.trim()}
-          >
-            {commentText}
-            {isTruncated && (
-              <>
-                {"… "}
-                <button
-                  className="comment-item__read-more"
-                  type="button"
-                  onClick={() => setIsFullComment(true)}
-                >
-                  Читать дальше
-                </button>
-              </>
+          <div className="flex justify-between gap-1">
+            <p
+              className={`comment-item__text ${
+                comment.is_deleted ? "comment-item__text--deleted" : ""
+              }`.trim()}
+            >
+              {commentText}
+              {isTruncated && (
+                <>
+                  {"… "}
+                  <button
+                    className="comment-item__read-more"
+                    type="button"
+                    onClick={() => setIsFullComment(true)}
+                  >
+                    Читать дальше
+                  </button>
+                </>
+              )}
+            </p>
+            {comment.is_edited && (
+              <span className="text-[10px] text-grey">изменено</span>
             )}
-          </p>
+          </div>
           {isReplies && (
             <button
               className="comment-item__replies-toggle"
@@ -145,7 +168,15 @@ const CommentItem = ({ comment, level = 0, onReply, onEdit }: CommentItemProps) 
           hidden={!isRepliesOpen}
         >
           {repliesError && (
-            <li><EmptyState icon={<TriangleAlert />} text="Не удалось загрузить ответы" error={repliesError} isError onRefetch={() => void refetchReplies()} /></li>
+            <li>
+              <EmptyState
+                icon={<TriangleAlert />}
+                text="Не удалось загрузить ответы"
+                error={repliesError}
+                isError
+                onRefetch={() => void refetchReplies()}
+              />
+            </li>
           )}
           {replies.map((reply) => (
             <CommentItem

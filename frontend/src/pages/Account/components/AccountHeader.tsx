@@ -16,7 +16,7 @@ interface AccountHeaderProps {
   followers_count: number;
   followings_count: number;
   posts_count: number;
-  is_blocked?: boolean;
+  blocked_user?: boolean;
   isOwnProfile?: boolean;
   onPublicationsClick?: () => void;
 }
@@ -31,6 +31,7 @@ const AccountHeader = ({
   followers_count,
   followings_count,
   posts_count,
+  blocked_user,
   isOwnProfile = false,
   onPublicationsClick,
 }: AccountHeaderProps) => {
@@ -66,7 +67,11 @@ const AccountHeader = ({
           <div className="flex justify-between">
             <AccountInfo name={name} username={username} lvl={level} />
             {!isOwnProfile && (
-              <AccountMenu className="account-header__menu" id={id} />
+              <AccountMenu
+                className="account-header__menu"
+                blocked_user={blocked_user}
+                id={id}
+              />
             )}
           </div>
           <div className="account__count-wrapper flex items-center gap-3">

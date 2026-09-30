@@ -19,8 +19,16 @@ const UserPage = () => {
   const followLockRef = useRef(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
-  const { data: posts = [], isPending, isError, error: postsError } = useUserPostsQuery(id);
-  useAnchorScroll("publications", Boolean(profile) && !profile?.is_blocked && !isPending);
+  const {
+    data: posts = [],
+    isPending,
+    isError,
+    error: postsError,
+  } = useUserPostsQuery(id);
+  useAnchorScroll(
+    "publications",
+    Boolean(profile) && !profile?.blocked_by_user && !isPending,
+  );
   useEffect(() => {
     return () => {
       if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
@@ -48,23 +56,25 @@ const UserPage = () => {
       },
     );
   };
-
   if (isLoading) return <Loader />; // скелет
   return (
     <section className="wrapper">
       <div className="container">
         {profile ? (
-          profile.is_blocked ? (
+          profile.blocked_by_user ? (
             <BlockedAccountHeader {...profile} />
           ) : (
             <div className="flex flex-col gap-5">
               <AccountHeader {...profile} isOwnProfile={false} />
-
-              <UserActions
-                profile={profile}
-                onFollow={handleFollow}
-                isFollowDisabled={isFollowDisabled}
-              />
+              {profile.blocked_user ? (
+                <div className="text-center p-2 bg-grey/40 rounded-2xl">Пользователь заблокирован</div>
+              ) : (
+                <UserActions
+                  profile={profile}
+                  onFollow={handleFollow}
+                  isFollowDisabled={isFollowDisabled}
+                />
+              )}
               <div id="publications" className="anchor-section">
                 {isPending ? (
                   // скелет

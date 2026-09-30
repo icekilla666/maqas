@@ -37,7 +37,8 @@ export type AccountData = {
 };
 
 export type UserData = AccountData & {
-  is_blocked: boolean;
+  blocked_by_user: boolean;
+  blocked_user: boolean;
   is_following: boolean;
 };
 
@@ -156,7 +157,6 @@ export type LastMessage = {
   created_at: string;
   image_url: string | null;
   is_owner: boolean;
-  // Optional until the chat list API includes the read status.
   is_read?: boolean;
 };
 
