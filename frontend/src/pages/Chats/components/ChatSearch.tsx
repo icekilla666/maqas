@@ -57,7 +57,13 @@ const ChatSearch = ({ chats }: { chats: ChatData[] }) => {
         }
       }}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
+        // На iOS тап по результату может вызвать blur с relatedTarget === null
+        // до click. Закрытие здесь скрыло бы результат раньше нажатия.
+        // Нажатия снаружи отдельно обрабатывает handleOutsideClick.
+        if (
+          event.relatedTarget instanceof Node &&
+          !event.currentTarget.contains(event.relatedTarget)
+        ) setIsOpen(false);
       }}
     >
       <div className="chat-search__toolbar">
