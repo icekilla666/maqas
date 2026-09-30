@@ -1,4 +1,5 @@
 import { chatsApi } from "@/services/chats.api";
+import { sharePostToUsers } from "@/services/postShare.api";
 import { chatsKeys } from "@/utils/constants";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { showApiError } from "@/utils/apiError";
@@ -23,6 +24,17 @@ export const useChatMessagesQuery = (chat_id?: string) => {
 
 const invalidateChatRelatedQueries = () => {
   return queryClient.invalidateQueries({ queryKey: chatsKeys.all });
+};
+
+export const useSharePostMutation = () => {
+  return useMutation({
+    mutationKey: chatsKeys.sharePost(),
+    mutationFn: sharePostToUsers,
+    retry: false,
+    onSettled: () => {
+      void invalidateChatRelatedQueries();
+    },
+  });
 };
 
 export const useCreateChatMutation = () => {

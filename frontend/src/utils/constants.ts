@@ -110,6 +110,7 @@ export const chatsKeys = {
     [...chatsKeys.all, "chat-messages", chat_id] as const,
   createChat: () => [...chatsKeys.all, "create-chat"] as const,
   createMessage: () => [...chatsKeys.all, "create-message"] as const,
+  sharePost: () => [...chatsKeys.all, "share-post"] as const,
   updateMessage: () => [...chatsKeys.all, "update-message"] as const,
   deleteMessage: () => [...chatsKeys.all, "delete-message"] as const,
   markMessagesAsRead: () => [...chatsKeys.all, "mark-messages-as-read"] as const,

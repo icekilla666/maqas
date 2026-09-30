@@ -1,6 +1,7 @@
 import { Pencil, Reply, X } from "lucide-react";
 import IconButton from "@/components/ui/Buttons/IconButton";
 import type { ChatComposerContext } from "@/hooks/useChatComposer";
+import { getChatMessagePreview } from "@/utils/sharedPost";
 
 interface ChatComposerContextBarProps {
   context: ChatComposerContext;
@@ -20,7 +21,7 @@ const ChatComposerContextBar = ({ context, onCancel, disabled }: ChatComposerCon
             ? "Редактирование"
             : `Ответ ${context.message.sender.name || context.message.sender.username}`}
         </strong>
-        <span>{context.message.content || "Изображение"}</span>
+        <span>{getChatMessagePreview(context.message)}</span>
       </div>
       <IconButton
         type="button"

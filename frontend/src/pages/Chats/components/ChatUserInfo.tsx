@@ -2,6 +2,7 @@ import Avatar from "@/components/common/Avatar/Avatar";
 import DateTime from "@/components/common/DateTime";
 import { Check, CheckCheck } from "lucide-react";
 import type { ChatUserData, LastMessage } from "@/types/api.types";
+import { getChatMessagePreview } from "@/utils/sharedPost";
 
 interface ChatUserInfoProps {
   user: ChatUserData;
@@ -12,9 +13,7 @@ interface ChatUserInfoProps {
 }
 const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, isTyping = false }: ChatUserInfoProps) => {
   const preview = last_message
-    ? last_message.image_url
-      ? "Фотография"
-      : last_message.content ?? ""
+    ? getChatMessagePreview(last_message)
     : `@${user.username}`;
   const subtitle = isTyping ? "печатает…" : preview;
   return (
