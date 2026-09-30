@@ -12,7 +12,8 @@ import {
 import { useMeQuery } from "@/lib/usersQueries";
 import type { ChatMessageData, ChatUserData } from "@/types/api.types";
 import { CHATS_PAGE } from "@/utils/constants";
-import type { ChatComposerContext } from "@/pages/Chats/components/ChatComposer";
+import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
+import type { ChatComposerContext } from "./useChatComposer";
 
 export const useChatConversation = (chatId: string) => {
   const location = useLocation();
@@ -65,6 +66,9 @@ export const useChatConversation = (chatId: string) => {
     (me
       ? messages.find((message) => message.sender.id !== me.id)?.sender
       : undefined);
+  const isTyping = useChatsRealtimeStore(
+    (state) => !!user && state.typingByChat[chatId] === user.id,
+  );
   const isBusy =
     createMessage.isPending ||
     updateMessage.isPending ||
@@ -156,6 +160,7 @@ export const useChatConversation = (chatId: string) => {
 
   return {
     user,
+    isTyping,
     messages: displayedMessages,
     pendingMessageId: pendingMessage?.id,
     messagesQuery,

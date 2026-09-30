@@ -11,6 +11,7 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
     <section className="chat-page" aria-label="Переписка">
       <ChatHeader
         user={chat.user}
+        isTyping={chat.isTyping}
         onDelete={chat.openDeleteChat}
         disabled={chat.isBusy}
         canDelete={chat.canDeleteChat}
@@ -29,6 +30,7 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
         disabled={chat.isBusy}
       />
       <ChatComposer
+        chatId={chatId}
         key={chat.context?.type === "edit" ? chat.context.message.id : "new-message"}
         context={chat.context}
         onCancel={chat.cancelContext}

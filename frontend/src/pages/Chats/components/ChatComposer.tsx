@@ -1,12 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
-import { Check, ImagePlus, LoaderCircle, Pencil, Reply, SendHorizontal, X } from "lucide-react";
-import { toast } from "sonner";
+import { Check, ImagePlus, LoaderCircle, SendHorizontal } from "lucide-react";
 import IconButton from "@/components/ui/Buttons/IconButton";
-import type { ChatMessageData } from "@/types/api.types";
-
-export type ChatComposerContext = { type: "reply" | "edit"; message: ChatMessageData };
+import { useChatComposer, type ChatComposerContext } from "@/hooks/useChatComposer";
+import ChatComposerContextBar from "./ChatComposerContextBar";
+import ChatAttachmentPreview from "./ChatAttachmentPreview";
 
 interface ChatComposerProps {
+  chatId: string;
   context?: ChatComposerContext;
   onCancel: () => void;
   onSend: (content: string, image: File | null) => Promise<void>;
@@ -14,97 +13,97 @@ interface ChatComposerProps {
   disabled: boolean;
 }
 
-const ChatComposer = ({ context, onCancel, onSend, isPending, disabled }: ChatComposerProps) => {
-  const [content, setContent] = useState(context?.type === "edit" ? context.message.content ?? "" : "");
-  const [attachment, setAttachment] = useState<{ file: File; url: string } | null>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const submitting = useRef(false);
-  const isEditing = context?.type === "edit";
-  const canSubmit = !disabled && (isEditing ? !!content.trim() : !!content.trim() || !!attachment);
-
-  useEffect(() => {
-    if (context) inputRef.current?.focus();
-  }, [context]);
-
-  useEffect(() => () => {
-    if (attachment) URL.revokeObjectURL(attachment.url);
-  }, [attachment]);
-
-  useLayoutEffect(() => {
-    const input = inputRef.current;
-    if (!input) return;
-    input.style.height = "auto";
-    input.style.height = `${Math.min(input.scrollHeight, 132)}px`;
-  }, [content]);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canSubmit || submitting.current) return;
-    submitting.current = true;
-    const draft = content;
-    const image = attachment?.file ?? null;
-    if (!isEditing) {
-      setContent("");
-      setAttachment(null);
-    }
-    try {
-      await onSend(draft.trim(), image);
-      setContent("");
-      setAttachment(null);
-      inputRef.current?.focus();
-    } catch {
-      // Мутация показывает ошибку; возвращаем текст и вложение для повтора.
-      if (!isEditing) {
-        setContent(draft);
-        if (image) setAttachment({ file: image, url: URL.createObjectURL(image) });
-      }
-    } finally {
-      submitting.current = false;
-    }
-  };
+const ChatComposer = (props: ChatComposerProps) => {
+  const {
+    content,
+    attachment,
+    inputRef,
+    fileRef,
+    isEditing,
+    canSubmit,
+    isDisabled,
+    handleChange,
+    handleKeyDown,
+    handleFileChange,
+    handleSubmit,
+    stopTyping,
+    openFilePicker,
+    removeAttachment,
+  } = useChatComposer(props);
 
   return (
-    <form className="chat-composer" onSubmit={handleSubmit} aria-label={isEditing ? "Редактирование сообщения" : "Новое сообщение"}>
-      {context && <div className="chat-composer__context">
-        {isEditing ? <Pencil size={18} /> : <Reply size={18} />}
-        <div><strong>{isEditing ? "Редактирование" : `Ответ ${context.message.sender.name || context.message.sender.username}`}</strong><span>{context.message.content || "Изображение"}</span></div>
-        <IconButton type="button" size="small" onClick={onCancel} disabled={isPending} aria-label="Отменить"><X size={18} /></IconButton>
-      </div>}
-      {attachment && <div className="chat-composer__attachment">
-        <img src={attachment.url} alt="Прикреплённое изображение" />
-        <span>{attachment.file.name}</span>
-        <IconButton type="button" size="small" onClick={() => setAttachment(null)} disabled={isPending} aria-label="Убрать изображение"><X size={18} /></IconButton>
-      </div>}
+    <form
+      className="chat-composer"
+      onSubmit={handleSubmit}
+      aria-label={isEditing ? "Редактирование сообщения" : "Новое сообщение"}
+    >
+      {props.context && (
+        <ChatComposerContextBar
+          context={props.context}
+          onCancel={props.onCancel}
+          disabled={props.isPending}
+        />
+      )}
+      {attachment && (
+        <ChatAttachmentPreview
+          url={attachment.url}
+          fileName={attachment.file.name}
+          onRemove={removeAttachment}
+          disabled={props.isPending}
+        />
+      )}
       <div className="chat-composer__row">
-        {!isEditing && <>
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp" hidden disabled={disabled} onChange={(event) => {
-            const file = event.target.files?.[0];
-            event.target.value = "";
-            if (!file) return;
-            if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)) {
-              toast.error("Выберите JPG, PNG, GIF или WebP");
-              return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-              toast.error("Изображение должно быть не больше 5 МБ");
-              return;
-            }
-            setAttachment({ file, url: URL.createObjectURL(file) });
-          }} />
-          <IconButton type="button" aria-label="Прикрепить изображение" onClick={() => fileRef.current?.click()} disabled={disabled}><ImagePlus size={22} /></IconButton>
-        </>}
-        <textarea ref={inputRef} className="chat-composer__input" aria-label="Текст сообщения" placeholder="Сообщение…" value={content} onChange={(event) => setContent(event.target.value)} maxLength={700} rows={1} disabled={disabled} onKeyDown={(event) => {
-          if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && window.matchMedia("(pointer: fine)").matches) {
-            event.preventDefault();
-            event.currentTarget.form?.requestSubmit();
-          }
-        }} />
-        <IconButton className="chat-composer__send" type="submit" aria-label={isEditing ? "Сохранить сообщение" : "Отправить сообщение"} disabled={!canSubmit}>
-          {isEditing && isPending ? <LoaderCircle className="animate-spin" size={20} /> : isEditing ? <Check size={21} /> : <SendHorizontal size={21} />}
+        {!isEditing && (
+          <>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              hidden
+              disabled={isDisabled}
+              onChange={handleFileChange}
+            />
+            <IconButton
+              type="button"
+              aria-label="Прикрепить изображение"
+              onClick={openFilePicker}
+              disabled={isDisabled}
+            >
+              <ImagePlus size={22} />
+            </IconButton>
+          </>
+        )}
+        <textarea
+          ref={inputRef}
+          className="chat-composer__input"
+          aria-label="Текст сообщения"
+          placeholder="Сообщение…"
+          value={content}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onBlur={stopTyping}
+          maxLength={700}
+          rows={1}
+          disabled={isDisabled}
+        />
+        <IconButton
+          className="chat-composer__send"
+          type="submit"
+          aria-label={isEditing ? "Сохранить сообщение" : "Отправить сообщение"}
+          disabled={!canSubmit}
+        >
+          {isEditing && props.isPending ? (
+            <LoaderCircle className="animate-spin" size={20} />
+          ) : isEditing ? (
+            <Check size={21} />
+          ) : (
+            <SendHorizontal size={21} />
+          )}
         </IconButton>
       </div>
-      {content.length >= 600 && <span className="chat-composer__counter">{content.length} / 700</span>}
+      {content.length >= 600 && (
+        <span className="chat-composer__counter">{content.length} / 700</span>
+      )}
     </form>
   );
 };

@@ -8,13 +8,15 @@ interface ChatUserInfoProps {
   compact?: boolean;
   last_message?: LastMessage | null;
   unread_count?: number;
+  isTyping?: boolean;
 }
-const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false }: ChatUserInfoProps) => {
+const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, isTyping = false }: ChatUserInfoProps) => {
   const preview = last_message
     ? last_message.image_url
       ? "Фотография"
       : last_message.content ?? ""
     : `@${user.username}`;
+  const subtitle = isTyping ? "печатает…" : preview;
   return (
     <>
       <Avatar
@@ -44,8 +46,21 @@ const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false }:
           )}
         </span>
         <span className="chat-user-info__row">
-          <span className="chat-user-info__username" title={preview}>
-            {preview}
+          <span
+            className={`chat-user-info__username ${isTyping ? "chat-user-info__username--typing" : ""}`.trim()}
+            title={subtitle}
+            role={compact ? "status" : undefined}
+          >
+            {isTyping ? (
+              <>
+                печатает
+                <span className="chat-typing-dots" aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </span>
+              </>
+            ) : subtitle}
           </span>
           {last_message && unread_count > 0 && (
             <span

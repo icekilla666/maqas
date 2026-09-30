@@ -7,12 +7,13 @@ import ChatUserInfo from "./ChatUserInfo";
 
 interface ChatHeaderProps {
   user?: ChatUserData;
+  isTyping: boolean;
   onDelete: () => void;
   disabled: boolean;
   canDelete: boolean;
 }
 
-const ChatHeader = ({ user, onDelete, disabled, canDelete }: ChatHeaderProps) => (
+const ChatHeader = ({ user, isTyping, onDelete, disabled, canDelete }: ChatHeaderProps) => (
   <header className="chat-header">
     <Link
       className="chat-header__back"
@@ -27,7 +28,7 @@ const ChatHeader = ({ user, onDelete, disabled, canDelete }: ChatHeaderProps) =>
         className="chat-header__user"
         aria-label={`Профиль ${user.name || user.username}`}
       >
-        <ChatUserInfo user={user} compact />
+        <ChatUserInfo user={user} isTyping={isTyping} compact />
       </Link>
     ) : (
       <h1 className="chat-header__user">Переписка</h1>
