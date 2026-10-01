@@ -8,6 +8,7 @@ import type { PostActionProps } from "@/types/entities";
 import { usePostLikeMutation } from "@/lib/likesQueries";
 import { useState } from "react";
 import PostShareModal from "./PostShareModal";
+import OptimizedImage from "../OptimizedImage";
 
 interface PostItemProps {
   post: PostPreview | PostDetails;
@@ -96,7 +97,7 @@ const PostItem = ({
         <div className="flex flex-col gap-3">
           {post.image_url && (
             <div className="post-item__poster">
-              <img src={post.image_url} alt={post.title} />
+              <OptimizedImage variant="post" src={post.image_url} alt={post.title} />
             </div>
           )}
           <div className="post-item__text flex flex-col gap-1.5">

@@ -5,6 +5,7 @@ import { FileText, ArrowUpRight } from "lucide-react";
 import { usePostQuery } from "@/lib/postsQueries";
 import Skeleton from "@/components/ui/Skeleton/Skeleton";
 import SkeletonView from "@/components/ui/Skeleton/SkeletonView";
+import OptimizedImage from "@/components/common/OptimizedImage";
 
 interface ChatPostCardProps {
   postId: string;
@@ -67,7 +68,8 @@ const ChatPostCard = ({ postId, onContentLoad }: ChatPostCardProps) => {
         <FileText size={14} />Публикация<ArrowUpRight size={14} />
       </span>
       {post.image_url && (
-        <img
+        <OptimizedImage
+          variant="post"
           className="chat-post-card__image"
           src={post.image_url}
           alt=""

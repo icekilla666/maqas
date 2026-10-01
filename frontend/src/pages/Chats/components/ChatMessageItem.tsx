@@ -5,6 +5,7 @@ import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenuList";
 import type { ChatMessageData } from "@/types/api.types";
 import { getChatMessagePreview, getSharedPostId } from "@/utils/sharedPost";
 import ChatPostCard from "./ChatPostCard";
+import OptimizedImage from "@/components/common/OptimizedImage";
 
 interface ChatMessageItemProps {
   message: ChatMessageData;
@@ -101,7 +102,8 @@ const ChatMessageItem = ({
             aria-label="Открыть изображение"
             draggable={false}
           >
-            <img
+            <OptimizedImage
+              variant="message"
               className="chat-message__image"
               src={message.image_url}
               alt="Изображение в сообщении"

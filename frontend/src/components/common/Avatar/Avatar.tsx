@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import AvatarPlaceholder from "./AvatarPlaceholder";
+import OptimizedImage from "../OptimizedImage";
 
 interface AvatarProps {
   avatar?: string;
@@ -23,13 +24,13 @@ const Avatar = ({
       }
     >
       {avatar ? (
-        <img
+        <OptimizedImage
+          variant="avatar"
           className="w-full h-full rounded-full object-cover"
           src={avatar}
           alt="avatar"
           loading="eager"
           decoding="async"
-          fetchPriority="high"
         />
       ) : (
         <AvatarPlaceholder username={username} size={size} />

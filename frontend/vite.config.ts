@@ -14,6 +14,30 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: "autoUpdate",
 
+        workbox: {
+          runtimeCaching: [
+            {
+              // Функция сериализуется в sw.js: не использует внешние переменные.
+              urlPattern: ({ request, url }) =>
+                request.destination === "image" &&
+                request.mode === "cors" &&
+                url.origin === "https://res.cloudinary.com" &&
+                !url.search &&
+                /^\/[^/]+\/image\/upload\/c_limit,w_(256|960|1200)\/f_auto\/q_auto\/v\d+\/.+/.test(url.pathname),
+              handler: "CacheFirst",
+              options: {
+                cacheName: "maqas-images-v1",
+                cacheableResponse: { statuses: [200] },
+                expiration: {
+                  maxEntries: 150,
+                  maxAgeSeconds: 7 * 24 * 60 * 60,
+                  purgeOnQuotaError: true,
+                },
+              },
+            },
+          ],
+        },
+
         manifest: {
           name: "Maqas",
           short_name: "Maqas",
