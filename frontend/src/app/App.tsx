@@ -12,22 +12,22 @@ const App = () => {
   useApplyTheme();
   useChatsRealtime();
 
-  const setUser = useAuthStore((state) => state.setUser);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
   const setIsAuthCheked = useAuthStore((state) => state.setIsAuthChecked);
   useEffect(() => {
+    let active = true;
     const initAuth = async () => {
       try {
-        const response = await authApi.refreshAccess();
-        setUser(true, response.data.access_token);
+        await authApi.refreshAccess();
       } catch {
-        setUser(false, null);
+        // Refresh сам обновляет состояние сессии; сетевой сбой не сбрасывает её.
       } finally {
-        setIsAuthCheked(true);
+        if (active) setIsAuthCheked(true);
       }
     };
-    initAuth();
-  }, [setUser, setIsAuthCheked]);
+    void initAuth();
+    return () => { active = false; };
+  }, [setIsAuthCheked]);
 
   if (!isAuthCheked)
     return (

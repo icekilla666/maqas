@@ -1,11 +1,8 @@
 import type { LoginData, RegisterData } from "../types/api.types";
-import { api } from "./api";
+import { api, refreshAccessToken } from "./api";
 
 export const authApi = {
-  refreshAccess: async () => {
-    const response = await api.post("/api/auth/refresh-access");
-    return response.data;
-  },
+  refreshAccess: refreshAccessToken,
   resendEmail: async (email: string) => {
     const response = await api.post("/api/auth/resend-verification-email", {
       email,

@@ -5,11 +5,13 @@ interface AuthState {
   isAuth: boolean;
   isAuthChecked: boolean;
   accessToken: string | null;
+  sessionVersion: number;
   pendingEmail: string | null;
 
   setPendingEmail: (email: string | null) => void;
   setIsAuthChecked: (isAuthChecked: boolean) => void;
   setUser: (isAuth: boolean, accessToken: string | null) => void;
+  setAccessToken: (accessToken: string) => void;
   logout: () => void;
 }
 
@@ -18,12 +20,19 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       isAuth: false,
       accessToken: null,
+      sessionVersion: 0,
       isAuthChecked: false,
       pendingEmail: null,
 
       setIsAuthChecked: (isAuthChecked) => set({ isAuthChecked }),
-      setUser: (isAuth, accessToken) => set({ isAuth, accessToken }),
-      logout: () => set({ isAuth: false, accessToken: null }),
+      // Вход/выход меняет сессию, refresh обновляет только её access token.
+      setUser: (isAuth, accessToken) => set((state) => ({
+        isAuth, accessToken, sessionVersion: state.sessionVersion + 1,
+      })),
+      setAccessToken: (accessToken) => set({ isAuth: true, accessToken }),
+      logout: () => set((state) => ({
+        isAuth: false, accessToken: null, sessionVersion: state.sessionVersion + 1,
+      })),
       setPendingEmail: (pendingEmail) => set({ pendingEmail }),
     }),
     {
