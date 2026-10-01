@@ -119,7 +119,9 @@ export const postsApi = {
       formData.append("image", data.image);
     }
 
-    const response = await api.post("/api/posts/create", formData);
+    const response = await api.post("/api/posts/create", formData, {
+      ...(data.image ? { timeout: 120_000 } : {}),
+    });
     return response.data.data;
   },
 };

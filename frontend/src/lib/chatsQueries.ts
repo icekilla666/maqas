@@ -5,7 +5,7 @@ import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { showApiError } from "@/utils/apiError";
 import { queryClient } from "./queryClient";
 import type { ChatMessageData } from "@/types/api.types";
-import { isMessageDeliveryUncertain } from "@/utils/messageDelivery";
+import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 
 export const useMyChatsQuery = () => {
   return useQuery({
@@ -57,7 +57,7 @@ export const useCreateMessageMutation = () => {
     retry: false,
     onError: (error) => {
       // Неопределённый результат показывается у сообщения в открытом чате.
-      if (!isMessageDeliveryUncertain(error)) showApiError(error);
+      if (!isRequestOutcomeUncertain(error)) showApiError(error);
     },
     onSuccess: async (message) => {
       const queryKey = chatsKeys.chatMessages(message.chat_id);

@@ -24,18 +24,20 @@ interface AddPostEditorProps {
   formData: AddPostProps;
   setFormData: Dispatch<SetStateAction<AddPostProps>>;
   createPost: CreatePostMutation;
+  disabled: boolean;
 }
 
 const AddPostEditor = ({
   formData,
   setFormData,
   createPost,
+  disabled,
 }: AddPostEditorProps) => {
   const imageRef = useRef<HTMLInputElement>(null);
+  const submittingRef = useRef(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState("");
-  const { resetDraft } = useDraftStore();
-  const { saveDraftWithDebounce } = useDraft(formData);
+  const { saveDraftWithDebounce, cancelDraftSave } = useDraft(formData);
   const navigate = useNavigate();
 
   const updateField = (field: keyof typeof formData) => (value: string) => {
@@ -48,7 +50,7 @@ const AddPostEditor = ({
 
     setFormData(updatedFormData);
 
-    saveDraftWithDebounce();
+    saveDraftWithDebounce(updatedFormData);
   };
 
   const toggleTag = (tag: PostTag) => {
@@ -94,8 +96,11 @@ const AddPostEditor = ({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (disabled || submittingRef.current || useDraftStore.getState().publicationUnconfirmed) return;
     const result = addPostSchema.safeParse(formData);
     if (!result.success) return setError(result.error?.issues[0].message);
+    submittingRef.current = true;
+    cancelDraftSave();
     createPost.mutate(result.data, {
       onSuccess: () => {
         setError("");
@@ -105,10 +110,10 @@ const AddPostEditor = ({
           tags: [],
           image: null,
         });
-        resetDraft();
         setPreview(null);
         navigate(HOME_PAGE);
       },
+      onSettled: () => { submittingRef.current = false; },
     });
   };
 
@@ -123,6 +128,7 @@ const AddPostEditor = ({
         <label className="add-post-field">
           <span className="add-post-field__label">Заголовок</span>
           <MainInput
+            disabled={disabled}
             className="add-post-field__input"
             maxLength={120}
             name="title"
@@ -139,6 +145,7 @@ const AddPostEditor = ({
         </label>
 
         <Textarea
+          disabled={disabled}
           className="add-post-content"
           hint={`${formData.content.length}/2500`}
           error={
@@ -155,7 +162,7 @@ const AddPostEditor = ({
           onChange={(e) => updateField("content")(e.target.value)}
         />
 
-        <fieldset className="add-post-field add-post-tags">
+        <fieldset className="add-post-field add-post-tags" disabled={disabled}>
           <legend className="add-post-field__label">Темы</legend>
           <p className="add-post-field__description">
             Выберите до пяти тем, чтобы публикацию было проще найти
@@ -190,6 +197,7 @@ const AddPostEditor = ({
             id="add-post-media"
             name="image"
             type="file"
+            disabled={disabled}
             ref={imageRef}
             onChange={addImage}
           />
@@ -205,6 +213,7 @@ const AddPostEditor = ({
               <div className="relative">
                 <img src={preview} />
                 <IconButton
+                  disabled={disabled}
                   typeBtn="danger"
                   size="small"
                   className="absolute top-3 right-3"

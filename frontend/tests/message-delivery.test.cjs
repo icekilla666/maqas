@@ -19,7 +19,7 @@ function load(file, mocks = {}) {
   return module.exports;
 }
 
-const delivery = load("utils/messageDelivery.ts");
+const delivery = load("utils/requestOutcome.ts");
 const failure = (status) => new axios.AxiosError(
   "Request failed", status ? "ERR_BAD_RESPONSE" : "ECONNABORTED",
   undefined, undefined, status ? { status } : undefined,
@@ -74,7 +74,7 @@ function setupSend() {
     "@/lib/usersQueries": { useMeQuery: () => ({ data: { id: "me", name: "Me" } }) },
     "@/utils/constants": { CHATS_PAGE: "/chats" },
     "@/store/chatsRealtime.store": { useChatsRealtimeStore: () => false },
-    "@/utils/messageDelivery": delivery,
+    "@/utils/requestOutcome": delivery,
   });
   const { useChatComposer } = load("hooks/useChatComposer.ts", {
     react: composer.react,
@@ -97,10 +97,10 @@ function setupSend() {
 
 test("таймаут, отсутствие ответа и 5xx имеют неопределённый результат", () => {
   for (const status of [undefined, 408, 500, 502, 504]) {
-    assert.equal(delivery.isMessageDeliveryUncertain(failure(status)), true);
+    assert.equal(delivery.isRequestOutcomeUncertain(failure(status)), true);
   }
   for (const status of [400, 401, 403, 413, 422, 429]) {
-    assert.equal(delivery.isMessageDeliveryUncertain(failure(status)), false);
+    assert.equal(delivery.isRequestOutcomeUncertain(failure(status)), false);
   }
 });
 

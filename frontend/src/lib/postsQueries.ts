@@ -1,9 +1,11 @@
 import { showApiError } from "@/utils/apiError";
 import { postsApi } from "@/services/posts.api";
 import type { PostFeed } from "@/types/api.types";
-import { postsKeys } from "@/utils/constants";
+import { postsKeys, userKeys } from "@/utils/constants";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
+import { useDraftStore } from "@/store/draft.store";
+import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 
 export const usePostFeedQuery = ({
   feed_type,
@@ -47,12 +49,22 @@ export const useCreatePostMutation = () => {
   return useMutation({
     mutationKey: postsKeys.createPost(),
     mutationFn: postsApi.createPost,
-
-    onError: showApiError,
+    retry: false,
+    onMutate: (data) => {
+      useDraftStore.getState().beginPublication(data);
+    },
+    onError: (error) => {
+      if (isRequestOutcomeUncertain(error)) return;
+      useDraftStore.getState().setPublicationUnconfirmed(false);
+      showApiError(error);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: postsKeys.all,
-      });
+      // Выполняется и при уходе со страницы, пока запрос ещё идёт.
+      useDraftStore.getState().resetDraft();
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: postsKeys.all });
+      void queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
   });
 };

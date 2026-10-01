@@ -14,7 +14,7 @@ import type { ChatMessageData, ChatUserData } from "@/types/api.types";
 import { CHATS_PAGE } from "@/utils/constants";
 import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 import type { ChatComposerContext } from "./useChatComposer";
-import { isMessageDeliveryUncertain } from "@/utils/messageDelivery";
+import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 
 export const useChatConversation = (chatId: string) => {
   const location = useLocation();
@@ -130,7 +130,7 @@ export const useChatConversation = (chatId: string) => {
         });
         setPendingMessage(undefined);
       } catch (error) {
-        if (isMessageDeliveryUncertain(error)) {
+        if (isRequestOutcomeUncertain(error)) {
           // Сохраняем локальную карточку и не возвращаем файл в форму:
           // сервер мог отправить сообщение, хотя ответ до нас не дошёл.
           setIsDeliveryUnconfirmed(true);
