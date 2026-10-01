@@ -1,6 +1,6 @@
 import CommentInput from "@/components/ui/Inputs/CommentInput";
 import EmptyState from "@/components/common/EmptyState";
-import Loader from "@/components/ui/Loaders/Loader";
+import CommentsSkeleton from "@/components/common/Skeletons/CommentsSkeleton";
 import {
   useCommentSendMutation,
   useCommentUpdateMutation,
@@ -83,9 +83,7 @@ const PostComments = ({
 
       <div className="post-comments__list-wrapper">
         {isLoading ? (
-          <div className="post-comments__loader">
-            <Loader width={34} />
-          </div>
+          <CommentsSkeleton />
         ) : error ? (
           <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить комментарии" error={error} isError />
         ) : (

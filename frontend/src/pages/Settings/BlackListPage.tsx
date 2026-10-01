@@ -1,7 +1,7 @@
 import EmptyState from "@/components/common/EmptyState";
 import TitlePage from "@/components/common/TitlePage";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
-import Loader from "@/components/ui/Loaders/Loader";
+import UsersSkeleton from "@/components/common/Skeletons/UsersSkeleton";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import { Ban, CircleX, TriangleAlert } from "lucide-react";
 import { useState } from "react";
@@ -14,7 +14,7 @@ import {
 import type { BlackListUserData } from "@/types/api.types";
 
 const BlackListPage = () => {
-  const { data: users = [], isLoading, isFetching, isError, error, refetch } = useBlackListQuery();
+  const { data: users = [], isLoading, isError, error, refetch } = useBlackListQuery();
   const { data: profile } = useMeQuery();
   const unblockMutation = useUnblockUserMutation();
   const [selectedUser, setSelectedUser] = useState<BlackListUserData | null>(
@@ -34,14 +34,13 @@ const BlackListPage = () => {
     });
   };
 
-  if (isLoading || isFetching) return <Loader />; // скелет
 
   return (
     <section className="wrapper">
       <div className="container">
-        <TitlePage title="Черный список" count={users.length} />
+        <TitlePage title="Черный список" count={isLoading ? undefined : users.length} />
         <SearchInput className="w-full mb-3" placeholder="введите юзернейм" />
-        <UsersList
+        {isLoading ? <UsersSkeleton action /> : <UsersList
           className="blacklist-item"
           users={users}
           userId={profile?.id}
@@ -53,7 +52,7 @@ const BlackListPage = () => {
             />
           }
           onBtnClick={openUnblockModal}
-        />
+        />}
         <p className="text-[14px] mt-5 opacity-40">
           Заблокированные пользователи не смогут писать вам, просматривать ваш
           профиль и оставлять вам комментарии. Вы не будете видеть их посты в
@@ -62,7 +61,7 @@ const BlackListPage = () => {
         {isError && (
           <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить чёрный список" error={error} isError onRefetch={() => void refetch()} />
         )}
-        {!isError && !users.length && (
+        {!isLoading && !isError && !users.length && (
           <EmptyState
             icon={<Ban />}
             text="Черный список пуст. Здесь будут аккаунты, которые ты заблокируешь"

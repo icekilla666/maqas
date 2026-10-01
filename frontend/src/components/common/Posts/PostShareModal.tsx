@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import Avatar from "../Avatar/Avatar";
 import MainButton from "@/components/ui/Buttons/MainButton";
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
-import Loader from "@/components/ui/Loaders/Loader";
+import UsersSkeleton from "@/components/common/Skeletons/UsersSkeleton";
 import Modal from "@/components/ui/Modals/Modal";
 import { useFollowQuery } from "@/lib/usersQueries";
 import { useMyChatsQuery, useSharePostMutation } from "@/lib/chatsQueries";
@@ -110,9 +110,7 @@ const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
         <div className="post-share-modal__recipients">
           <p className="post-share-modal__label">Чаты и подписчики</p>
           {isPending ? (
-            <div className="post-share-modal__status">
-              <Loader />
-            </div>
+            <UsersSkeleton avatarsOnly count={6} />
           ) : isError ? (
             <div className="post-share-modal__status" role="status">
               <p>{getApiErrorMessage(error, "Не удалось загрузить получателей")}</p>

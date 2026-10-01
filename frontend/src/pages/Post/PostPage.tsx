@@ -1,7 +1,9 @@
 import EmptyState from "@/components/common/EmptyState";
 import PostItem from "@/components/common/Posts/PostItem";
 import PostLikersModal from "@/pages/Post/components/PostLikersModal";
-import Loader from "@/components/ui/Loaders/Loader";
+import CommentsSkeleton from "@/components/common/Skeletons/CommentsSkeleton";
+import { PostSkeleton } from "@/components/common/Skeletons/PostsSkeleton";
+import SkeletonView from "@/components/ui/Skeleton/SkeletonView";
 import { usePostQuery } from "@/lib/postsQueries";
 import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
@@ -26,8 +28,9 @@ const PostPage = () => {
   if (isLoading) {
     return (
       <section className="post-detail-page">
-        <div className="container post-detail__loader">
-          <Loader />
+        <div className="post-detail">
+          <SkeletonView label="Загрузка публикации…"><PostSkeleton detail image /></SkeletonView>
+          <div className="post-comments"><CommentsSkeleton /></div>
         </div>
       </section>
     );

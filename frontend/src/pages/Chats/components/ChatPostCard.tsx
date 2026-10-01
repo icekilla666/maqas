@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { FileText, ArrowUpRight } from "lucide-react";
 import { usePostQuery } from "@/lib/postsQueries";
+import Skeleton from "@/components/ui/Skeleton/Skeleton";
+import SkeletonView from "@/components/ui/Skeleton/SkeletonView";
 
 interface ChatPostCardProps {
   postId: string;
@@ -22,10 +24,14 @@ const ChatPostCard = ({ postId, onContentLoad }: ChatPostCardProps) => {
 
   if (isPending) {
     return (
-      <div className="chat-post-card chat-post-card--placeholder" role="status">
-        <FileText size={24} />
-        <span>Загрузка публикации…</span>
-      </div>
+      <SkeletonView label="Загрузка публикации…" className="chat-post-card">
+        <div className="chat-post-card__body skeleton-stack">
+          <Skeleton width="40%" height={10} />
+          <Skeleton height={18} />
+          <Skeleton height={12} />
+          <Skeleton width="70%" height={12} />
+        </div>
+      </SkeletonView>
     );
   }
 

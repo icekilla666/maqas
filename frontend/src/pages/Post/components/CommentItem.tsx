@@ -1,4 +1,5 @@
 import Avatar from "@/components/common/Avatar/Avatar";
+import CommentsSkeleton from "@/components/common/Skeletons/CommentsSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import {
   useCommentDeleteMutation,
@@ -43,6 +44,7 @@ const CommentItem = ({
   const {
     data: replies = [],
     error: repliesError,
+    isLoading: isRepliesLoading,
     refetch: refetchReplies,
   } = useRepliesComment(comment.id, isReplies);
   const characters = Array.from(comment.content ?? "");
@@ -167,6 +169,7 @@ const CommentItem = ({
           className="comment-item__replies"
           hidden={!isRepliesOpen}
         >
+          {isRepliesOpen && isRepliesLoading && <li><CommentsSkeleton count={2} /></li>}
           {repliesError && (
             <li>
               <EmptyState

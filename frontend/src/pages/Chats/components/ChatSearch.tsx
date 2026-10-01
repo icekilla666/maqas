@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
 import IconButton from "@/components/ui/Buttons/IconButton";
 import Loader from "@/components/ui/Loaders/Loader";
+import ChatsSkeleton from "@/components/common/Skeletons/ChatsSkeleton";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useCreateChatMutation } from "@/lib/chatsQueries";
 import { useUsersFindQuery } from "@/lib/usersQueries";
@@ -31,7 +32,7 @@ const ChatSearch = ({ chats }: { chats: ChatData[] }) => {
   const globalUsers = canSearch && !users.isError
     ? (users.data ?? []).filter((user) => !chatUserIds.has(user.id))
     : [];
-  const isSearching = isOpen && !!query && (query !== debouncedQuery || users.isFetching);
+  const isSearching = isOpen && !!query && (query !== debouncedQuery || users.isLoading);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -110,9 +111,8 @@ const ChatSearch = ({ chats }: { chats: ChatData[] }) => {
         <section aria-labelledby={`${panelId}-global`} aria-busy={isSearching}>
           <h2 id={`${panelId}-global`} className="chat-search__heading">
             Глобальные
-            {/* скетел */}
-            {isSearching && <span role="status" aria-label="Поиск пользователей"><Loader width={16} /></span>}
           </h2>
+          {isSearching && <ChatsSkeleton count={3} label="Поиск пользователей…" />}
           <ul className="chat-list">
             {globalUsers.map((user) => (
               <li key={user.id}>

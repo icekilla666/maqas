@@ -1,5 +1,6 @@
 import { Fragment, useLayoutEffect, useRef } from "react";
 import { MessageCircle, TriangleAlert } from "lucide-react";
+import MessagesSkeleton from "@/components/common/Skeletons/MessagesSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import type { ChatMessageData } from "@/types/api.types";
 import { normalizedDate } from "@/utils/normalizedDate";
@@ -64,6 +65,7 @@ const ChatMessages = ({
             80;
       }}
     >
+      {isLoading && !messages.length && <MessagesSkeleton />}
       {!isLoading && isError && (
         <EmptyState
           icon={<TriangleAlert />}

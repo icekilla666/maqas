@@ -1,6 +1,7 @@
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
-import Loader from "@/components/ui/Loaders/Loader";
+import AccountSkeleton from "@/components/common/Skeletons/AccountSkeleton";
+import PostsSkeleton from "@/components/common/Skeletons/PostsSkeleton";
 import { Bot, TriangleAlert } from "lucide-react";
 import { useMeQuery } from "@/lib/usersQueries";
 import SwitchButtons, {
@@ -48,7 +49,7 @@ const AccountPage = () => {
     navigate({ hash: "#publications" });
   };
 
-  if (isLoading) return <Loader />; // в будущем здесь будет skeletonview
+  if (isLoading) return <AccountSkeleton own />;
   return (
     <section className="wrapper">
       <div className="container">
@@ -70,7 +71,7 @@ const AccountPage = () => {
 
             <div id="publications" className="anchor-section">
               {activePosts.isPending ? (
-                <Loader />
+                <PostsSkeleton />
               ) : activePosts.isError ? (
                 <EmptyState
                   variant="error"

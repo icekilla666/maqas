@@ -1,6 +1,6 @@
 import EmptyState from "@/components/common/EmptyState";
 import UsersList from "@/components/common/UsersList/UsersList";
-import Loader from "@/components/ui/Loaders/Loader";
+import UsersSkeleton from "@/components/common/Skeletons/UsersSkeleton";
 import { useFollowQuery, useMeQuery } from "@/lib/usersQueries";
 import type { FollowTab } from "@/types/entities";
 import {
@@ -33,7 +33,6 @@ const FollowList = () => {
     isLoading,
     isError,
     error,
-    isFetching,
   } = useFollowQuery(activeTab, targetUserId);
   const { data: profile } = useMeQuery();
 
@@ -86,11 +85,8 @@ const FollowList = () => {
         </button>
       </nav>
 
-      {isLoading || isFetching ? (
-        <div className="follow-list__state">
-          {/* скелет */}
-          <Loader width={38} />
-        </div>
+      {isLoading ? (
+        <UsersSkeleton />
       ) : isError ? (
         <EmptyState
           icon={<TriangleAlert />}

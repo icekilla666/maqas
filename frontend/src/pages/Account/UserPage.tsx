@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
-import Loader from "@/components/ui/Loaders/Loader";
+import AccountSkeleton from "@/components/common/Skeletons/AccountSkeleton";
+import PostsSkeleton from "@/components/common/Skeletons/PostsSkeleton";
 import { Bot, TriangleAlert } from "lucide-react";
 import UserActions from "./components/UserActions";
 import BlockedAccountHeader from "./components/BlockedAccountHeader";
@@ -56,7 +57,7 @@ const UserPage = () => {
       },
     );
   };
-  if (isLoading) return <Loader />; // скелет
+  if (isLoading) return <AccountSkeleton />;
   return (
     <section className="wrapper">
       <div className="container">
@@ -77,8 +78,7 @@ const UserPage = () => {
               )}
               <div id="publications" className="anchor-section">
                 {isPending ? (
-                  // скелет
-                  <Loader />
+                  <PostsSkeleton />
                 ) : isError ? (
                   <EmptyState
                     variant="error"

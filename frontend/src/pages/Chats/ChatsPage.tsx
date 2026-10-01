@@ -4,7 +4,7 @@ import EmptyState from "@/components/common/EmptyState";
 import { useMyChatsQuery } from "@/lib/chatsQueries";
 import ChatList from "./components/ChatList";
 
-import Loader from "@/components/ui/Loaders/Loader";
+import ChatsSkeleton from "@/components/common/Skeletons/ChatsSkeleton";
 import ChatSearch from "./components/ChatSearch";
 
 const ChatsPage = () => {
@@ -24,8 +24,7 @@ const ChatsPage = () => {
             onRefetch={() => void refetch()}
           />
         )}
-        {/* скелет */}
-        {isPending && <Loader />}
+        {isPending && <ChatsSkeleton />}
 
         {chats &&
           (visibleChats.length ? (

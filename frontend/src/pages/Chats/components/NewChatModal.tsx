@@ -10,7 +10,7 @@ import { useMeQuery, useUsersFindQuery } from "@/lib/usersQueries";
 import { useCreateChatMutation } from "@/lib/chatsQueries";
 import { CHAT_DETAIL } from "@/utils/constants";
 import ChatUserInfo from "./ChatUserInfo";
-import Loader from "@/components/ui/Loaders/Loader";
+import ChatsSkeleton from "@/components/common/Skeletons/ChatsSkeleton";
 
 const NewChatModal = ({ onClose }: { onClose: () => void }) => {
   const [search, setSearch] = useState("");
@@ -36,7 +36,7 @@ const NewChatModal = ({ onClose }: { onClose: () => void }) => {
           <EmptyState icon={<Search />} text="Введите хотя бы 2 символа юзернейма" />
         ) : (
           <>
-            {isSearching && <Loader width={28} />}
+            {isSearching && <ChatsSkeleton count={3} label="Поиск пользователей…" />}
             {!isSearching && users.isError && <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить пользователей" error={users.error} isError onRefetch={() => void users.refetch()} />}
             {!isSearching && !users.isError && (results.length ? (
               <ul className="chat-list">

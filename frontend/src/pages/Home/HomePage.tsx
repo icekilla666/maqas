@@ -1,7 +1,7 @@
 import EmptyState from "@/components/common/EmptyState";
 import PostsList from "@/components/common/Posts/PostsList";
 import TitlePage from "@/components/common/TitlePage";
-import Loader from "@/components/ui/Loaders/Loader";
+import PostsSkeleton from "@/components/common/Skeletons/PostsSkeleton";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePostFeedQuery } from "@/lib/postsQueries";
 import type { PostFeed, PostTag, HomeSort } from "@/types/api.types";
@@ -62,7 +62,7 @@ const HomePage = () => {
         />
 
         {isPending ? (
-          <Loader className="home-feed__loader" />
+          <PostsSkeleton />
         ) : isError ? (
           <EmptyState
             icon={<TriangleAlert />}
