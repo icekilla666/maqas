@@ -1,4 +1,4 @@
-import { Check, CheckCheck, Clock3, Pencil, Reply, Trash2 } from "lucide-react";
+import { Check, CheckCheck, Clock3, Pencil, Reply, Trash2, CircleHelp } from "lucide-react";
 import DateTime from "@/components/common/DateTime";
 import ContextMenu from "@/components/ui/ActionMenu/ContextMenu";
 import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenuList";
@@ -15,6 +15,7 @@ interface ChatMessageItemProps {
   onImageLoad: () => void;
   disabled: boolean;
   isSending?: boolean;
+  isDeliveryUnconfirmed?: boolean;
 }
 
 const ChatMessageItem = ({
@@ -26,9 +27,12 @@ const ChatMessageItem = ({
   onImageLoad,
   disabled,
   isSending = false,
+  isDeliveryUnconfirmed = false,
 }: ChatMessageItemProps) => {
   const sharedPostId = getSharedPostId(message.content);
-  const statusLabel = isSending
+  const statusLabel = isDeliveryUnconfirmed
+    ? "Отправка не подтверждена"
+    : isSending
     ? "Отправляется"
     : message.is_read
       ? "Прочитано"
@@ -117,7 +121,9 @@ const ChatMessageItem = ({
           <DateTime date={message.created_at} onlyTime />
           {message.is_owner && (
             <span aria-label={statusLabel} title={statusLabel}>
-              {isSending ? (
+              {isDeliveryUnconfirmed ? (
+                <><span className="chat-message__delivery-label">Не подтверждено</span><CircleHelp size={15} /></>
+              ) : isSending ? (
                 <Clock3 size={15} />
               ) : message.is_read ? (
                 <CheckCheck size={15} />

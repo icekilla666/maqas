@@ -19,14 +19,14 @@ const App = () => {
     const initAuth = async () => {
       try {
         await authApi.refreshAccess();
-      } catch {
-        // Refresh сам обновляет состояние сессии; сетевой сбой не сбрасывает её.
       } finally {
         if (active) setIsAuthCheked(true);
       }
     };
     void initAuth();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [setIsAuthCheked]);
 
   if (!isAuthCheked)

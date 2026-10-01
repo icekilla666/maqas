@@ -6,8 +6,6 @@ const vm = require("node:vm");
 const ts = require("typescript");
 const axios = require("axios");
 
-// Проверяем настоящие Axios-interceptors с подменённым сетевым адаптером.
-// TypeScript уже установлен в проекте, отдельный тестовый раннер не нужен.
 function load(file, mocks = {}) {
   const source = fs.readFileSync(path.join(__dirname, "../src", file), "utf8")
     .replace("import.meta.env.VITE_API_URL", "undefined");

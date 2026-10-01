@@ -14,6 +14,7 @@ import type { ChatMessageData, ChatUserData } from "@/types/api.types";
 import { CHATS_PAGE } from "@/utils/constants";
 import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 import type { ChatComposerContext } from "./useChatComposer";
+import { isMessageDeliveryUncertain } from "@/utils/messageDelivery";
 
 export const useChatConversation = (chatId: string) => {
   const location = useLocation();
@@ -30,6 +31,7 @@ export const useChatConversation = (chatId: string) => {
   const [isDeleteChatOpen, setIsDeleteChatOpen] = useState(false);
   const [scrollRequest, setScrollRequest] = useState(0);
   const [pendingMessage, setPendingMessage] = useState<ChatMessageData>();
+  const [isDeliveryUnconfirmed, setIsDeliveryUnconfirmed] = useState(false);
   const {
     mutate: markAsRead,
     isPending: isMarkingRead,
@@ -70,6 +72,7 @@ export const useChatConversation = (chatId: string) => {
     (state) => !!user && state.typingByChat[chatId] === user.id,
   );
   const isBusy =
+    !!pendingMessage ||
     createMessage.isPending ||
     updateMessage.isPending ||
     deleteMessage.isPending ||
@@ -125,8 +128,17 @@ export const useChatConversation = (chatId: string) => {
           image,
           parent_id: context?.message.id,
         });
-      } finally {
         setPendingMessage(undefined);
+      } catch (error) {
+        if (isMessageDeliveryUncertain(error)) {
+          // Сохраняем локальную карточку и не возвращаем файл в форму:
+          // сервер мог отправить сообщение, хотя ответ до нас не дошёл.
+          setIsDeliveryUnconfirmed(true);
+          void messagesQuery.refetch();
+        } else {
+          setPendingMessage(undefined);
+          throw error;
+        }
       }
     }
     setContext(undefined);
@@ -163,6 +175,12 @@ export const useChatConversation = (chatId: string) => {
     isTyping,
     messages: displayedMessages,
     pendingMessageId: pendingMessage?.id,
+    isDeliveryUnconfirmed,
+    dismissUnconfirmedMessage: () => {
+      if (!isDeliveryUnconfirmed) return;
+      setPendingMessage(undefined);
+      setIsDeliveryUnconfirmed(false);
+    },
     messagesQuery,
     context,
     scrollRequest,

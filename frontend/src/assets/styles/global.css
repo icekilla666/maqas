@@ -3388,6 +3388,40 @@ textarea {
 
 .chat-message__meta > span {
   display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-message__delivery-label {
+  font-size: 10px;
+}
+
+.chat-delivery-notice {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--color-primary);
+  border-top: 1px solid var(--chat-border);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.chat-delivery-notice > svg {
+  flex-shrink: 0;
+  color: var(--color-main);
+}
+
+.chat-delivery-notice p {
+  color: var(--chat-muted);
+  margin: 4px 0 8px;
+}
+
+.chat-delivery-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .context-menu-target {

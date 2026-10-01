@@ -8,6 +8,7 @@ import ChatMessageItem from "./ChatMessageItem";
 interface ChatMessagesProps {
   messages: ChatMessageData[];
   pendingMessageId?: string;
+  isDeliveryUnconfirmed?: boolean;
   isLoading: boolean;
   isError: boolean;
   error?: unknown;
@@ -22,6 +23,7 @@ interface ChatMessagesProps {
 const ChatMessages = ({
   messages,
   pendingMessageId,
+  isDeliveryUnconfirmed = false,
   isLoading,
   isError,
   error,
@@ -103,6 +105,7 @@ const ChatMessages = ({
             <ChatMessageItem
               message={message}
               isSending={message.id === pendingMessageId}
+              isDeliveryUnconfirmed={message.id === pendingMessageId && isDeliveryUnconfirmed}
               parent={messages.find(
                 (parent) => parent.id === message.parent_id,
               )}

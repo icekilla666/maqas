@@ -7,6 +7,8 @@ import type {
 } from "@/types/api.types";
 import { api } from "./api";
 
+const IMAGE_UPLOAD_TIMEOUT = 120_000;
+
 export const chatsApi = {
   createChat: async (user_id: string): Promise<ChatShortData> => {
     const response = await api.post(`/api/chats/users/${user_id}`);
@@ -36,6 +38,7 @@ export const chatsApi = {
     const response = await api.post(
       `/api/chats/${chat_id}/messages/create`,
       formData,
+      image ? { timeout: IMAGE_UPLOAD_TIMEOUT } : {},
     );
     return response.data.data;
   },
@@ -53,7 +56,10 @@ export const chatsApi = {
     const response = await api.patch(
       `/api/chats/messages/${message_id}`,
       formData,
-      { params: { image_removed } },
+      {
+        params: { image_removed },
+        ...(image ? { timeout: IMAGE_UPLOAD_TIMEOUT } : {}),
+      },
     );
     return response.data.data;
   },

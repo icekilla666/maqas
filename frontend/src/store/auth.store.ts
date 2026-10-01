@@ -25,7 +25,6 @@ export const useAuthStore = create<AuthState>()(
       pendingEmail: null,
 
       setIsAuthChecked: (isAuthChecked) => set({ isAuthChecked }),
-      // Вход/выход меняет сессию, refresh обновляет только её access token.
       setUser: (isAuth, accessToken) => set((state) => ({
         isAuth, accessToken, sessionVersion: state.sessionVersion + 1,
       })),

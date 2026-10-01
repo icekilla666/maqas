@@ -11,7 +11,6 @@ const options = {
 };
 
 export const api = axios.create(options);
-// Отдельный клиент не перехватывает собственный 401 и не зацикливает refresh.
 const refreshApi = axios.create(options);
 
 type RefreshAccessResponse = {
@@ -35,7 +34,6 @@ export const refreshAccessToken = (): Promise<RefreshAccessResponse> => {
 
   const promise = refreshApi.post<RefreshAccessResponse>("/api/auth/refresh-access")
     .then(({ data }) => {
-      // Запоздавший refresh не должен восстанавливать сессию после выхода.
       if (useAuthStore.getState().sessionVersion !== sessionVersion) {
         throw new axios.CanceledError("Сессия изменилась");
       }
@@ -106,7 +104,6 @@ api.interceptors.response.use(
     ) throw error;
 
     config._authRetry = true;
-    // Если другой запрос уже обновил токен, достаточно повторить этот запрос.
     if (config.headers.Authorization === `Bearer ${accessToken}`) {
       await refreshAccessToken();
     }

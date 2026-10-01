@@ -3,6 +3,7 @@ import { useChatConversation } from "@/hooks/useChatConversation";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatComposer from "./ChatComposer";
+import ChatDeliveryNotice from "./ChatDeliveryNotice";
 
 const ChatConversation = ({ chatId }: { chatId: string }) => {
   const chat = useChatConversation(chatId);
@@ -19,6 +20,7 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
       <ChatMessages
         messages={chat.messages}
         pendingMessageId={chat.pendingMessageId}
+        isDeliveryUnconfirmed={chat.isDeliveryUnconfirmed}
         isLoading={chat.messagesQuery.isPending}
         isError={chat.messagesQuery.isError}
         error={chat.messagesQuery.error}
@@ -29,6 +31,13 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
         onDelete={chat.requestDeleteMessage}
         disabled={chat.isBusy}
       />
+      {chat.isDeliveryUnconfirmed && (
+        <ChatDeliveryNotice
+          isChecking={chat.messagesQuery.isFetching}
+          onCheck={chat.refetchMessages}
+          onDismiss={chat.dismissUnconfirmedMessage}
+        />
+      )}
       <ChatComposer
         chatId={chatId}
         key={chat.context?.type === "edit" ? chat.context.message.id : "new-message"}
