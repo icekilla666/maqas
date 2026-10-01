@@ -3655,7 +3655,7 @@ textarea {
   }
 
   .mobile-nav {
-    --mobile-nav-button-size: clamp(44px, calc((100vw - 66px) / 5), 76px);
+    --mobile-nav-button-size: clamp(44px, calc((100vw - 116px) / 5), 76px);
 
     display: flex;
     align-items: center;
@@ -3872,7 +3872,6 @@ textarea {
   ),
   textarea,
   select {
-    /* Override smaller component fonts to prevent iOS focus zoom. */
     font-size: 16px !important;
   }
 }

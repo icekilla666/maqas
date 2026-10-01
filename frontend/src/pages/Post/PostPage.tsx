@@ -10,6 +10,7 @@ import PostComments from "./components/PostComments";
 import { useCommentsQuery } from "@/lib/commentsQueries";
 import { useLikersQuery } from "@/lib/likesQueries";
 import { useAnchorScroll } from "@/hooks/useAnchorScroll";
+import { HOME_PAGE } from "@/utils/constants";
 
 const PostPage = () => {
   const { id } = useParams();
@@ -38,6 +39,7 @@ const PostPage = () => {
           <PostItem
             onCommentsClick={() => navigate({ hash: "#comments" })}
             onLikersClick={() => setIsLikersModalOpen(true)}
+            onDeleted={() => navigate(HOME_PAGE, { replace: true })}
             post={post}
             variant="detail"
           />

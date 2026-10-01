@@ -14,6 +14,10 @@ import { api } from "./api";
 import { MOCK_DELAY_MS, USE_MOCK_POSTS, wait } from "@/utils/settingsMock";
 
 export const postsApi = {
+  deletePost: async (postId: string): Promise<void> => {
+    await api.delete(`/api/posts/${postId}`);
+  },
+
   getPostFeed: async ({
     feed_type,
     search_query,

@@ -2,7 +2,7 @@ import type { PostDetails, PostPreview } from "@/types/api.types";
 import UserItem from "../UsersList/UserItem";
 import DateTime from "../DateTime";
 import { CornerUpRight, Heart, MessageSquare } from "lucide-react";
-import ItemMenu from "../ItemMenu";
+import PostMenu from "./PostMenu";
 import PostAction from "./PostAction";
 import type { PostActionProps } from "@/types/entities";
 import { usePostLikeMutation } from "@/lib/likesQueries";
@@ -15,6 +15,7 @@ interface PostItemProps {
   onCommentsClick?: () => void;
   onLikeClick?: () => void;
   onLikersClick?: () => void;
+  onDeleted?: () => void;
   variant?: "card" | "detail";
 }
 
@@ -24,6 +25,7 @@ const PostItem = ({
   onCommentsClick,
   onLikeClick,
   onLikersClick,
+  onDeleted,
   variant = "card",
 }: PostItemProps) => {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -123,7 +125,7 @@ const PostItem = ({
                   />
                 ))}
               </div>
-              <ItemMenu reportTarget="post" ariaLabel="Меню поста" />
+              <PostMenu postId={post.id} authorId={post.user.id} onDeleted={onDeleted} />
             </div>
             {variant === "detail" && likeCount > 0 && (
               <button

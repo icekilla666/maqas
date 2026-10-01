@@ -82,6 +82,7 @@ export const postsKeys = {
   userPosts: (id?: string) => [...postsKeys.all, "user-posts", id] as const,
   post: (id?: string) => [...postsKeys.all, "post", id] as const,
   createPost: () => [...postsKeys.all, "create-post"] as const,
+  deletePost: () => [...postsKeys.all, "delete-post"] as const,
 };
 
 export const likesKeys = {
