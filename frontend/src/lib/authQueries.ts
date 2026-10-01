@@ -32,13 +32,13 @@ export const useLoginMutation = () => {
 };
 
 export const useRegisterMutation = () => {
-  const setPendingEmail = useAuthStore((state) => state.setPendingEmail);
+  const startCooldown = useAuthStore((state) => state.startVerificationCooldown);
 
   return useMutation({
     mutationKey: authKeys.register(),
     mutationFn: (data: RegisterData) => authApi.register(data),
     onSuccess: (response) => {
-      setPendingEmail(response.data);
+      startCooldown(response.data);
     },
   });
 };

@@ -3,9 +3,10 @@ import verifySuccess from "@/assets/images/verify-success.svg";
 import verifyError from "@/assets/images/verify-error.svg";
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
 import { authApi } from "@/services/auth.api";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import Loader from "@/components/ui/Loaders/Loader";
 import { getApiErrorMessage } from "@/utils/apiError";
+import { useVerificationCooldown } from "@/hooks/useVerificationCooldown";
 
 interface VerifyEmailProps {
   variant: "wait" | "success" | "error";
@@ -26,28 +27,22 @@ const VerifyEmailWrapper = ({
 }: VerifyEmailProps) => {
   const [message, setMessage] = useState(text);
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(60);
-
-  useEffect(() => {
-    if (cooldown > 0) {
-      const timer = setInterval(() => {
-        setCooldown(cooldown - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [cooldown]);
+  const { cooldown, restart } = useVerificationCooldown(email);
+  const sendingRef = useRef(false);
 
   const handleResend = async (email: string) => {
-    if (loading) return;
+    if (sendingRef.current || cooldown > 0) return;
 
+    sendingRef.current = true;
     setLoading(true);
     try {
       const response = await authApi.resendEmail(email);
       setMessage(response.message);
-      setCooldown(60);
+      if (response.success) restart();
     } catch (error) {
       setMessage(getApiErrorMessage(error, "Что-то пошло не так. Попробуйте позже"));
     } finally {
+      sendingRef.current = false;
       setLoading(false);
     }
   };
@@ -66,7 +61,7 @@ const VerifyEmailWrapper = ({
         <StrokeButton
           onClick={() => handleResend(email)}
           className="text-[12px]"
-          disabled={cooldown > 0}
+          disabled={loading || cooldown > 0}
         >
           {loading ? (
             <Loader width={18} />
