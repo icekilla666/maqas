@@ -7,7 +7,7 @@ from src.users.models import UsersModel
 from src.database import SessionDep
 from src.auth.jwt import decode_token
 from src.auth.repository import AuthRepository
-from src.users.schemas import UserStatus
+from src.users.schemas import UserStatus, UserRole
 from src.auth.service import AuthService
 from src.users.repository import UsersRepository
 
@@ -144,3 +144,21 @@ def get_auth_service(
     return AuthService(auth_repo, users_repo)
 
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+
+async def get_admin(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    session: SessionDep
+):
+    current_user = await get_current_user(credentials, session)
+    if current_user.role != UserRole.admin:
+        raise HTTPException (
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "success": False,
+                "message": "Доступ разрешён только администраторам",
+                "error": "ADMIN_REQUIRED"
+            }
+        )
+    return current_user
+
+AdminsAuthDep = Annotated[UsersModel, Depends(get_admin)]

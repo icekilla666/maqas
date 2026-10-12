@@ -159,3 +159,15 @@ class ChatsRepository:
         query = (select(func.count(MessagesModel.id)).where(MessagesModel.chat_id == chat_id, MessagesModel.sender_id != user_id, MessagesModel.is_read.is_(False)))
         result = await session.execute(query)
         return result.scalar_one()
+    
+    async def get_chat_partner_ids(self, user_id: UUID, session: AsyncSession) -> set[UUID]:
+        query = select(ChatsModel.user1_id, ChatsModel.user2_id).where(
+            or_(ChatsModel.user1_id == user_id,ChatsModel.user2_id == user_id))
+        result = await session.execute(query)
+        partner_ids = set()
+        for user1_id, user2_id in result.all():
+            if user1_id == user_id:
+                partner_ids.add(user2_id)
+            else:
+                partner_ids.add(user1_id)
+        return partner_ids

@@ -4,11 +4,12 @@ from sqlalchemy import String, Enum, Integer, ForeignKey, UniqueConstraint
 from uuid import uuid4
 
 from src.database import Base
-from src.users.schemas import UserStatus, Level
+from src.users.schemas import UserStatus, Level, UserRole
 
 class UsersModel(Base):
     __tablename__ = "users"
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    role: Mapped[Enum] = mapped_column(Enum(UserRole, name="user_role_enum", native_enum=False), server_default="user", nullable=False, default=UserRole.user)
     username: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     avatar_url: Mapped[str] = mapped_column(String(500), nullable=True)

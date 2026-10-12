@@ -7,18 +7,32 @@ class RealtimeConnectionManager:
 
     async def connect(self, user_id: UUID, websocket: WebSocket):
         await websocket.accept()
+        was_offline = not self.active_connections.get(user_id)
         if user_id not in self.active_connections:
             self.active_connections[user_id] = set()
         self.active_connections[user_id].add(websocket)
+        return was_offline
 
     def disconnect(self, user_id: UUID, websocket: WebSocket):
-        user_connections = self.active_connections.get(user_id)
-        if not user_connections:
-            return
-        user_connections.discard(websocket)
-        if not user_connections:
+        connections = self.active_connections.get(user_id)
+        if not connections:
+            return False
+        connections.discard(websocket)
+        if not connections:
             self.active_connections.pop(user_id, None)
+            return True
+        return False
 
+    def is_online(self, user_id: UUID) -> bool:
+        return bool(self.active_connections.get(user_id))
+
+    def get_online_user_ids(self) -> set[UUID]:
+        return {
+            user_id
+            for user_id, connections in self.active_connections.items()
+            if connections
+        }
+    
     async def send_to_user(self, user_id: UUID, event: dict):
         connections = self.active_connections.get(user_id)
         if not connections:

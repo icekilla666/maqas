@@ -7,6 +7,7 @@ from src.likes.router import likes_router
 from src.comments.router import comments_router
 from src.chats.router import chats_router
 from src.realtime.router import realtime_router
+from src.admins.router import admins_router
 
 router = APIRouter()
 
@@ -17,3 +18,4 @@ router.include_router(likes_router)
 router.include_router(comments_router)
 router.include_router(chats_router)
 router.include_router(realtime_router)
+router.include_router(admins_router)

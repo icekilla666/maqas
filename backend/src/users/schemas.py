@@ -13,6 +13,10 @@ class Level(str, Enum):
     loshok_1 = "лошок 1"
     loshok_pro = "лошок про"
 
+class UserRole(str, Enum):
+    user = "user"
+    admin = "admin"
+    
 class UserOutShort(BaseModel):
     id: UUID
     username: str = Field(min_length=1, max_length=100)

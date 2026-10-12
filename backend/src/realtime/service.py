@@ -25,43 +25,82 @@ class RealtimeService:
 
     async def handle_chat_connection(self, token: str, websocket: WebSocket, session: AsyncSession):
         user_id: UUID | None = None
+        partner_ids: set[UUID] = set()
         try:
             payload = decode_token(token)
             if not payload or payload.get("type") != "access":
                 await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
                 return
-
             raw_user_id = payload.get("sub")
             if not raw_user_id:
                 await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
                 return
-
             user_id = UUID(raw_user_id)
-
             user = await self.users_repo.get_by_id(user_id, session)
             if not user:
                 await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
                 return
-
-            await self.manager.connect(user_id, websocket)
-
+            partner_ids = await self.chats_repo.get_chat_partner_ids(
+                user_id,
+                session
+            )
+            online_user_ids = [
+                str(partner_id)
+                for partner_id in partner_ids
+                if self.manager.is_online(partner_id)
+            ]
+            was_offline = await self.manager.connect(
+                user_id,
+                websocket
+            )
+            await websocket.send_json({
+                "type": RealtimeEventType.CHAT_CONNECTED,
+                "data": {
+                    "online_user_ids": online_user_ids
+                }
+            })
+            if was_offline:
+                for partner_id in partner_ids:
+                    await self.notify_user(
+                        user_id=partner_id,
+                        event_type=RealtimeEventType.CHAT_USER_ONLINE,
+                        data={
+                            "user_id": str(user_id)
+                        }
+                    )
             while True:
                 message = await websocket.receive_json()
-
                 event_type = message.get("type")
                 data = message.get("data", {})
-
                 if event_type == RealtimeEventType.CHAT_TYPING_STARTED:
-                    await self.handle_typing_started(user_id, data, session)
-
+                    await self.handle_typing_started(
+                        user_id,
+                        data,
+                        session
+                    )
                 elif event_type == RealtimeEventType.CHAT_TYPING_STOPPED:
-                    await self.handle_typing_stopped(user_id, data, session)
+                    await self.handle_typing_stopped(
+                        user_id,
+                        data,
+                        session
+                    )
         except WebSocketDisconnect:
             pass
-
         finally:
             if user_id:
-                self.manager.disconnect(user_id, websocket)
+                became_offline = self.manager.disconnect(
+                    user_id,
+                    websocket
+                )
+                if became_offline:
+                    for partner_id in partner_ids:
+                        await self.notify_user(
+                            user_id=partner_id,
+                            event_type=RealtimeEventType.CHAT_USER_OFFLINE,
+                            data={
+                                "user_id": str(user_id)
+                            }
+                        )
         
     async def handle_typing_started(self, user_id: UUID, data: dict, session: AsyncSession):
         chat_id = UUID(data["chat_id"])

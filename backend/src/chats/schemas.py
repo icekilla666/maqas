@@ -29,6 +29,7 @@ class MessageOut(BaseModel):
     content: None | str = Field(default=None, max_length=700)
     image_url: None | str = Field(default=None)
     is_read: bool = Field(default=False)
+    is_edited: bool = Field(default=False)
     created_at: datetime
     parent_id: None | UUID = Field(default=None)
     sender: UserOutShort

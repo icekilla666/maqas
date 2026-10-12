@@ -87,7 +87,8 @@ class ChatsService:
                     content=last_message.content,
                     image_url=last_message.image_url,
                     created_at=last_message.created_at,
-                    is_owner=last_message.sender_id == current_user.id
+                    is_owner=last_message.sender_id == current_user.id,
+                    is_edited=last_message.is_edited
                 )
                 )
             )
@@ -285,6 +286,7 @@ class ChatsService:
                 message.image_url = None
         if update_message.content:
             message.content = update_message.content
+        message.is_edited = True
         await session.commit()
         owner_message = MessageOut.model_validate(message)
         owner_message.is_owner = True
