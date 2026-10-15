@@ -11,8 +11,9 @@ import {
   Tags,
   TrendingUp,
   UsersRound,
+  X,
 } from "lucide-react";
-import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
+import { useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 
 interface HomeHeaderProps {
   setSearch: (search: string) => void;
@@ -37,6 +38,7 @@ const HomeHeader = ({
   setSelectedSort,
   isToolbarHidden,
 }: HomeHeaderProps) => {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
@@ -109,7 +111,7 @@ const HomeHeader = ({
   return (
     <div
       className={`home-feed__toolbar ${
-        isToolbarHidden ? "home-feed__toolbar--hidden" : ""
+        isToolbarHidden && !isFilterOpen ? "home-feed__toolbar--hidden" : ""
       }`.trim()}
     >
       <SearchInput
@@ -123,6 +125,8 @@ const HomeHeader = ({
       <div className="home-feed__actions">
         <ActionMenu
           actions={filterActions}
+          closeOnSelect={false}
+          onOpenChange={setIsFilterOpen}
           ariaLabel="Фильтры публикаций"
           className={`home-feed__action ${
             hasActiveFilters ? "active" : ""
@@ -136,6 +140,20 @@ const HomeHeader = ({
           icon={<ArrowUpDown size={20} />}
         />
       </div>
+      {hasActiveFilters && (
+        <div className="home-feed__filter-tags" aria-label="Выбранные фильтры">
+          {selectedTags.map(tag => (
+            <button key={tag} type="button" className="home-feed__filter-tag" onClick={() => toggleTag(tag)} aria-label={`Убрать фильтр ${tag}`}>
+              <span>{tag}</span><X size={17} aria-hidden="true" />
+            </button>
+          ))}
+          {followingOnly && (
+            <button type="button" className="home-feed__filter-tag" onClick={() => setFollowingOnly(false)} aria-label="Убрать фильтр Мои подписки">
+              <span>Мои подписки</span><X size={17} aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -26,6 +26,7 @@ export const useChatsRealtime = () => {
       typingTimers.forEach((timer) => clearTimeout(timer));
       typingTimers.clear();
       resetTyping();
+      useChatsRealtimeStore.getState().resetPresence();
     };
 
     const url = new URL("/api/ws/chats", window.location.origin);
@@ -43,6 +44,21 @@ export const useChatsRealtime = () => {
     socket.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data);
+        const presence = useChatsRealtimeStore.getState();
+        if (payload.type === "chat.connected" && Array.isArray(payload.data?.online_user_ids)) {
+          presence.setOnlineUsers(payload.data.online_user_ids.filter((id: unknown): id is string => typeof id === "string"));
+          return;
+        }
+        if (payload.type === "chat.user.online" || payload.type === "chat.user.offline") {
+          if (typeof payload.data?.user_id === "string") {
+            presence.setPresence(payload.data.user_id, payload.type === "chat.user.online");
+          }
+          return;
+        }
+        if (payload.type === "chat.list.updated") {
+          void queryClient.invalidateQueries({ queryKey: chatsKeys.myChats() });
+          return;
+        }
         const chatId = payload?.data?.chat_id;
         if (typeof chatId !== "string") return;
 

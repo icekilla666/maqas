@@ -1,3 +1,4 @@
+import { validateImage } from "@/utils/validateImage";
 import MainInput from "@/components/ui/Inputs/MainInput";
 import Textarea from "@/components/ui/Inputs/Textarea";
 import { HOME_PAGE, POST_TAGS } from "@/utils/constants";
@@ -70,7 +71,10 @@ const AddPostEditor = ({
   const addImage = (e: ChangeEvent<HTMLInputElement>) => {
     setError("");
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
+    const imageError = validateImage(file);
+    if (imageError) { setError(imageError); return; }
 
     setFormData((prev) => ({
       ...prev,

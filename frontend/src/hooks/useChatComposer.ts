@@ -1,3 +1,4 @@
+import { validateImage } from "@/utils/validateImage";
 import {
   useEffect,
   useLayoutEffect,
@@ -119,14 +120,8 @@ export const useChatComposer = ({
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
-    if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)) {
-      toast.error("Выберите JPG, PNG, GIF или WebP");
-      return;
-    }
-    if (file.size > 15 * 1024 * 1024) {
-      toast.error("Изображение должно быть не больше 15 МБ");
-      return;
-    }
+    const imageError = validateImage(file);
+    if (imageError) { toast.error(imageError); return; }
     setAttachment({ file, url: URL.createObjectURL(file) });
   };
 

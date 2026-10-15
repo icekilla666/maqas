@@ -29,6 +29,7 @@ const PostItem = ({
   onDeleted,
   variant = "card",
 }: PostItemProps) => {
+  const [likeAnimation, setLikeAnimation] = useState(0);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const setPostLike = usePostLikeMutation();
   const pendingLike =
@@ -39,13 +40,14 @@ const PostItem = ({
   const likeCount = pendingLike?.nextLikesCount ?? post.likes_count;
   const postActions: PostActionProps[] = [
     {
-      icon: <Heart size={18} />,
+      icon: <Heart key={likeAnimation} className={likeAnimation ? "like-pop" : undefined} size={18} />,
       ariaLabel: isLiked ? "Убрать лайк" : "Поставить лайк",
       value: likeCount,
       className: isLiked ? "liked" : "",
       disabled: setPostLike.isPending,
       onClick: () => {
         if (setPostLike.isPending) return;
+        if (!isLiked) setLikeAnimation(value => value + 1);
 
         if (onLikeClick) {
           onLikeClick();

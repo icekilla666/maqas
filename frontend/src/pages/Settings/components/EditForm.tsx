@@ -1,3 +1,5 @@
+import { validateImage } from "@/utils/validateImage";
+import { toast } from "sonner";
 import Avatar from "@/components/common/Avatar/Avatar";
 import Input from "@/components/ui/Inputs/Input";
 import StrokeButton from "@/components/ui/Buttons/StrokeButton";
@@ -40,7 +42,10 @@ const EditForm = ({ profile }: { profile: AccountData }) => {
 
   const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    event.target.value = "";
     if (!file) return;
+    const imageError = validateImage(file);
+    if (imageError) { toast.error(imageError); return; }
 
     uploadAvatar.mutate(file, {
       onSettled: () => {

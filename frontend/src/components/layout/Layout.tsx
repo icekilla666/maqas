@@ -1,6 +1,7 @@
 import { Outlet, useMatches } from "react-router-dom";
 import { Navigation } from "../common/Navigation/Navigation";
 import { useAuthStore } from "@/store/auth.store";
+import InstallAppPrompt from "../common/InstallAppPrompt";
 
 type RouteHandle = {
   hideNavigation?: boolean;
@@ -19,6 +20,7 @@ const Layout = () => {
         <Outlet />
       </main>
       {showNavigation && <Navigation />}
+      {isAuth && <InstallAppPrompt />}
     </>
   );
 };

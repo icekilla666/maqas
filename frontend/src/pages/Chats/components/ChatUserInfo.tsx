@@ -3,6 +3,7 @@ import DateTime from "@/components/common/DateTime";
 import { Check, CheckCheck } from "lucide-react";
 import type { ChatUserData, LastMessage } from "@/types/api.types";
 import { getChatMessagePreview } from "@/utils/sharedPost";
+import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 
 interface ChatUserInfoProps {
   user: ChatUserData;
@@ -12,18 +13,25 @@ interface ChatUserInfoProps {
   isTyping?: boolean;
 }
 const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, isTyping = false }: ChatUserInfoProps) => {
+  const presence = useChatsRealtimeStore(state => state.presenceByUser[user.id]);
+  const presenceReady = useChatsRealtimeStore(state => state.presenceReady);
+  const presenceText = presence?.online ? "в сети"
+    : presenceReady ? "не в сети" : "статус недоступен";
   const preview = last_message
     ? getChatMessagePreview(last_message)
     : `@${user.username}`;
-  const subtitle = isTyping ? "печатает…" : preview;
+  const subtitle = isTyping ? "печатает…" : compact ? presenceText : preview;
   return (
     <>
+      <span className="chat-avatar-presence">
       <Avatar
         avatar={user.avatar_url ?? undefined}
         username={user.username}
         width={compact ? 42 : 52}
         size={compact ? 23 : 28}
       />
+      {presence?.online && <span className="chat-online-dot" role="img" aria-label="В сети" />}
+      </span>
       <span className="chat-user-info">
         <span className="chat-user-info__row">
           <span className="chat-user-info__name" title={user.name || user.username}>
@@ -33,7 +41,7 @@ const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, i
             <span className="chat-list__time-row">
               {last_message.is_owner && typeof last_message.is_read === "boolean" && (
                 <span
-                  className="chat-list__read-status"
+                  className={`chat-list__read-status ${last_message.is_read ? "chat-list__read-status--read" : ""}`}
                   aria-label={last_message.is_read ? "Прочитано" : "Не прочитано"}
                   title={last_message.is_read ? "Прочитано" : "Не прочитано"}
                 >
@@ -46,7 +54,7 @@ const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, i
         </span>
         <span className="chat-user-info__row">
           <span
-            className={`chat-user-info__username ${isTyping ? "chat-user-info__username--typing" : ""}`.trim()}
+            className={`chat-user-info__username ${isTyping || (compact && presence?.online) ? "chat-user-info__username--typing" : ""}`.trim()}
             title={subtitle}
             role={compact ? "status" : undefined}
           >

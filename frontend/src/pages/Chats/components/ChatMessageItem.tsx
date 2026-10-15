@@ -120,6 +120,7 @@ const ChatMessageItem = ({
           )
         )}
         <div className="chat-message__meta">
+          {message.is_edited && <span className="chat-message__edited">изменено</span>}
           <DateTime date={message.created_at} onlyTime />
           {message.is_owner && (
             <span aria-label={statusLabel} title={statusLabel}>

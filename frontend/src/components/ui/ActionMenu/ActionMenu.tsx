@@ -16,6 +16,8 @@ interface ActionMenuProps {
   icon: ReactNode;
   ariaLabel: string;
   className?: string;
+  closeOnSelect?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const ActionMenu = ({
@@ -23,14 +25,23 @@ const ActionMenu = ({
   icon,
   ariaLabel,
   className = "",
+  closeOnSelect = true,
+  onOpenChange,
 }: ActionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [menuStack, setMenuStack] = useState<ActionMenuItem[]>([]);
+  const [menuStack, setMenuStack] = useState<number[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
-  const activeMenu = menuStack.at(-1);
+  let activeMenu: ActionMenuItem | undefined;
+  let levelActions = actions;
+  for (const index of menuStack) {
+    activeMenu = levelActions[index];
+    levelActions = activeMenu?.actions ?? [];
+  }
   const activeActions = activeMenu?.actions ?? actions;
+
+  useEffect(() => { onOpenChange?.(isOpen); }, [isOpen, onOpenChange]);
 
   useEffect(() => {
     if (isOpen) menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')?.focus();
@@ -94,13 +105,15 @@ const ActionMenu = ({
 
   const handleAction = (action: ActionMenuItem) => {
     if (action.actions?.length) {
-      setMenuStack((stack) => [...stack, action]);
+      setMenuStack((stack) => [...stack, activeActions.indexOf(action)]);
       return;
     }
 
-    setIsOpen(false);
-    setMenuStack([]);
-    triggerRef.current?.focus();
+    if (closeOnSelect) {
+      setIsOpen(false);
+      setMenuStack([]);
+      triggerRef.current?.focus();
+    }
     action.onClick?.();
   };
 

@@ -174,6 +174,7 @@ export type ChatData = {
 };
 
 export type ChatMessageData = {
+  is_edited?: boolean;
   id: string;
   chat_id: string;
   content: string | null;

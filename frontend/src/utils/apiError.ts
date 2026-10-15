@@ -18,6 +18,7 @@ export const getApiErrorMessage = (
   fallback = "Что-то пошло не так",
 ): string => {
   if (!isAxiosError<unknown>(error)) return fallback;
+  if (error.response?.status === 413) return "Файл слишком большой для загрузки. Выберите изображение меньшего размера (до 15 МБ)";
 
   const data = error.response?.data;
   if (!isRecord(data)) return fallback;
