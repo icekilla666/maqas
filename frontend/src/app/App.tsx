@@ -1,6 +1,9 @@
 import { authApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store.ts";
-import { useEffect } from "react";
+import axios from "axios";
+import EmptyState from "@/components/common/EmptyState";
+import { WifiOff } from "lucide-react";
+import { useEffect, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "../routes/router.tsx";
 import Loader from "@/components/ui/Loaders/Loader.tsx";
@@ -12,27 +15,54 @@ const App = () => {
   useApplyTheme();
   useChatsRealtime();
 
+  const [authError, setAuthError] = useState(false);
+  const [authAttempt, setAuthAttempt] = useState(0);
   const isAuthCheked = useAuthStore((state) => state.isAuthChecked);
   const setIsAuthCheked = useAuthStore((state) => state.setIsAuthChecked);
   useEffect(() => {
     let active = true;
+    let pending = false;
     const initAuth = async () => {
+      if (pending) return;
+      pending = true;
       try {
         await authApi.refreshAccess();
-      } finally {
         if (active) setIsAuthCheked(true);
+      } catch (error) {
+        if (!active) return;
+        if (axios.isAxiosError(error) && [401, 403].includes(error.response?.status ?? 0)) {
+          setIsAuthCheked(true);
+        } else {
+          setAuthError(true);
+        }
+      } finally {
+        pending = false;
       }
     };
+    const retryOnReturn = () => {
+      if (document.visibilityState !== "hidden" && !useAuthStore.getState().isAuthChecked) void initAuth();
+    };
+    window.addEventListener("online", retryOnReturn);
+    document.addEventListener("visibilitychange", retryOnReturn);
     void initAuth();
     return () => {
       active = false;
+      window.removeEventListener("online", retryOnReturn);
+      document.removeEventListener("visibilitychange", retryOnReturn);
     };
-  }, [setIsAuthCheked]);
+  }, [setIsAuthCheked, authAttempt]);
 
   if (!isAuthCheked)
     return (
       <div className="h-svh flex justify-center items-center">
-        <Loader />
+        {authError ? (
+          <EmptyState
+            icon={<WifiOff />}
+            text="Не удалось восстановить сессию. Проверьте подключение и попробуйте снова."
+            isError
+            onRefetch={() => { setAuthError(false); setAuthAttempt(value => value + 1); }}
+          />
+        ) : <Loader />}
       </div>
     );
 

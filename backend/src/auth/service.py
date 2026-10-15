@@ -184,6 +184,7 @@ class AuthService:
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
+            max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
             httponly=True,
             secure=False, # local     
             samesite="lax",
