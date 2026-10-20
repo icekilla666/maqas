@@ -50,6 +50,16 @@ const ChatMessages = ({
     scrollToBottom();
   }, [messages, scrollRequest]);
 
+  useLayoutEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    const observer = new ResizeObserver(() => {
+      if (stickToBottom.current) element.scrollTop = element.scrollHeight;
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
       className="chat-messages"

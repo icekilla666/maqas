@@ -1,3 +1,4 @@
+import { useChatViewport } from "@/hooks/useChatViewport";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import { useChatConversation } from "@/hooks/useChatConversation";
 import ChatHeader from "./ChatHeader";
@@ -6,10 +7,11 @@ import ChatComposer from "./ChatComposer";
 import ChatDeliveryNotice from "./ChatDeliveryNotice";
 
 const ChatConversation = ({ chatId }: { chatId: string }) => {
+  const viewportRef = useChatViewport();
   const chat = useChatConversation(chatId);
 
   return (
-    <section className="chat-page" aria-label="Переписка">
+    <section ref={viewportRef} className="chat-page" aria-label="Переписка">
       <ChatHeader
         user={chat.user}
         isTyping={chat.isTyping}

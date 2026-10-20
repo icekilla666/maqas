@@ -84,9 +84,13 @@ const ChatComposer = (props: ChatComposerProps) => {
           onBlur={stopTyping}
           maxLength={700}
           rows={1}
-          disabled={isDisabled}
+          disabled={props.disabled && !props.isPending}
         />
         <IconButton
+          onPointerDown={(event) => {
+            // Кнопка не забирает фокус у поля при тапе или клике.
+            if (document.activeElement === inputRef.current) event.preventDefault();
+          }}
           className="chat-composer__send"
           type="submit"
           aria-label={isEditing ? "Сохранить сообщение" : "Отправить сообщение"}

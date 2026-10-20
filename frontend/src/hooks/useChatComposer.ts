@@ -64,7 +64,10 @@ export const useChatComposer = ({
     const input = inputRef.current;
     if (!input) return;
     input.style.height = "auto";
-    input.style.height = `${Math.min(input.scrollHeight, 132)}px`;
+    // scrollHeight включает padding, но не границы border-box.
+    const styles = getComputedStyle(input);
+    const borderHeight = parseFloat(styles.borderTopWidth) + parseFloat(styles.borderBottomWidth);
+    input.style.height = `${Math.min(input.scrollHeight + borderHeight, 132)}px`;
   }, [content]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -80,12 +83,11 @@ export const useChatComposer = ({
     }
     try {
       await onSend(draft.trim(), image);
-      setContent("");
-      setAttachment(null);
-      inputRef.current?.focus();
+      // Новый черновик, введённый во время отправки, сохраняем.
+      if (isEditing) setContent("");
     } catch {
       if (!isEditing) {
-        setContent(draft);
+        setContent(current => current ? `${draft}\n${current}` : draft);
         if (image)
           setAttachment({ file: image, url: URL.createObjectURL(image) });
       }
