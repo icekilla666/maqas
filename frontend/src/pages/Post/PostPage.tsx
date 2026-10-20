@@ -18,9 +18,11 @@ const PostPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: post, isLoading, isError, error } = usePostQuery(id);
+  const commentsQuery = useCommentsQuery(id);
   const { data: comments = [], isLoading: isCommentsLoading, error: commentsError } =
-    useCommentsQuery(id);
-  const { data: likers = [], error: likersError } = useLikersQuery(id);
+    commentsQuery;
+  const likersQuery = useLikersQuery(id);
+  const { data: likers = [], error: likersError } = likersQuery;
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
 
   useAnchorScroll("comments", Boolean(post) && !isError && !isCommentsLoading);
@@ -50,6 +52,7 @@ const PostPage = () => {
             key={post.id}
             postId={post.id}
             comments={comments}
+            pagination={commentsQuery}
             isLoading={isCommentsLoading}
             error={commentsError}
           />
@@ -64,6 +67,7 @@ const PostPage = () => {
       )}
       <PostLikersModal
         likers={likers}
+        pagination={likersQuery}
         error={likersError}
         onClose={() => setIsLikersModalOpen(false)}
         open={isLikersModalOpen}

@@ -2416,7 +2416,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: calc(100dvh - 92px);
+  max-height: min(476px, calc(100dvh - 92px));
 }
 
 .post-likers-modal__header {
@@ -2454,9 +2454,12 @@ textarea {
   cursor: pointer;
 }
 
-.post-likers-modal .user-list__items {
+.post-likers-modal__results {
+  min-height: 0;
   overflow-y: auto;
 }
+
+.post-likers-modal__header { flex-shrink: 0; }
 
 .post-likers-modal__empty {
   padding: 24px 0;
@@ -3935,3 +3938,10 @@ textarea {
     overflow: hidden;
   }
 }
+
+.infinite-scroll { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px; font-size: 12px; color: var(--color-grey); }
+.infinite-scroll > span { display: flex; align-items: center; gap: 8px; }
+.infinite-scroll button { padding: 8px 12px; color: var(--color-second); }
+.infinite-scroll button:disabled { opacity: .5; }
+
+.post-share-modal__avatars > .infinite-scroll { flex-shrink: 0; width: 120px; }

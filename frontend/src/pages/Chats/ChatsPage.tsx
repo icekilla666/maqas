@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import { MessageCircle, TriangleAlert } from "lucide-react";
 import TitlePage from "@/components/common/TitlePage";
 import EmptyState from "@/components/common/EmptyState";
@@ -8,13 +9,14 @@ import ChatsSkeleton from "@/components/common/Skeletons/ChatsSkeleton";
 import ChatSearch from "./components/ChatSearch";
 
 const ChatsPage = () => {
-  const { data: chats, isPending, isError, error, refetch } = useMyChatsQuery();
+  const chatsQuery = useMyChatsQuery();
+  const { data: chats, isPending, isError, error, refetch } = chatsQuery;
   const visibleChats = (chats ?? []).filter((chat) => !!chat.last_message);
   return (
     <section className="wrapper chats-page">
       <div className="container chats-page__container">
         <TitlePage title="Чаты" />
-        <ChatSearch chats={visibleChats} />
+        <ChatSearch chats={visibleChats} pagination={chatsQuery} />
         {isError && (
           <EmptyState
             icon={<TriangleAlert />}
@@ -26,7 +28,7 @@ const ChatsPage = () => {
         )}
         {isPending && <ChatsSkeleton />}
 
-        {chats &&
+        {!isPending && !isError &&
           (visibleChats.length ? (
             <ChatList chats={visibleChats} />
           ) : (
@@ -37,6 +39,7 @@ const ChatsPage = () => {
               />
             </div>
           ))}
+        <InfiniteScroll pagination={chatsQuery} />
       </div>
     </section>
   );

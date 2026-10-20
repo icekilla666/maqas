@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import Avatar from "@/components/common/Avatar/Avatar";
 import CommentsSkeleton from "@/components/common/Skeletons/CommentsSkeleton";
 import EmptyState from "@/components/common/EmptyState";
@@ -41,12 +42,13 @@ const CommentItem = ({
   const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
   const isReplies = comment.replies_count > 0;
+  const repliesQuery = useRepliesComment(comment.id, isReplies && isRepliesOpen);
   const {
     data: replies = [],
     error: repliesError,
     isLoading: isRepliesLoading,
     refetch: refetchReplies,
-  } = useRepliesComment(comment.id, isReplies);
+  } = repliesQuery;
   const characters = Array.from(comment.content ?? "");
   const isTruncated =
     !comment.is_deleted &&
@@ -190,6 +192,7 @@ const CommentItem = ({
               onEdit={onEdit}
             />
           ))}
+          {isRepliesOpen && <li><InfiniteScroll pagination={repliesQuery} /></li>}
         </ul>
       )}
       {isDeleteOpen && comment.is_owner && !comment.is_deleted && (

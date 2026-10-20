@@ -1,23 +1,18 @@
+import { usePaginatedQuery } from "./usePaginatedQuery";
+import type { CommentData } from "@/types/api.types";
 import { commentsApi } from "@/services/comments.api";
 import { commentsKeys, postsKeys } from "@/utils/constants";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import { showApiError } from "@/utils/apiError";
 
-export const useCommentsQuery = (id?: string) => {
-  return useQuery({
-    queryKey: commentsKeys.comments(id),
-    queryFn: () => commentsApi.getPostComments(id),
-  });
-};
+export const useCommentsQuery = (id?: string) => usePaginatedQuery<CommentData>({
+  queryKey: commentsKeys.comments(id), path: `/api/comments/post/${id}`, enabled: Boolean(id),
+});
 
-export const useRepliesComment = (comment_id: string, enabled: boolean) => {
-  return useQuery({
-    queryKey: commentsKeys.repliesComment(comment_id),
-    queryFn: () => commentsApi.getRepliesComment(comment_id),
-    enabled,
-  });
-};
+export const useRepliesComment = (id: string, enabled: boolean) => usePaginatedQuery<CommentData>({
+  queryKey: commentsKeys.repliesComment(id), path: `/api/comments/${id}/replies`, enabled,
+});
 
 // -------------
 

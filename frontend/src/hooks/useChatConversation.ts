@@ -19,7 +19,8 @@ import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 export const useChatConversation = (chatId: string) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: chats } = useMyChatsQuery();
+  const chatsQuery = useMyChatsQuery();
+  const { data: chats, hasNextPage, isFetching, isFetchNextPageError, fetchNextPage } = chatsQuery;
   const { data: me } = useMeQuery();
   const messagesQuery = useChatMessagesQuery(chatId);
   const createMessage = useCreateMessageMutation();
@@ -68,6 +69,10 @@ export const useChatConversation = (chatId: string) => {
     (me
       ? messages.find((message) => message.sender.id !== me.id)?.sender
       : undefined);
+  // При прямом открытии старого чата его собеседник может быть не на первой странице.
+  useEffect(() => {
+    if (!user && hasNextPage && !isFetching && !isFetchNextPageError) void fetchNextPage();
+  }, [user, hasNextPage, isFetching, isFetchNextPageError, fetchNextPage]);
   const isTyping = useChatsRealtimeStore(
     (state) => !!user && state.typingByChat[chatId] === user.id,
   );
@@ -187,7 +192,7 @@ export const useChatConversation = (chatId: string) => {
     isBusy,
     canDeleteChat,
     isSending: createMessage.isPending || updateMessage.isPending,
-    isComposerDisabled: isBusy || !me || !messagesQuery.data || messagesQuery.isError,
+    isComposerDisabled: isBusy || !me || messagesQuery.isPending || messagesQuery.isError,
     handleSend,
     handleReply,
     handleEdit,

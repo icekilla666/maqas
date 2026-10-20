@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import EmptyState from "@/components/common/EmptyState";
 import PostsList from "@/components/common/Posts/PostsList";
 import TitlePage from "@/components/common/TitlePage";
@@ -22,17 +23,18 @@ const HomePage = () => {
       ? "popular"
       : selectedSort;
 
-  const {
-    data: feed = [],
-    isError,
-    error,
-    isPending,
-  } = usePostFeedQuery({
+  const feedQuery = usePostFeedQuery({
     feed_type: followingOnly ? "following" : "all",
     search_query: debouncedSearch || undefined,
     tags: selectedTags.length ? selectedTags : undefined,
     sort: requestSort,
   });
+  const {
+    data: feed = [],
+    isError,
+    error,
+    isPending,
+  } = feedQuery;
 
   const posts = useMemo(
     () =>
@@ -79,6 +81,7 @@ const HomePage = () => {
           />
         )}
 
+        <InfiniteScroll pagination={feedQuery} />
       </div>
     </section>
   );

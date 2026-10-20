@@ -1,3 +1,5 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
+import type { PaginationControl } from "@/components/common/InfiniteScroll";
 import { useEffect, useId, useRef, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
@@ -13,7 +15,7 @@ import { CHAT_DETAIL } from "@/utils/constants";
 import ChatList from "./ChatList";
 import ChatUserInfo from "./ChatUserInfo";
 
-const ChatSearch = ({ chats }: { chats: ChatData[] }) => {
+const ChatSearch = ({ chats, pagination }: { chats: ChatData[]; pagination: PaginationControl }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -107,6 +109,7 @@ const ChatSearch = ({ chats }: { chats: ChatData[] }) => {
         <section aria-labelledby={`${panelId}-chats`}>
           <h2 id={`${panelId}-chats`} className="chat-search__heading">Мои чаты</h2>
           <ChatList chats={filteredChats} />
+          <InfiniteScroll pagination={pagination} enabled={isOpen} />
         </section>
         <section aria-labelledby={`${panelId}-global`} aria-busy={isSearching}>
           <h2 id={`${panelId}-global`} className="chat-search__heading">
@@ -132,6 +135,7 @@ const ChatSearch = ({ chats }: { chats: ChatData[] }) => {
               </li>
             ))}
           </ul>
+          <InfiniteScroll pagination={users} enabled={canSearch} />
         </section>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import { useParams } from "react-router-dom";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
@@ -20,12 +21,13 @@ const UserPage = () => {
   const followLockRef = useRef(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFollowDisabled = isFollowLocked || toggleFollowMutation.isPending;
+  const postsQuery = useUserPostsQuery(id);
   const {
     data: posts = [],
     isPending,
     isError,
     error: postsError,
-  } = useUserPostsQuery(id);
+  } = postsQuery;
   useAnchorScroll(
     "publications",
     Boolean(profile) && !profile?.blocked_by_user && !isPending,
@@ -87,7 +89,7 @@ const UserPage = () => {
                     icon={<TriangleAlert />}
                   />
                 ) : posts.length > 0 ? (
-                  <PostsList count={posts.length} posts={posts} />
+                  <PostsList count={postsQuery.total ?? posts.length} posts={posts} />
                 ) : (
                   <EmptyState
                     variant="default"
@@ -95,6 +97,7 @@ const UserPage = () => {
                     icon={<Bot />}
                   />
                 )}
+                <InfiniteScroll pagination={postsQuery} />
               </div>
             </div>
           )

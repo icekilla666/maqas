@@ -1,6 +1,9 @@
+import { usePaginatedQuery } from "./usePaginatedQuery";
+import { USE_MOCK_POSTS } from "@/utils/settingsMock";
+import type { LikersData, PostPreview } from "@/types/api.types";
 import { likesApi } from "@/services/likes.api";
 import { likesKeys, postsKeys } from "@/utils/constants";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import { showApiError } from "@/utils/apiError";
 
@@ -10,20 +13,14 @@ type SetPostLikeVariables = {
   nextLikesCount: number;
 };
 
-export const useLikersQuery = (id?: string) => {
-  return useQuery({
-    queryKey: likesKeys.likers(id),
-    queryFn: () => likesApi.getPostLikers(id),
-    enabled: Boolean(id),
-  });
-};
+export const useLikersQuery = (id?: string) => usePaginatedQuery<LikersData>({
+  queryKey: likesKeys.likers(id), path: `/api/likes/${id}`, enabled: Boolean(id),
+  mock: USE_MOCK_POSTS ? () => likesApi.getPostLikers(id) : undefined,
+});
 
-export const useMyLikedQueries = () => {
-  return useQuery({
-    queryKey: likesKeys.myLiked(),
-    queryFn: () => likesApi.getMyLikedPost(),
-  });
-};
+export const useMyLikedQueries = () => usePaginatedQuery<PostPreview>({
+  queryKey: likesKeys.myLiked(), path: "/api/likes/me",
+});
 
 // -------------
 

@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import { useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { Search, TriangleAlert, X } from "lucide-react";
@@ -57,6 +58,7 @@ const NewChatModal = ({ onClose }: { onClose: () => void }) => {
             ) : <EmptyState icon={<Search />} text="Никого не нашли" />)}
           </>
         )}
+        <InfiniteScroll pagination={users} enabled={search.trim().length >= 2 && !isSearching} />
       </div>
     </Modal>
   );

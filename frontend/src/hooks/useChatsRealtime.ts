@@ -140,7 +140,6 @@ export const useChatsRealtime = () => {
 
         void queryClient.invalidateQueries({
           queryKey: chatsKeys.chatMessages(chatId),
-          exact: true,
         });
 
         void queryClient.invalidateQueries({

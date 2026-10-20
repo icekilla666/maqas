@@ -1,25 +1,21 @@
+import { isPaginatedData } from "@/utils/paginatedCache";
+import { usePaginatedQuery } from "./usePaginatedQuery";
 import { chatsApi } from "@/services/chats.api";
 import { sharePostToUsers } from "@/services/postShare.api";
 import { chatsKeys } from "@/utils/constants";
-import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { showApiError } from "@/utils/apiError";
 import { queryClient } from "./queryClient";
-import type { ChatMessageData } from "@/types/api.types";
+import type { ChatMessageData, ChatData } from "@/types/api.types";
 import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 
-export const useMyChatsQuery = () => {
-  return useQuery({
-    queryKey: chatsKeys.myChats(),
-    queryFn: chatsApi.myChats,
-  });
-};
+export const useMyChatsQuery = () => usePaginatedQuery<ChatData>({
+  queryKey: chatsKeys.myChats(), path: "/api/chats/me",
+});
 
-export const useChatMessagesQuery = (chat_id?: string) => {
-  return useQuery({
-    queryKey: chatsKeys.chatMessages(chat_id),
-    queryFn: chat_id ? () => chatsApi.getChatMessages(chat_id) : skipToken,
-  });
-};
+export const useChatMessagesQuery = (id?: string) => usePaginatedQuery<ChatMessageData>({
+  queryKey: chatsKeys.chatMessages(id), path: `/api/chats/${id}`, enabled: Boolean(id),
+});
 
 // -------------
 
@@ -61,12 +57,18 @@ export const useCreateMessageMutation = () => {
     },
     onSuccess: async (message) => {
       const queryKey = chatsKeys.chatMessages(message.chat_id);
-      await queryClient.cancelQueries({ queryKey, exact: true });
-      queryClient.setQueryData<ChatMessageData[]>(queryKey, (messages = []) =>
-        messages.some((item) => item.id === message.id)
-          ? messages
-          : [...messages, message],
-      );
+      await queryClient.cancelQueries({ queryKey });
+      queryClient.setQueriesData({ queryKey }, (data: unknown) => {
+        if (!isPaginatedData<ChatMessageData>(data) || !data.pages.length) return data;
+        if (data.pages.some(page => page.data.some(item => item.id === message.id))) return data;
+        const pages = data.pages.map((page, index) => ({
+          ...page,
+          data: index === 0 ? [message, ...page.data] : page.data,
+          skip: index === 0 ? 0 : page.skip + 1,
+          total: page.total === undefined ? undefined : page.total + 1,
+        }));
+        return { ...data, pages, pageParams: pages.map(page => page.skip) };
+      });
       void invalidateChatRelatedQueries();
     },
   });
@@ -110,8 +112,8 @@ export const useDeleteChatMutation = () => {
     onError: showApiError,
     onSuccess: async (_, chat_id) => {
       const queryKey = chatsKeys.chatMessages(chat_id);
-      await queryClient.cancelQueries({ queryKey, exact: true });
-      queryClient.removeQueries({ queryKey, exact: true });
+      await queryClient.cancelQueries({ queryKey });
+      queryClient.removeQueries({ queryKey });
       return queryClient.invalidateQueries({ queryKey: chatsKeys.myChats() });
     },
   });

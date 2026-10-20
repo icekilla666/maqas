@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import EmptyState from "@/components/common/EmptyState";
 import UsersList from "@/components/common/UsersList/UsersList";
 import UsersSkeleton from "@/components/common/Skeletons/UsersSkeleton";
@@ -28,12 +29,13 @@ const FollowList = () => {
     locationState?.tab === "followings" ? "followings" : "followers";
   const targetUserId = locationState?.userId ? locationState.userId : undefined;
   const [activeTab, setActiveTab] = useState<FollowTab>(initialTab);
+  const usersQuery = useFollowQuery(activeTab, targetUserId);
   const {
     data: users,
     isLoading,
     isError,
     error,
-  } = useFollowQuery(activeTab, targetUserId);
+  } = usersQuery;
   const { data: profile } = useMeQuery();
 
   const isFollowings = activeTab === "followings";
@@ -106,6 +108,7 @@ const FollowList = () => {
       ) : (
         <UsersList users={users} userId={profile?.id} />
       )}
+      <InfiniteScroll pagination={usersQuery} />
     </div>
   );
 };

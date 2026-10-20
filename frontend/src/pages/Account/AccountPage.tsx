@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import AccountHeader from "./components/AccountHeader";
 import EmptyState from "@/components/common/EmptyState";
 import AccountSkeleton from "@/components/common/Skeletons/AccountSkeleton";
@@ -84,6 +85,7 @@ const AccountPage = () => {
               ) : (
                 <EmptyState variant="default" text="Постов нет" icon={<Bot />} />
               )}
+              <InfiniteScroll pagination={activePosts} />
             </div>
           </div>
         ) : (

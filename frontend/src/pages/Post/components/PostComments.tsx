@@ -1,3 +1,5 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
+import type { PaginationControl } from "@/components/common/InfiniteScroll";
 import CommentInput from "@/components/ui/Inputs/CommentInput";
 import EmptyState from "@/components/common/EmptyState";
 import CommentsSkeleton from "@/components/common/Skeletons/CommentsSkeleton";
@@ -11,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import CommentsList from "./CommentsList";
 
 interface PostCommentsProps {
+  pagination: PaginationControl;
   postId: string;
   comments: CommentData[];
   isLoading?: boolean;
@@ -24,6 +27,7 @@ type ComposerTarget = {
 
 const PostComments = ({
   postId,
+  pagination,
   comments,
   isLoading = false,
   error,
@@ -93,6 +97,7 @@ const PostComments = ({
             onEdit={handleEdit}
           />
         )}
+        <InfiniteScroll pagination={pagination} />
       </div>
 
       <div className="post-comments__composer">

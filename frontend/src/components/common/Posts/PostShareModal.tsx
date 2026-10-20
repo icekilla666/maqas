@@ -1,3 +1,4 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
 import { useRef, useState } from "react";
 import { getApiErrorMessage } from "@/utils/apiError";
 import { Check, Copy, LoaderCircle, Send, X } from "lucide-react";
@@ -151,6 +152,8 @@ const PostShareModal = ({ postId, onClose }: PostShareModalProps) => {
                   )}
                 </button>
               ))}
+              <InfiniteScroll pagination={chatsQuery} />
+              <InfiniteScroll pagination={followersQuery} />
             </div>
           ) : (
             <p className="post-share-modal__status">Чатов и подписчиков пока нет</p>

@@ -1,3 +1,5 @@
+import InfiniteScroll from "@/components/common/InfiniteScroll";
+import type { PaginationControl } from "@/components/common/InfiniteScroll";
 import UsersList from "@/components/common/UsersList/UsersList";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/ui/Modals/Modal";
@@ -5,6 +7,7 @@ import type { LikersData } from "@/types/api.types";
 import { Heart, TriangleAlert, X } from "lucide-react";
 
 interface PostLikersModalProps {
+  pagination: PaginationControl;
   open: boolean;
   likers: LikersData[];
   onClose: () => void;
@@ -12,6 +15,7 @@ interface PostLikersModalProps {
 }
 
 const PostLikersModal = ({
+  pagination,
   open,
   likers,
   onClose,
@@ -35,6 +39,7 @@ const PostLikersModal = ({
           </button>
         </div>
 
+        <div className="post-likers-modal__results">
         {error ? (
           <EmptyState icon={<TriangleAlert />} text="Не удалось загрузить список лайкнувших" error={error} isError />
         ) : likers.length > 0 ? (
@@ -42,6 +47,8 @@ const PostLikersModal = ({
         ) : (
           <p className="post-likers-modal__empty">Лайков пока нет</p>
         )}
+        <InfiniteScroll pagination={pagination} enabled={open} />
+        </div>
       </div>
     </Modal>
   );

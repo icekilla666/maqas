@@ -68,6 +68,7 @@ const ChatMessageItem = ({
 
   return (
     <article
+      data-message-id={message.id}
       className={`chat-message ${message.is_owner ? "chat-message--own" : ""}`}
       aria-label={
         message.is_owner

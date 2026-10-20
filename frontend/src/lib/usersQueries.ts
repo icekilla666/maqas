@@ -1,3 +1,6 @@
+import { removeListItem } from "@/utils/paginatedCache";
+import { usePaginatedQuery } from "./usePaginatedQuery";
+import type { FindUsers } from "@/types/api.types";
 import { showApiError } from "@/utils/apiError";
 import { usersApi } from "@/services/users.api";
 import type {
@@ -20,12 +23,9 @@ type ToggleFollowContext = {
 };
 
 
-export const useBlackListQuery = () => {
-  return useQuery({
-    queryKey: userKeys.blacklist(),
-    queryFn: () => usersApi.getBlackList({ skip: 0, limit: 20 }),
-  });
-};
+export const useBlackListQuery = () => usePaginatedQuery<BlackListUserData>({
+  queryKey: userKeys.blacklist(), path: "/api/users/me/blacklist",
+});
 
 export const useMeQuery = () => {
   return useQuery({
@@ -45,33 +45,17 @@ export const useUserQuery = (id?: string) => {
   });
 };
 
-export const useFollowQuery = (tab: FollowTab, userId?: string) => {
-  return useQuery({
-    queryKey:
-      tab === "followers"
-        ? userKeys.followers(userId)
-        : userKeys.followings(userId),
-
-    queryFn: () => {
-      const params = { skip: 0, limit: 20 };
-
-      if (tab === "followers") {
-        return userId
-          ? usersApi.getUserFollowers(userId, params)
-          : usersApi.getFollowers(params);
-      }
-      return userId
-        ? usersApi.getUserFollowings(userId, params)
-        : usersApi.getFollowings(params);
-    },
-  });
-};
+export const useFollowQuery = (tab: FollowTab, userId?: string) => usePaginatedQuery<BlackListUserData>({
+  queryKey: tab === "followers" ? userKeys.followers(userId) : userKeys.followings(userId),
+  path: `/api/users/${userId ?? "me"}/${tab}`,
+});
 
 export const useUsersFindQuery = (username: string, minLength = 2) => {
   const normalizedUsername = username.trim();
-  return useQuery({
+  return usePaginatedQuery<FindUsers>({
     queryKey: userKeys.search(normalizedUsername),
-    queryFn: () => usersApi.findUser({ username: normalizedUsername }),
+    path: "/api/users/",
+    params: { username: normalizedUsername },
     enabled: normalizedUsername.length >= minLength,
   });
 };
@@ -103,10 +87,7 @@ export const useUnblockUserMutation = () => {
     mutationFn: usersApi.unblockUser,
     onError: showApiError,
     onSuccess: (_, userId) => {
-      queryClient.setQueryData<BlackListUserData[]>(
-        userKeys.blacklist(),
-        (old) => old?.filter((user) => user.id !== userId) ?? old,
-      );
+      queryClient.setQueriesData({ queryKey: userKeys.blacklist() }, data => removeListItem(data, userId));
       queryClient.invalidateQueries({ queryKey: userKeys.blacklist() });
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
     },

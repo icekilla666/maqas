@@ -1,4 +1,5 @@
-import { Fragment, useLayoutEffect, useRef } from "react";
+import InfiniteScroll, { type PaginationControl } from "@/components/common/InfiniteScroll";
+import { Fragment, useCallback, useLayoutEffect, useRef } from "react";
 import { MessageCircle, TriangleAlert } from "lucide-react";
 import MessagesSkeleton from "@/components/common/Skeletons/MessagesSkeleton";
 import EmptyState from "@/components/common/EmptyState";
@@ -8,6 +9,7 @@ import ChatMessageItem from "./ChatMessageItem";
 
 interface ChatMessagesProps {
   messages: ChatMessageData[];
+  pagination: PaginationControl;
   pendingMessageId?: string;
   isDeliveryUnconfirmed?: boolean;
   isLoading: boolean;
@@ -23,6 +25,7 @@ interface ChatMessagesProps {
 
 const ChatMessages = ({
   messages,
+  pagination,
   pendingMessageId,
   isDeliveryUnconfirmed = false,
   isLoading,
@@ -33,6 +36,18 @@ const ChatMessages = ({
   ...actions
 }: ChatMessagesProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const anchor = useRef<{ id: string; top: number } | null>(null);
+  const { fetchNextPage, isFetchingNextPage } = pagination;
+  const loadOlder = useCallback(async () => {
+    const element = scrollRef.current;
+    if (element) {
+      const top = element.getBoundingClientRect().top;
+      const visible = Array.from(element.querySelectorAll<HTMLElement>("[data-message-id]"))
+        .find(item => item.getBoundingClientRect().bottom > top);
+      if (visible) anchor.current = { id: visible.dataset.messageId!, top: visible.getBoundingClientRect().top - top };
+    }
+    await fetchNextPage();
+  }, [fetchNextPage]);
   const stickToBottom = useRef(true);
   const previousScrollRequest = useRef(scrollRequest);
 
@@ -44,11 +59,20 @@ const ChatMessages = ({
 
   useLayoutEffect(() => {
     if (previousScrollRequest.current !== scrollRequest) {
+      anchor.current = null;
       stickToBottom.current = true;
       previousScrollRequest.current = scrollRequest;
     }
-    scrollToBottom();
-  }, [messages, scrollRequest]);
+    const element = scrollRef.current;
+    if (anchor.current && element) {
+      const item = Array.from(element.querySelectorAll<HTMLElement>("[data-message-id]"))
+        .find(item => item.dataset.messageId === anchor.current?.id);
+      if (item) element.scrollTop += item.getBoundingClientRect().top - element.getBoundingClientRect().top - anchor.current.top;
+      if (!isFetchingNextPage) anchor.current = null;
+    } else {
+      scrollToBottom();
+    }
+  }, [messages, scrollRequest, isFetchingNextPage]);
 
   useLayoutEffect(() => {
     const element = scrollRef.current;
@@ -75,6 +99,7 @@ const ChatMessages = ({
             80;
       }}
     >
+      <InfiniteScroll pagination={pagination} enabled={!isLoading} onLoad={loadOlder} label="Предыдущие сообщения" />
       {isLoading && !messages.length && <MessagesSkeleton />}
       {!isLoading && isError && (
         <EmptyState

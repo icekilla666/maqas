@@ -21,6 +21,7 @@ const ChatConversation = ({ chatId }: { chatId: string }) => {
       />
       <ChatMessages
         messages={chat.messages}
+        pagination={chat.messagesQuery}
         pendingMessageId={chat.pendingMessageId}
         isDeliveryUnconfirmed={chat.isDeliveryUnconfirmed}
         isLoading={chat.messagesQuery.isPending}
