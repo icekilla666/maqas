@@ -5,6 +5,7 @@ import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenuList";
 import type { ChatMessageData } from "@/types/api.types";
 import { getChatMessagePreview, getSharedPostId } from "@/utils/sharedPost";
 import ChatPostCard from "./ChatPostCard";
+import ImageViewer from "@/components/common/ImageViewer";
 import OptimizedImage from "@/components/common/OptimizedImage";
 
 interface ChatMessageItemProps {
@@ -95,13 +96,7 @@ const ChatMessageItem = ({
           </div>
         )}
         {message.image_url && (
-          <a
-            href={message.image_url}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Открыть изображение"
-            draggable={false}
-          >
+          <ImageViewer src={message.image_url} label="Открыть изображение">
             <OptimizedImage
               variant="message"
               className="chat-message__image"
@@ -110,7 +105,7 @@ const ChatMessageItem = ({
               onLoad={onImageLoad}
               draggable={false}
             />
-          </a>
+          </ImageViewer>
         )}
         {sharedPostId ? (
           <ChatPostCard postId={sharedPostId} onContentLoad={onImageLoad} />

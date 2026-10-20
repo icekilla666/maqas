@@ -38,7 +38,7 @@ const UserItem = ({
       onClick={() => handleNavigate(user.id)}
     >
       <div className="user-list__avatar">
-        <Avatar size={24} avatar={user.avatar_url} username={user.username} />
+        <Avatar preview size={24} avatar={user.avatar_url} username={user.username} />
       </div>
       <div className="user-list__user">
         <div className="user-list__info">

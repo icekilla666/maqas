@@ -62,7 +62,7 @@ const AccountHeader = ({
   return (
     <header className="account-header">
       <div className="flex gap-3.5">
-        <Avatar username={username} avatar={avatar_url} />
+        <Avatar preview username={username} avatar={avatar_url} />
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <div className="flex justify-between">
             <AccountInfo name={name} username={username} lvl={level} />

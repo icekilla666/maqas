@@ -15,7 +15,7 @@ const BlockedAccountHeader = ({
     <header className="account-header account-header--blocked">
       <div className="flex w-full gap-3.5">
         <div className="account__avatar rounded-full">
-          <Avatar avatar={avatar_url} username={username} size={42} />
+          <Avatar preview avatar={avatar_url} username={username} size={42} />
         </div>
         <div className="min-w-0 flex flex-1 flex-col justify-between">
           <div className="flex justify-between">
