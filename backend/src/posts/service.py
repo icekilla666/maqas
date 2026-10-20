@@ -16,6 +16,15 @@ class PostsService:
         self.users_repo = users_repo
 
     async def create_post(self, post: PostCreate, image: None | UploadFile, current_user: UsersModel, session: AsyncSession):
+        if not post.title.strip() and not post.content.strip() and not (image and image.filename):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "success": False,
+                    "message": "Добавьте заголовок, текст или изображение",
+                    "error": "EMPTY_POST",
+                },
+            )
         hashtags = re.findall(r"#([a-zA-Zа-яА-ЯёЁ0-9_]+)", post.content)
         hashtags_models = []
         for hashtag in hashtags:
@@ -223,8 +232,9 @@ class PostsService:
             )
         hashtag = None
         if search_query:
-            hashtag = re.search(r"#([a-zA-Zа-яА-ЯёЁ0-9_]+)", search_query)
-            if hashtag:
+            hashtag_match = re.search(r"#([a-zA-Zа-яА-ЯёЁ0-9_]+)", search_query)
+            if hashtag_match:
+                hashtag = hashtag_match.group(1)
                 search_query = None
         rows, count = await self.posts_repo.get_feed(feed_type, search_query, hashtag, tags, sort, skip, limit, optional_user, session)
         posts = self._convert_rows_to_posts(rows)

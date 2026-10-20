@@ -37,14 +37,15 @@ class HashtagOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class PostCreate(BaseModel):
-    title: str = Field(min_length=1, max_length=100)
-    content: str = Field(min_length=1, max_length=5000)
-    tags: list[PostTags]
+    title: str = Field(default="", max_length=100)
+    content: str = Field(default="", max_length=5000)
+    tags: list[PostTags] = Field(default_factory=list)
+    model_config = ConfigDict(str_strip_whitespace=True)
 
 class PostOutFull(BaseModel):
     id: UUID
-    title: str = Field(min_length=1, max_length=100)
-    content: str = Field(min_length=1, max_length=5000)
+    title: str = Field(max_length=100)
+    content: str = Field(max_length=5000)
     tags: list[TagOut]
     hashtags: None | list[HashtagOut] = Field(default_factory=list)
     image_url: None | str = Field(default=None)
@@ -57,8 +58,8 @@ class PostOutFull(BaseModel):
 
 class PostOutShort(BaseModel):
     id: UUID
-    title: str = Field(min_length=1, max_length=100)
-    preview: str = Field(min_length=1, max_length=150)
+    title: str = Field(max_length=100)
+    preview: str = Field(max_length=150)
     tags: list[TagOut]
     hashtags: None | list[HashtagOut] = Field(default_factory=list)
     image_url: None | str = Field(default=None)

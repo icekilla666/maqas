@@ -21,10 +21,15 @@ def get_posts_service(
 PostsServiceDep = Annotated[PostsService, Depends(get_posts_service)]
 
 class PostCreateForm:
-    def __init__(self, title: str = Form(...), content: str = Form(...), tags: list[PostTags] = Form(...)):
+    def __init__(
+        self,
+        title: str = Form("", max_length=100),
+        content: str = Form("", max_length=5000),
+        tags: list[PostTags] | None = Form(None),
+    ):
         self.title = title
         self.content = content
-        self.tags = tags 
+        self.tags = tags or []
 
 PostCreateFormDep = Annotated[PostCreateForm, Depends()]
 

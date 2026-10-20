@@ -75,6 +75,7 @@ export const postsApi = {
     }
 
     const response = await api.get("/api/posts/feed", {
+      paramsSerializer: { indexes: null },
       params: {
         feed_type,
         search_query,
