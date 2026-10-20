@@ -1,7 +1,6 @@
 import InfiniteScroll from "@/components/common/InfiniteScroll";
 import EmptyState from "@/components/common/EmptyState";
 import TitlePage from "@/components/common/TitlePage";
-import SearchInput from "@/components/ui/Inputs/SearchInput";
 import UsersSkeleton from "@/components/common/Skeletons/UsersSkeleton";
 import ModalActions from "@/components/ui/Modals/ModalActions";
 import { Ban, CircleX, TriangleAlert } from "lucide-react";
@@ -41,7 +40,6 @@ const BlackListPage = () => {
     <section className="wrapper">
       <div className="container">
         <TitlePage title="Черный список" count={isLoading ? undefined : usersQuery.total ?? users.length} />
-        <SearchInput className="w-full mb-3" placeholder="введите юзернейм" />
         {isLoading ? <UsersSkeleton action /> : <UsersList
           className="blacklist-item"
           users={users}
