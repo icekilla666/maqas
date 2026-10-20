@@ -1,5 +1,6 @@
+import BackLink from "@/components/common/BackLink";
 import { Link } from "react-router-dom";
-import { ChevronLeft, Ellipsis, Trash2 } from "lucide-react";
+import { Ellipsis, Trash2 } from "lucide-react";
 import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
 import type { ChatUserData } from "@/types/api.types";
 import { CHATS_PAGE } from "@/utils/constants";
@@ -15,13 +16,7 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ user, isTyping, onDelete, disabled, canDelete }: ChatHeaderProps) => (
   <header className="chat-header">
-    <Link
-      className="chat-header__back"
-      to={CHATS_PAGE}
-      aria-label="Вернуться к чатам"
-    >
-      <ChevronLeft size={24} />
-    </Link>
+    <BackLink to={CHATS_PAGE} label="Вернуться к чатам" />
     {user ? (
       <Link
         to={`/${user.id}`}

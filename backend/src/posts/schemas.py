@@ -83,5 +83,6 @@ class FeedSort(Enum):
     old = "old"
     new = "new"
     popular = "popular"
+    popular_asc = "popular_asc"
 
 

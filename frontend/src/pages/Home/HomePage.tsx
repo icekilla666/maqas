@@ -7,7 +7,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { usePostFeedQuery } from "@/lib/postsQueries";
 import type { PostFeed, PostTag, HomeSort } from "@/types/api.types";
 import { SearchX, TriangleAlert } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import HomeHeader from "./components/HomeHeader";
 
@@ -19,8 +19,8 @@ const HomePage = () => {
   const isToolbarHidden = useHideOnScroll();
   const debouncedSearch = useDebounce(search.trim(), 350);
   const requestSort: PostFeed["sort"] =
-    selectedSort === "popular-desc" || selectedSort === "popular-asc"
-      ? "popular"
+    selectedSort === "popular-desc" ? "popular"
+      : selectedSort === "popular-asc" ? "popular_asc"
       : selectedSort;
 
   const feedQuery = usePostFeedQuery({
@@ -36,16 +36,7 @@ const HomePage = () => {
     isPending,
   } = feedQuery;
 
-  const posts = useMemo(
-    () =>
-      selectedSort === "popular-asc"
-        ? [...feed].sort(
-            (firstPost, secondPost) =>
-              firstPost.likes_count - secondPost.likes_count,
-          )
-        : feed,
-    [feed, selectedSort],
-  );
+  const posts = feed;
   return (
     <section className="home-feed wrapper">
       <div className="container relative">

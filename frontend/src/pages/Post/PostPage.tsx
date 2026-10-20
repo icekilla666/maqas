@@ -1,3 +1,4 @@
+import BackLink from "@/components/common/BackLink";
 import EmptyState from "@/components/common/EmptyState";
 import PostItem from "@/components/common/Posts/PostItem";
 import PostLikersModal from "@/pages/Post/components/PostLikersModal";
@@ -31,6 +32,7 @@ const PostPage = () => {
     return (
       <section className="post-detail-page">
         <div className="post-detail">
+          <BackLink to={HOME_PAGE} label="Вернуться в ленту" />
           <SkeletonView label="Загрузка публикации…"><PostSkeleton detail image /></SkeletonView>
           <div className="post-comments"><CommentsSkeleton /></div>
         </div>
@@ -58,12 +60,15 @@ const PostPage = () => {
           />
         </div>
       ) : (
+        <>
+        <BackLink to={HOME_PAGE} label="Вернуться в ленту" />
         <EmptyState
           icon={<TriangleAlert />}
           text="Не удалось загрузить пост"
           error={error}
           variant="error"
         />
+        </>
       )}
       <PostLikersModal
         likers={likers}

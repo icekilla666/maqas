@@ -1,3 +1,4 @@
+import { SETTINGS_PAGE } from "@/utils/constants";
 import InfiniteScroll from "@/components/common/InfiniteScroll";
 import EmptyState from "@/components/common/EmptyState";
 import TitlePage from "@/components/common/TitlePage";
@@ -39,7 +40,7 @@ const BlackListPage = () => {
   return (
     <section className="wrapper">
       <div className="container">
-        <TitlePage title="Черный список" count={isLoading ? undefined : usersQuery.total ?? users.length} />
+        <TitlePage backTo={SETTINGS_PAGE} backLabel="Вернуться в настройки" title="Черный список" count={isLoading ? undefined : usersQuery.total ?? users.length} />
         {isLoading ? <UsersSkeleton action /> : <UsersList
           className="blacklist-item"
           users={users}

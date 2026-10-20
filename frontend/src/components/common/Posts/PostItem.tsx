@@ -1,3 +1,5 @@
+import BackLink from "../BackLink";
+import { HOME_PAGE } from "@/utils/constants";
 import type { PostDetails, PostPreview } from "@/types/api.types";
 import UserItem from "../UsersList/UserItem";
 import DateTime from "../DateTime";
@@ -94,7 +96,10 @@ const PostItem = ({
         onClick={onClick}
       >
         <header className="flex justify-between items-center mb-1.5">
-          <UserItem user={post.user} showName={false} />
+          <div className="post-item__author">
+            {variant === "detail" && <BackLink to={HOME_PAGE} label="Вернуться в ленту" />}
+            <UserItem user={post.user} showName={false} />
+          </div>
           <DateTime date={post.created_at} className="post-item__datetime" />
         </header>
         <div className="flex flex-col gap-3">

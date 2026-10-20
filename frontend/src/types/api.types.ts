@@ -131,7 +131,7 @@ export type PostFeed = {
   feed_type?: "all" | "following";
   search_query?: string;
   tags?: PostTag[];
-  sort?: "old" | "new" | "popular";
+  sort?: "old" | "new" | "popular" | "popular_asc";
 };
 
 export type AddPostProps = {

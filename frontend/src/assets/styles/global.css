@@ -3945,3 +3945,11 @@ textarea {
 .infinite-scroll button:disabled { opacity: .5; }
 
 .post-share-modal__avatars > .infinite-scroll { flex-shrink: 0; width: 120px; }
+
+.back-link { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 42px; border-radius: 12px; color: var(--color-second); }
+.back-link:focus-visible { outline: 2px solid var(--color-main); outline-offset: 2px; }
+@media (hover: hover) { .back-link:hover { background: color-mix(in srgb, var(--color-second) 8%, transparent); } }
+.title-page h1 { min-width: 0; overflow-wrap: anywhere; }
+.title-page > span { flex-shrink: 0; }
+.post-item__author { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+.post-item__author > .user-list__item { min-width: 0; }

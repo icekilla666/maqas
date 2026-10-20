@@ -1,3 +1,4 @@
+import { SETTINGS_PAGE } from "@/utils/constants";
 import TitlePage from "@/components/common/TitlePage";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
@@ -45,7 +46,7 @@ const FaqPage = () => {
   return (
     <section className="wrapper">
       <div className="container">
-        <TitlePage title="Часто задаваемые вопросы" />
+        <TitlePage backTo={SETTINGS_PAGE} backLabel="Вернуться в настройки" title="Часто задаваемые вопросы" />
         <div className="faq-list">
           {faqItems.map((item, index) => {
             const isActive = activeIndex === index;

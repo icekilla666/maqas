@@ -1,3 +1,5 @@
+import TitlePage from "@/components/common/TitlePage";
+import { HOME_PAGE } from "@/utils/constants";
 import InfiniteScroll from "@/components/common/InfiniteScroll";
 import { useParams } from "react-router-dom";
 import AccountHeader from "./components/AccountHeader";
@@ -59,11 +61,12 @@ const UserPage = () => {
       },
     );
   };
-  if (isLoading) return <AccountSkeleton />;
+
   return (
     <section className="wrapper">
       <div className="container">
-        {profile ? (
+        <TitlePage title="Профиль" backTo={HOME_PAGE} backLabel="Вернуться в ленту" />
+        {isLoading ? <AccountSkeleton /> : profile ? (
           profile.blocked_by_user ? (
             <BlockedAccountHeader {...profile} />
           ) : (

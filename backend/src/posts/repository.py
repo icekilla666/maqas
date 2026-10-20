@@ -59,7 +59,7 @@ class PostsRepository:
             is_liked = exists().where(LikesModel.post_id == PostsModel.id, LikesModel.user_id == optional_user.id).label("is_liked")
         else:
             is_liked = literal(False).label("is_liked")
-        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"), is_liked).where(PostsModel.user_id == user_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
+        query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"), is_liked).where(PostsModel.user_id == user_id).options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).order_by(PostsModel.created_at.desc(), PostsModel.id.desc()).offset(skip).limit(limit)
         result = await session.execute(query)
         posts = result.all()
         count_query = select(func.count(PostsModel.id)).where(PostsModel.user_id == user_id)
@@ -86,11 +86,13 @@ class PostsRepository:
         query = select(PostsModel, func.left(PostsModel.content, 150).label("preview"), is_liked)
         query = await self._filter_feed(query, feed_type, search_query, hashtag, tags, sort, optional_user, session)
         if sort == FeedSort.new:
-            query = query.order_by(PostsModel.created_at.desc())
+            query = query.order_by(PostsModel.created_at.desc(), PostsModel.id.desc())
         elif sort == FeedSort.old:
-            query = query.order_by(PostsModel.created_at.asc())
+            query = query.order_by(PostsModel.created_at.asc(), PostsModel.id.asc())
         elif sort == FeedSort.popular:
-            query = query.order_by(PostsModel.likes_count.desc())
+            query = query.order_by(PostsModel.likes_count.desc(), PostsModel.id.desc())
+        elif sort == FeedSort.popular_asc:
+            query = query.order_by(PostsModel.likes_count.asc(), PostsModel.id.asc())
         query = query.options(selectinload(PostsModel.hashtags), selectinload(PostsModel.tags), selectinload(PostsModel.user)).offset(skip).limit(limit)
         result = await session.execute(query)
         feed = result.all()

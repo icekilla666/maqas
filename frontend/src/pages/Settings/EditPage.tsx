@@ -1,3 +1,4 @@
+import { SETTINGS_PAGE } from "@/utils/constants";
 import TitlePage from "@/components/common/TitlePage";
 import { TriangleAlert } from "lucide-react";
 import EmptyState from "@/components/common/EmptyState";
@@ -10,7 +11,7 @@ const EditPage = () => {
   return (
     <section className="wrapper">
       <div className="container">
-        <TitlePage title="Редактирование профиля" />
+        <TitlePage backTo={SETTINGS_PAGE} backLabel="Вернуться в настройки" title="Редактирование профиля" />
         {isLoading ? (
           <EditProfileSkeleton />
         ) : profile ? (

@@ -1,3 +1,4 @@
+import { HOME_PAGE } from "@/utils/constants";
 import TitlePage from "@/components/common/TitlePage";
 import AddPostLayout from "./components/AddPostLayout";
 
@@ -5,7 +6,7 @@ const AddPostPage = () => {
   return (
     <section className="add-post-page wrapper">
       <div className="container">
-        <TitlePage title="Новая публикация" />
+        <TitlePage backTo={HOME_PAGE} backLabel="Вернуться в ленту" title="Новая публикация" />
 
         <AddPostLayout />
       </div>

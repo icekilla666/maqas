@@ -61,8 +61,9 @@ export const postsApi = {
       }
 
       feed.sort((firstPost, secondPost) => {
-        if (sort === "popular") {
-          return secondPost.likes_count - firstPost.likes_count;
+        if (sort === "popular" || sort === "popular_asc") {
+          const difference = secondPost.likes_count - firstPost.likes_count;
+          return sort === "popular_asc" ? -difference : difference;
         }
 
         const firstDate = new Date(firstPost.created_at).getTime();
