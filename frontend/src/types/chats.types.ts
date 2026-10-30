@@ -12,7 +12,7 @@ export type LastMessage = {
   created_at: string;
   image_url: string | null;
   is_owner: boolean;
-  is_read?: boolean;
+  is_read: boolean;
 };
 
 export type ChatShortData = {

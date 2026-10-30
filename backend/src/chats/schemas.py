@@ -9,6 +9,7 @@ class LastMessageOut(BaseModel):
     image_url: str | None
     created_at: datetime
     is_owner: bool
+    is_read: bool
 
 class ChatOutShort(BaseModel):
     id: UUID

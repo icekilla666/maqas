@@ -84,12 +84,13 @@ class ChatsService:
                     unread_count=unread_messages_count,
                     target_user=target_user,
                     last_message=LastMessageOut(
-                    content=last_message.content,
-                    image_url=last_message.image_url,
-                    created_at=last_message.created_at,
-                    is_owner=last_message.sender_id == current_user.id,
-                    is_edited=last_message.is_edited
-                )
+                        content=last_message.content,
+                        image_url=last_message.image_url,
+                        created_at=last_message.created_at,
+                        is_owner=last_message.sender_id == current_user.id,
+                        is_read=last_message.is_read,
+                        is_edited=last_message.is_edited,
+                    ) if last_message else None
                 )
             )
         return {

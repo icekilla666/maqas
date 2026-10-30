@@ -39,15 +39,6 @@ const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, i
           </span>
           {last_message && (
             <span className="chat-list__time-row">
-              {last_message.is_owner && typeof last_message.is_read === "boolean" && (
-                <span
-                  className={`chat-list__read-status ${last_message.is_read ? "chat-list__read-status--read" : ""}`}
-                  aria-label={last_message.is_read ? "Прочитано" : "Не прочитано"}
-                  title={last_message.is_read ? "Прочитано" : "Не прочитано"}
-                >
-                  {last_message.is_read ? <CheckCheck size={14} /> : <Check size={14} />}
-                </span>
-              )}
               <DateTime date={last_message.created_at} className="chat-list__time" />
             </span>
           )}
@@ -69,6 +60,16 @@ const ChatUserInfo = ({ user, last_message, unread_count = 0, compact = false, i
               </>
             ) : subtitle}
           </span>
+          {last_message?.is_owner && !isTyping && typeof last_message.is_read === "boolean" && (
+            <span
+              className={`chat-list__read-status ${last_message.is_read ? "chat-list__read-status--read" : ""}`}
+              role="img"
+              aria-label={last_message.is_read ? "Прочитано" : "Отправлено"}
+              title={last_message.is_read ? "Прочитано" : "Отправлено"}
+            >
+              {last_message.is_read ? <CheckCheck size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
+            </span>
+          )}
           {last_message && unread_count > 0 && (
             <span
               className="chat-list__badge"

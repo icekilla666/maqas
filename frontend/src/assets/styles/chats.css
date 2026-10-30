@@ -2,7 +2,6 @@
 
 .chat-online-dot { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; border: 2px solid var(--color-primary); border-radius: 50%; background: #2ca971; }
 
-.chat-list__read-status--read { color: var(--color-main); }
 
 .chat-message__edited { font-size: 10px; color: var(--chat-muted); }
 
@@ -254,7 +253,17 @@
 
 .chat-list__read-status {
   display: flex;
+  align-items: center;
   flex-shrink: 0;
+  color: var(--chat-muted);
+}
+
+.chat-list__read-status--read {
+  color: var(--color-main);
+}
+
+.chat-list__read-status .lucide {
+  stroke-width: 1.6;
 }
 
 .chat-list__badge {
