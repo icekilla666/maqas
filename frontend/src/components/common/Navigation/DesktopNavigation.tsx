@@ -26,7 +26,6 @@ const DesktopNavigation = () => (
         <Plus size={24} aria-hidden="true" /><span>Создать пост</span>
       </NavLink>
     </nav>
-    <p className="desktop-sidebar__caption">Делитесь историями.<br />Находите своих.</p>
   </aside>
 );
 
