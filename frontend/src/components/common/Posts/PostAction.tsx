@@ -1,4 +1,4 @@
-import type { PostActionProps } from "@/types/entities";
+import type { PostActionProps } from "@/types/posts.types";
 import type { MouseEvent } from "react";
 
 const PostAction = ({

@@ -1,6 +1,6 @@
 import { usePaginatedQuery } from "./usePaginatedQuery";
 import { USE_MOCK_POSTS } from "@/utils/settingsMock";
-import type { LikersData, PostPreview } from "@/types/api.types";
+import type { LikersData, PostPreview } from "@/types/posts.types";
 import { likesApi } from "@/services/likes.api";
 import { likesKeys, postsKeys } from "@/utils/constants";
 import { useMutation } from "@tanstack/react-query";

@@ -9,7 +9,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { toast } from "sonner";
-import type { ChatMessageData } from "@/types/api.types";
+import type { ChatMessageData } from "@/types/chats.types";
 import { useChatTyping } from "./useChatTyping";
 
 export type ChatComposerContext = {

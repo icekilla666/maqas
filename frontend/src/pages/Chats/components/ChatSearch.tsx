@@ -10,7 +10,7 @@ import ChatsSkeleton from "@/components/common/Skeletons/ChatsSkeleton";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useCreateChatMutation } from "@/lib/chatsQueries";
 import { useUsersFindQuery } from "@/lib/usersQueries";
-import type { ChatData } from "@/types/api.types";
+import type { ChatData } from "@/types/chats.types";
 import { CHAT_DETAIL } from "@/utils/constants";
 import ChatList from "./ChatList";
 import ChatUserInfo from "./ChatUserInfo";

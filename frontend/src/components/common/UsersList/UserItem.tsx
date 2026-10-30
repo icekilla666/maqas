@@ -1,4 +1,4 @@
-import type { ListUser } from "@/types/entities";
+import type { ListUser } from "@/types/users.types";
 import { ACCOUNT_PAGE } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";

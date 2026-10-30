@@ -1,4 +1,4 @@
-import type { PostFeed, PostTag } from "@/types/api.types";
+import type { PostFeed, PostTag } from "@/types/posts.types";
 
 // роуты
 export const HOME_PAGE = "/";

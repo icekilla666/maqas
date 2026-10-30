@@ -1,0 +1,440 @@
+/* ---EMPTY--- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 180px;
+  padding: 32px 16px;
+  color: color-mix(in oklab, var(--color-second) 64%, transparent);
+  text-align: center;
+}
+
+.empty-state__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in oklab, var(--color-second) 46%, transparent);
+}
+
+.empty-state__icon .lucide {
+  width: 48px;
+  height: 48px;
+  stroke-width: 1px;
+}
+
+.empty-state__text {
+  max-width: 260px;
+  color: color-mix(in oklab, var(--color-second) 64%, transparent);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.empty-state--error,
+.empty-state--error .empty-state__icon,
+.empty-state--error .empty-state__text {
+  color: var(--color-red);
+}
+
+/* ---ИНПУТЫ--- */
+
+.input {
+  color: var(--color-second);
+}
+
+.input::placeholder {
+  color: var(--color-second);
+  opacity: 0.3;
+}
+
+.search-input {
+  position: relative;
+}
+
+.search-input__icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  color: var(--color-second);
+  opacity: 0.3;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 0.16s ease;
+}
+
+.search-input:focus-within .search-input__icon {
+  opacity: 1;
+}
+
+.search-input__field {
+  width: 100%;
+  padding: 12px 18px 12px 46px;
+  border: 1px solid var(--color-grey);
+  border-radius: 30px;
+}
+
+.ui-input {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ui-input__label {
+  color: color-mix(in oklab, var(--color-second) 58%, transparent);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ui-input__row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  background-color: var(--color-primary);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 12px 10px 12px 18px;
+  transition: border-color 0.2s ease;
+}
+
+.ui-input__row.active {
+  border-color: var(--color-main);
+}
+
+.ui-input__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ui-input__field {
+  min-width: 0;
+  width: 100%;
+  color: var(--color-second);
+  font-size: 16px;
+  line-height: 1;
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.ui-input__field:read-only {
+  cursor: default;
+}
+
+.ui-input__field:disabled,
+.ui-input__edit:disabled {
+  opacity: 0.5;
+}
+
+.ui-input__edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  color: var(--color-second);
+  background-color: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.ui-input__edit.active {
+  color: var(--color-primary);
+  background-color: var(--color-second);
+}
+
+.ui-input__edit:active {
+  transform: scale(0.96);
+}
+
+.ui-input__edit:focus-visible {
+  outline: 2px solid var(--color-main);
+  outline-offset: 2px;
+}
+
+/* ---КНОПКИ--- */
+
+.btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn.small {
+  max-height: 45px;
+  padding: 6px;
+  font-size: 14px;
+}
+
+.btn.medium {
+  max-height: 60px;
+  padding: 12px 18px;
+}
+
+.btn.default {
+  background-color: var(--color-primary);
+  border-radius: 20px;
+}
+
+.btn.list {
+  padding: 12px 0;
+}
+
+.btn-list li:not(:last-child) {
+  border-bottom: 1px solid
+    color-mix(in oklab, var(--color-second) 15%, transparent);
+}
+
+.btn.primary {
+  background-color: var(--color-second);
+  border-radius: 40px;
+  color: var(--color-primary);
+}
+
+.btn.default-outline {
+}
+
+.btn.primary-outline {
+  color: var(--color-main);
+  border: 1px solid var(--color-main);
+  padding: 18px;
+  border-radius: 30px;
+}
+
+.icon-btn.danger {
+  background-color: var(--color-red);
+}
+
+.btn-list {
+  background-color: var(--color-primary);
+  border-radius: 20px;
+  padding: 4px 18px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.icon-btn.small {
+  width: 36px;
+  height: 36px;
+}
+
+.icon-btn.medium {
+  width: 56px;
+  height: 56px;
+}
+
+.icon-btn.large {
+  width: 76px;
+  height: 76px;
+}
+
+.icon-btn.default {
+  background-color: var(--color-primary);
+  color: var(--color-second);
+}
+
+.icon-btn.primary {
+  background-color: var(--color-main);
+  color: var(--color-primary);
+}
+
+.icon-btn:active {
+  transform: scale(0.96);
+}
+
+/* ---ЛОАДЕР--- */
+
+.absolute-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  background-color: color-mix(in oklab, var(--color-wrapper) 10%, #000 30%);
+  border-radius: inherit;
+  backdrop-filter: blur(2px);
+}
+
+.absolute-loader .loader::after,
+.absolute-loader .loader::before {
+  box-shadow: 0 0 0 3px inset #fbfdff;
+}
+
+.loader {
+  --loader-width: calc(var(--loader)/1.8);
+  width: var(--loader);
+  aspect-ratio: 1;
+  position: relative;
+}
+
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  border-radius: 50px;
+  box-shadow: 0 0 0 3px inset var(--color-second);
+  animation: l4 2.5s infinite;
+}
+
+.loader:after {
+  animation-delay: -1.25s;
+}
+
+@keyframes l4 {
+  0% {
+    inset: 0 var(--loader-width) var(--loader-width) 0;
+  }
+  12.5% {
+    inset: 0 var(--loader-width) 0 0;
+  }
+  25% {
+    inset: var(--loader-width) var(--loader-width) 0 0;
+  }
+  37.5% {
+    inset: var(--loader-width) 0 0 0;
+  }
+  50% {
+    inset: var(--loader-width) 0 0 var(--loader-width);
+  }
+  62.5% {
+    inset: 0 0 0 var(--loader-width);
+  }
+  75% {
+    inset: 0 0 var(--loader-width) var(--loader-width);
+  }
+  87.5% {
+    inset: 0 0 var(--loader-width) 0;
+  }
+  100% {
+    inset: 0 var(--loader-width) var(--loader-width) 0;
+  }
+}
+
+.switch-buttons__wrapper {
+  --switch-items: 2;
+  position: relative;
+  width: 100%;
+  isolation: isolate;
+  display: inline-grid;
+  grid-template-columns: repeat(var(--switch-items), minmax(0, 1fr));
+  min-width: calc(var(--switch-items) * 52px);
+  overflow: hidden;
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-wrapper);
+  border-radius: 20px;
+  padding: 4px;
+}
+
+.switch-buttons__indicator {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / var(--switch-items));
+  background-color: var(--color-second);
+  border-radius: 16px;
+  transition: transform 0.24s ease;
+}
+
+.switch-buttons__item {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.switch-buttons__input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.switch-buttons__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  min-width: 52px;
+  height: 36px;
+  padding: 0 12px;
+  color: var(--color-second);
+  line-height: 1;
+  border-radius: 16px;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.switch-buttons__button svg {
+  flex: 0 0 auto;
+}
+
+.switch-buttons__input:checked + .switch-buttons__button {
+  color: var(--color-primary);
+}
+
+.switch-buttons__input:focus-visible + .switch-buttons__button {
+  outline: 1px solid var(--color-main);
+  outline-offset: -3px;
+}
+
+.switch-buttons__wrapper:has(
+    .switch-buttons__item:nth-of-type(2) .switch-buttons__input:checked
+  )
+  .switch-buttons__indicator {
+  transform: translateX(100%);
+}
+
+.switch-buttons__wrapper:has(
+    .switch-buttons__item:nth-of-type(3) .switch-buttons__input:checked
+  )
+  .switch-buttons__indicator {
+  transform: translateX(200%);
+}
+
+.switch-buttons__wrapper:has(
+    .switch-buttons__item:nth-of-type(4) .switch-buttons__input:checked
+  )
+  .switch-buttons__indicator {
+  transform: translateX(300%);
+}
+
+.switch-buttons__wrapper:has(
+    .switch-buttons__item:nth-of-type(5) .switch-buttons__input:checked
+  )
+  .switch-buttons__indicator {
+  transform: translateX(400%);
+}
+
+.switch-buttons__wrapper:has(
+    .switch-buttons__item:nth-of-type(6) .switch-buttons__input:checked
+  )
+  .switch-buttons__indicator {
+  transform: translateX(500%);
+}

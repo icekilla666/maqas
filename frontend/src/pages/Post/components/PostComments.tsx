@@ -7,7 +7,7 @@ import {
   useCommentSendMutation,
   useCommentUpdateMutation,
 } from "@/lib/commentsQueries";
-import type { CommentData } from "@/types/api.types";
+import type { CommentData } from "@/types/comments.types";
 import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CommentsList from "./CommentsList";

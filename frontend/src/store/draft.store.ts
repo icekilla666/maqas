@@ -1,4 +1,4 @@
-import type { AddPostProps, PostTag } from "@/types/api.types";
+import type { AddPostProps, PostTag } from "@/types/posts.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

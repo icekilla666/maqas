@@ -2,7 +2,7 @@ import BackLink from "@/components/common/BackLink";
 import { Link } from "react-router-dom";
 import { Ellipsis, Trash2 } from "lucide-react";
 import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
-import type { ChatUserData } from "@/types/api.types";
+import type { ChatUserData } from "@/types/chats.types";
 import { CHATS_PAGE } from "@/utils/constants";
 import ChatUserInfo from "./ChatUserInfo";
 

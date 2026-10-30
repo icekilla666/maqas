@@ -12,7 +12,7 @@ import MainButton from "@/components/ui/Buttons/MainButton";
 import { useAuth } from "@/hooks/useAuth";
 import { type SubmitEvent } from "react";
 import Loader from "@/components/ui/Loaders/Loader";
-import type { LoginData, RegisterData } from "@/types/api.types";
+import type { LoginData, RegisterData } from "@/types/auth.types";
 import { useLoginMutation, useRegisterMutation } from "@/lib/authQueries";
 
 const AuthForm = () => {

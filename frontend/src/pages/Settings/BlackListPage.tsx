@@ -12,7 +12,7 @@ import {
   useMeQuery,
   useUnblockUserMutation,
 } from "@/lib/usersQueries";
-import type { BlackListUserData } from "@/types/api.types";
+import type { BlackListUserData } from "@/types/users.types";
 
 const BlackListPage = () => {
   const usersQuery = useBlackListQuery();

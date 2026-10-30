@@ -1,4 +1,4 @@
-import type { CountType } from "@/types/entities";
+import type { CountType } from "@/types/users.types";
 import CountInfo from "./CountInfo";
 import { useNavigate } from "react-router-dom";
 import { FOLLOW_PAGE } from "@/utils/constants";

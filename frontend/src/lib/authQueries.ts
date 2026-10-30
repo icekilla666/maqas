@@ -2,7 +2,7 @@ import { showApiError } from "@/utils/apiError";
 import { authApi } from "@/services/auth.api";
 import { usersApi } from "@/services/users.api";
 import { useAuthStore } from "@/store/auth.store";
-import type { LoginData, RegisterData } from "@/types/api.types";
+import type { LoginData, RegisterData } from "@/types/auth.types";
 import { authKeys } from "@/utils/constants";
 import {
   useMutation,

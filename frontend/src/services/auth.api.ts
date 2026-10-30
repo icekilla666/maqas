@@ -1,4 +1,4 @@
-import type { LoginData, RegisterData } from "../types/api.types";
+import type { LoginData, RegisterData } from "@/types/auth.types";
 import { api, refreshAccessToken } from "./api";
 
 export const authApi = {

@@ -1,4 +1,4 @@
-import type { CommentData, SendCommentsProps } from "@/types/api.types";
+import type { CommentData, SendCommentsProps } from "@/types/comments.types";
 import { api } from "./api";
 
 export const commentsApi = {

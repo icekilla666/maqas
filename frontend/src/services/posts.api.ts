@@ -3,13 +3,7 @@ import {
   mockPostPreviews,
   mockPosts,
 } from "@/mocks/posts.mock";
-import type {
-  AddPostProps,
-  CreatedPost,
-  PostFeed,
-  PostDetails,
-  PostPreview,
-} from "@/types/api.types";
+import type { AddPostProps, CreatedPost, PostFeed, PostDetails, PostPreview } from "@/types/posts.types";
 import { api } from "./api";
 import { MOCK_DELAY_MS, USE_MOCK_POSTS, wait } from "@/utils/settingsMock";
 

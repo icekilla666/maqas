@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import UserItem from "./UserItem";
-import type { ListUser } from "@/types/entities";
+import type { ListUser } from "@/types/users.types";
 
 interface UsersListProps {
   users: ListUser[];

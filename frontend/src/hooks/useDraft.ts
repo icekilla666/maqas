@@ -1,5 +1,5 @@
 import { useDraftStore } from "@/store/draft.store";
-import type { AddPostProps } from "@/types/api.types";
+import type { AddPostProps } from "@/types/posts.types";
 import { useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 

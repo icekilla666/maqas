@@ -5,7 +5,7 @@ import EmptyState from "@/components/common/EmptyState";
 import UsersList from "@/components/common/UsersList/UsersList";
 import UsersSkeleton from "@/components/common/Skeletons/UsersSkeleton";
 import { useFollowQuery, useMeQuery } from "@/lib/usersQueries";
-import type { FollowTab } from "@/types/entities";
+import type { FollowTab } from "@/types/users.types";
 import {
   TriangleAlert,
   UserRoundCheck,

@@ -2,7 +2,7 @@ import { Check, CheckCheck, Clock3, Pencil, Reply, Trash2, CircleHelp } from "lu
 import DateTime from "@/components/common/DateTime";
 import ContextMenu from "@/components/ui/ActionMenu/ContextMenu";
 import type { ActionMenuItem } from "@/components/ui/ActionMenu/ActionMenuList";
-import type { ChatMessageData } from "@/types/api.types";
+import type { ChatMessageData } from "@/types/chats.types";
 import { getChatMessagePreview, getSharedPostId } from "@/utils/sharedPost";
 import ChatPostCard from "./ChatPostCard";
 import ImageViewer from "@/components/common/ImageViewer";

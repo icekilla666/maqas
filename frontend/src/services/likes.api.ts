@@ -1,5 +1,5 @@
 import { mockPostLikers } from "@/mocks/posts.mock";
-import type { LikersData, PostPreview } from "@/types/api.types";
+import type { LikersData, PostPreview } from "@/types/posts.types";
 import { MOCK_DELAY_MS, USE_MOCK_POSTS, wait } from "@/utils/settingsMock";
 import { api } from "./api";
 

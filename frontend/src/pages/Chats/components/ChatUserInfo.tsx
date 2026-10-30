@@ -1,7 +1,7 @@
 import Avatar from "@/components/common/Avatar/Avatar";
 import DateTime from "@/components/common/DateTime";
 import { Check, CheckCheck } from "lucide-react";
-import type { ChatUserData, LastMessage } from "@/types/api.types";
+import type { ChatUserData, LastMessage } from "@/types/chats.types";
 import { getChatMessagePreview } from "@/utils/sharedPost";
 import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 

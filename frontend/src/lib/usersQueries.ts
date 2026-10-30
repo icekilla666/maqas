@@ -1,14 +1,9 @@
 import { removeListItem } from "@/utils/paginatedCache";
 import { usePaginatedQuery } from "./usePaginatedQuery";
-import type { FindUsers } from "@/types/api.types";
+import type { FindUsers, AccountData, BlackListUserData, UserData, FollowTab } from "@/types/users.types";
 import { showApiError } from "@/utils/apiError";
 import { usersApi } from "@/services/users.api";
-import type {
-  AccountData,
-  BlackListUserData,
-  UserData,
-} from "@/types/api.types";
-import type { FollowTab } from "@/types/entities";
+
 import { userKeys } from "@/utils/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -21,7 +16,6 @@ type ToggleFollowContext = {
   previousUser?: UserData;
   previousMe?: AccountData;
 };
-
 
 export const useBlackListQuery = () => usePaginatedQuery<BlackListUserData>({
   queryKey: userKeys.blacklist(), path: "/api/users/me/blacklist",

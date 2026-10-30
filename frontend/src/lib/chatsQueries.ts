@@ -6,7 +6,7 @@ import { chatsKeys } from "@/utils/constants";
 import { useMutation } from "@tanstack/react-query";
 import { showApiError } from "@/utils/apiError";
 import { queryClient } from "./queryClient";
-import type { ChatMessageData, ChatData } from "@/types/api.types";
+import type { ChatMessageData, ChatData } from "@/types/chats.types";
 import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 
 export const useMyChatsQuery = () => usePaginatedQuery<ChatData>({

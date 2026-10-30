@@ -3,7 +3,7 @@ import { Fragment, useCallback, useLayoutEffect, useRef } from "react";
 import { MessageCircle, TriangleAlert } from "lucide-react";
 import MessagesSkeleton from "@/components/common/Skeletons/MessagesSkeleton";
 import EmptyState from "@/components/common/EmptyState";
-import type { ChatMessageData } from "@/types/api.types";
+import type { ChatMessageData } from "@/types/chats.types";
 import { normalizedDate } from "@/utils/normalizedDate";
 import ChatMessageItem from "./ChatMessageItem";
 

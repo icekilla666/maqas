@@ -2,7 +2,7 @@ import AddPostTip from "./AddPostTip";
 import AddPostEditor from "./AddPostEditor";
 import AddPostAction from "./AddPostAction";
 import { useState } from "react";
-import type { AddPostProps } from "@/types/api.types";
+import type { AddPostProps } from "@/types/posts.types";
 import { useDraftStore } from "@/store/draft.store";
 import { useDraft } from "@/hooks/useDraft";
 import { useCreatePostMutation } from "@/lib/postsQueries";

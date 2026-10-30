@@ -1,4 +1,4 @@
-import type { PostPreview } from "@/types/api.types";
+import type { PostPreview } from "@/types/posts.types";
 import PostItem from "./PostItem";
 import { useNavigate } from "react-router-dom";
 interface PostListProps {

@@ -6,7 +6,7 @@ import {
   useCommentDeleteMutation,
   useRepliesComment,
 } from "@/lib/commentsQueries";
-import type { CommentData } from "@/types/api.types";
+import type { CommentData } from "@/types/comments.types";
 import DateTime from "@/components/common/DateTime";
 import {
   ChevronDown,

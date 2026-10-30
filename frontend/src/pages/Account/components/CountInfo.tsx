@@ -1,4 +1,4 @@
-import type { CountType } from "@/types/entities";
+import type { CountType } from "@/types/users.types";
 
 interface CountInfoProps {
   followers: number;

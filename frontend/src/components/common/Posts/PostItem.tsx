@@ -1,12 +1,12 @@
 import BackLink from "../BackLink";
 import { HOME_PAGE } from "@/utils/constants";
-import type { PostDetails, PostPreview } from "@/types/api.types";
+import type { PostDetails, PostPreview, PostActionProps } from "@/types/posts.types";
 import UserItem from "../UsersList/UserItem";
 import DateTime from "../DateTime";
 import { CornerUpRight, Heart, MessageSquare } from "lucide-react";
 import PostMenu from "./PostMenu";
 import PostAction from "./PostAction";
-import type { PostActionProps } from "@/types/entities";
+
 import { usePostLikeMutation } from "@/lib/likesQueries";
 import { useState } from "react";
 import PostShareModal from "./PostShareModal";

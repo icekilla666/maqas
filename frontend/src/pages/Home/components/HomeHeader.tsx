@@ -2,7 +2,7 @@ import ActionMenu, {
   type ActionMenuItem,
 } from "@/components/ui/ActionMenu/ActionMenu";
 import SearchInput from "@/components/ui/Inputs/SearchInput";
-import type { PostTag, HomeSort } from "@/types/api.types";
+import type { PostTag, HomeSort } from "@/types/posts.types";
 import { POST_TAGS } from "@/utils/constants";
 import {
   ArrowUpDown,

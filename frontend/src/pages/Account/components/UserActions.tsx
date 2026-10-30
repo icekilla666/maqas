@@ -1,6 +1,6 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import { useCreateChatMutation } from "@/lib/chatsQueries";
-import type { UserData } from "@/types/api.types";
+import type { UserData } from "@/types/users.types";
 import { CHAT_DETAIL } from "@/utils/constants";
 import { MessageCircle, UserRoundPlus, UserRoundX } from "lucide-react";
 import { generatePath, useNavigate } from "react-router-dom";

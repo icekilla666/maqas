@@ -1,5 +1,5 @@
 import { usePaginatedQuery } from "./usePaginatedQuery";
-import type { CommentData } from "@/types/api.types";
+import type { CommentData } from "@/types/comments.types";
 import { commentsApi } from "@/services/comments.api";
 import { commentsKeys, postsKeys } from "@/utils/constants";
 import { useMutation } from "@tanstack/react-query";

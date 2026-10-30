@@ -8,7 +8,7 @@ import {
   useUpdateMeMutation,
   useUploadAvatarMutation,
 } from "@/lib/usersQueries";
-import type { AccountData } from "@/types/api.types";
+import type { AccountData } from "@/types/users.types";
 import { ImagePlus, PenLine, Trash2 } from "lucide-react";
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import MainButton from "@/components/ui/Buttons/MainButton";

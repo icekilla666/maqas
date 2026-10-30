@@ -3,7 +3,7 @@ import type { PaginationControl } from "@/components/common/InfiniteScroll";
 import UsersList from "@/components/common/UsersList/UsersList";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/ui/Modals/Modal";
-import type { LikersData } from "@/types/api.types";
+import type { LikersData } from "@/types/posts.types";
 import { Heart, TriangleAlert, X } from "lucide-react";
 
 interface PostLikersModalProps {

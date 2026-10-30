@@ -1,10 +1,4 @@
-import type {
-  ChatData,
-  ChatMessageData,
-  ChatShortData,
-  CreateChatMessageProps,
-  UpdateChatMessageProps,
-} from "@/types/api.types";
+import type { ChatData, ChatMessageData, ChatShortData, CreateChatMessageProps, UpdateChatMessageProps } from "@/types/chats.types";
 import { api } from "./api";
 
 const IMAGE_UPLOAD_TIMEOUT = 120_000;

@@ -12,7 +12,7 @@ import {
   type FormEvent,
   type SetStateAction,
 } from "react";
-import type { AddPostProps, PostTag } from "@/types/api.types";
+import type { AddPostProps, PostTag } from "@/types/posts.types";
 import IconButton from "@/components/ui/Buttons/IconButton";
 import { addPostSchema } from "@/utils/validation/validation.add";
 import { useDraftStore } from "@/store/draft.store";

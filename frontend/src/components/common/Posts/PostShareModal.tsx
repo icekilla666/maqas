@@ -11,7 +11,7 @@ import Modal from "@/components/ui/Modals/Modal";
 import { useFollowQuery } from "@/lib/usersQueries";
 import { useMyChatsQuery, useSharePostMutation } from "@/lib/chatsQueries";
 import { getPostShareUrl } from "@/utils/sharedPost";
-import type { ChatUserData } from "@/types/api.types";
+import type { ChatUserData } from "@/types/chats.types";
 
 interface PostShareModalProps {
   postId: string;

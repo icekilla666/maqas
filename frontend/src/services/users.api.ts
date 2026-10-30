@@ -1,11 +1,4 @@
-import type {
-  AccountData,
-  BlackListUserData,
-  FindUsers,
-  ListUsersProps,
-  ProfileProps,
-  UserData,
-} from "@/types/api.types";
+import type { AccountData, BlackListUserData, FindUsers, ListUsersProps, ProfileProps, UserData } from "@/types/users.types";
 import { api } from "./api";
 
 export const usersApi = {

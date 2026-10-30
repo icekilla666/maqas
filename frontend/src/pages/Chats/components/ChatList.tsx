@@ -1,5 +1,5 @@
 import { NavLink, generatePath } from "react-router-dom";
-import type { ChatData } from "@/types/api.types";
+import type { ChatData } from "@/types/chats.types";
 import { CHAT_DETAIL } from "@/utils/constants";
 import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 import ChatUserInfo from "./ChatUserInfo";

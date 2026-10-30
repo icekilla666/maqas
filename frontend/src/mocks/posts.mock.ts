@@ -1,10 +1,5 @@
-import type {
-  CommentData,
-  LikersData,
-  PostDetails,
-  PostPreview,
-  PostUserData,
-} from "@/types/api.types";
+import type { CommentData } from "@/types/comments.types";
+import type { LikersData, PostDetails, PostPreview, PostUserData } from "@/types/posts.types";
 
 const mockUsers: PostUserData[] = [
   {

@@ -3,7 +3,7 @@ import { usePaginatedQuery } from "./usePaginatedQuery";
 import { USE_MOCK_POSTS } from "@/utils/settingsMock";
 import { showApiError } from "@/utils/apiError";
 import { postsApi } from "@/services/posts.api";
-import type { PostFeed, PostPreview } from "@/types/api.types";
+import type { PostFeed, PostPreview } from "@/types/posts.types";
 import { likesKeys, postsKeys, userKeys } from "@/utils/constants";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";

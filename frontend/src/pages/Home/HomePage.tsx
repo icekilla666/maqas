@@ -5,7 +5,7 @@ import TitlePage from "@/components/common/TitlePage";
 import PostsSkeleton from "@/components/common/Skeletons/PostsSkeleton";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePostFeedQuery } from "@/lib/postsQueries";
-import type { PostFeed, PostTag, HomeSort } from "@/types/api.types";
+import type { PostFeed, PostTag, HomeSort } from "@/types/posts.types";
 import { SearchX, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";

@@ -1,4 +1,4 @@
-import type { UserData } from "@/types/api.types";
+import type { UserData } from "@/types/users.types";
 import AccountInfo from "./AccountInfo";
 import AccountMenu from "./AccountMenu";
 import Avatar from "@/components/common/Avatar/Avatar";

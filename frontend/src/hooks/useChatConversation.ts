@@ -10,7 +10,7 @@ import {
   useUpdateMessageMutation,
 } from "@/lib/chatsQueries";
 import { useMeQuery } from "@/lib/usersQueries";
-import type { ChatMessageData, ChatUserData } from "@/types/api.types";
+import type { ChatMessageData, ChatUserData } from "@/types/chats.types";
 import { CHATS_PAGE } from "@/utils/constants";
 import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
 import type { ChatComposerContext } from "./useChatComposer";
