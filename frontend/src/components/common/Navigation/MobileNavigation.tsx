@@ -8,7 +8,7 @@ import {
 import { House, MessageCircle, Plus, Settings, UserRound } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-const MobileNavigation = () => {
+const MobileNavigation = ({ hasUnread = false }: { hasUnread?: boolean }) => {
   const navs = [
     {
       label: "Главная",
@@ -44,7 +44,7 @@ const MobileNavigation = () => {
           <NavLink
             key={nav.label}
             to={nav.to}
-            aria-label={nav.label}
+            aria-label={nav.to === CHATS_PAGE && hasUnread ? `${nav.label}: есть непрочитанные сообщения` : nav.label}
             className={({ isActive }) => {
               if (nav.isAddPost) {
                 return "nav__wrapper nav__wrapper--add-post";
@@ -53,7 +53,10 @@ const MobileNavigation = () => {
               return isActive ? "nav__wrapper active" : "nav__wrapper";
             }}
           >
-            {nav.icon}
+            <span className="navigation-icon">
+              {nav.icon}
+              {nav.to === CHATS_PAGE && hasUnread && <span className="navigation-unread-dot" aria-hidden="true" />}
+            </span>
           </NavLink>
         ))}
       </nav>

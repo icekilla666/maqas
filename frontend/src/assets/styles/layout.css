@@ -407,7 +407,7 @@
   .desktop-sidebar { padding: 28px 12px; }
   .desktop-sidebar__brand { width: 60px; margin: 0 0 32px; }
   .desktop-sidebar__link, .desktop-sidebar__create { justify-content: center; padding: 14px; }
-  .desktop-sidebar__link span, .desktop-sidebar__create span, .desktop-sidebar__caption { display: none; }
+  .desktop-sidebar__label, .desktop-sidebar__create span, .desktop-sidebar__caption { display: none; }
   .auth__wrapper { gap: 32px; }
   .add-post-layout { grid-template-columns: minmax(0, 1fr); }
   .add-post-sidebar { position: static; }
@@ -436,4 +436,25 @@
   .chat-workspace__welcome > svg { width: 88px; height: 88px; padding: 20px; border-radius: 28px; background: var(--color-primary); color: var(--color-main); }
   .chat-workspace__welcome h1 { font-size: 24px; font-weight: 600; }
   .chat-workspace__welcome p { max-width: 300px; font-size: 14px; line-height: 1.7; color: color-mix(in srgb, var(--color-second) 60%, transparent); }
+}
+
+
+.navigation-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navigation-unread-dot {
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-red);
+  pointer-events: none;
 }
