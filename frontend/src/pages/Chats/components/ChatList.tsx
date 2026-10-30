@@ -1,4 +1,4 @@
-import { Link, generatePath } from "react-router-dom";
+import { NavLink, generatePath } from "react-router-dom";
 import type { ChatData } from "@/types/api.types";
 import { CHAT_DETAIL } from "@/utils/constants";
 import { useChatsRealtimeStore } from "@/store/chatsRealtime.store";
@@ -15,8 +15,8 @@ const ChatList = ({ chats }: { chats: ChatData[] }) => {
 
         return (
           <li key={chat.id}>
-            <Link
-              className="chat-list__item"
+            <NavLink
+              className={({ isActive }) => `chat-list__item${isActive ? " is-active" : ""}`}
               to={generatePath(CHAT_DETAIL, { chat_id: chat.id })}
               state={{ user: chat.target_user }}
             >
@@ -26,7 +26,7 @@ const ChatList = ({ chats }: { chats: ChatData[] }) => {
                 unread_count={chat.unread_count}
                 isTyping={typingByChat[chat.id] === chat.target_user.id}
               />
-            </Link>
+            </NavLink>
           </li>
         );
       })}

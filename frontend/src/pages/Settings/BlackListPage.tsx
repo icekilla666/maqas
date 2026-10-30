@@ -38,7 +38,7 @@ const BlackListPage = () => {
 
 
   return (
-    <section className="wrapper">
+    <section className="wrapper settings-page">
       <div className="container">
         <TitlePage backTo={SETTINGS_PAGE} backLabel="Вернуться в настройки" title="Черный список" count={isLoading ? undefined : usersQuery.total ?? users.length} />
         {isLoading ? <UsersSkeleton action /> : <UsersList

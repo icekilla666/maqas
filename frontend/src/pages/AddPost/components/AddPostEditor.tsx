@@ -213,24 +213,26 @@ const AddPostEditor = ({
               <strong>Добавить изображение</strong>
               <small>PNG, JPG или WEBP до 10 МБ</small>
             </span>
-            {preview && (
-              <div className="relative">
-                <img src={preview} />
-                <IconButton
-                  disabled={disabled}
-                  typeBtn="danger"
-                  size="small"
-                  className="absolute top-3 right-3"
-                  onClick={removeImage}
-                >
-                  <Trash2 size={18} />
-                </IconButton>
-              </div>
-            )}
             <span className="btn default medium add-post-media__action">
               Выбрать файл
             </span>
           </label>
+          {preview && (
+            <div className="add-post-media-preview">
+              <img src={preview} alt="Предпросмотр изображения публикации" />
+              <IconButton
+                disabled={disabled}
+                typeBtn="danger"
+                size="small"
+                aria-label="Удалить изображение"
+                type="button"
+                className="absolute top-3 right-3"
+                onClick={removeImage}
+              >
+                <Trash2 size={18} />
+              </IconButton>
+            </div>
+          )}
         </div>
         {error && <span className="text-red text-[11px]">{error}</span>}
       </form>

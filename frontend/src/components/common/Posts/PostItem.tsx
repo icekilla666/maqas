@@ -86,6 +86,8 @@ const PostItem = ({
   ];
 
   const postContent = "preview" in post ? post.preview : post.content;
+  const hasTitle = Boolean(post.title?.trim());
+  const hasContent = Boolean(postContent?.trim());
 
   return (
     <>
@@ -108,17 +110,21 @@ const PostItem = ({
               <OptimizedImage variant="post" src={post.image_url} alt={post.title} />
             </ImageViewer>
           )}
-          <div className="post-item__text flex flex-col gap-1.5">
-            <h2>{post.title}</h2>
-            <p className="post-item__content break-all">{postContent}</p>
-          </div>
-          <div className="flex gap-1 items-center flex-wrap">
-            {post.tags.map((t) => (
-              <span key={t.tag} className="post-item__tag bg-grey/70">
-                {t.tag}
-              </span>
-            ))}
-          </div>
+          {(hasTitle || hasContent) && (
+            <div className="post-item__text flex flex-col gap-1.5">
+              {hasTitle && <h2>{post.title}</h2>}
+              {hasContent && <p className="post-item__content break-all">{postContent}</p>}
+            </div>
+          )}
+          {Boolean(post.tags?.length) && (
+            <div className="flex gap-1 items-center flex-wrap">
+              {post.tags.map((t) => (
+                <span key={t.tag} className="post-item__tag bg-grey/70">
+                  {t.tag}
+                </span>
+              ))}
+            </div>
+          )}
           <div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">

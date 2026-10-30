@@ -9,7 +9,7 @@ import EditForm from "./components/EditForm";
 const EditPage = () => {
   const { data: profile, isLoading, error } = useMeQuery();
   return (
-    <section className="wrapper">
+    <section className="wrapper settings-page">
       <div className="container">
         <TitlePage backTo={SETTINGS_PAGE} backLabel="Вернуться в настройки" title="Редактирование профиля" />
         {isLoading ? (

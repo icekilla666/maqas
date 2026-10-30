@@ -80,7 +80,7 @@ const SettingPage = () => {
 
   const activeModal = modal ? modalConfig[modal] : null;
   return (
-    <section className="wrapper">
+    <section className="wrapper settings-page">
       <div className="container">
         <TitlePage title="Настройки" />
         {profile ? (

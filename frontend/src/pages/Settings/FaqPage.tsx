@@ -44,7 +44,7 @@ const FaqPage = () => {
   };
 
   return (
-    <section className="wrapper">
+    <section className="wrapper settings-page">
       <div className="container">
         <TitlePage backTo={SETTINGS_PAGE} backLabel="Вернуться в настройки" title="Часто задаваемые вопросы" />
         <div className="faq-list">
