@@ -34,7 +34,7 @@ const CountInfo = ({
     <article
       onClick={() => onClick(row.type)}
       key={row.type}
-      className="account__row flex flex-col items-start gap-1"
+      className="account__row flex flex-col items-start gap-1 cursor-pointer"
     >
       <p className="account__count text-xs text-second">{row.value}</p>
       <p className="account__count-label text-xs text-second font-medium">
