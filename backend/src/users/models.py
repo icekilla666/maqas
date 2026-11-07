@@ -39,12 +39,15 @@ class UsersModel(Base):
         return False
     @property
     def level(self):
-        if self.followers_count == 0:
-            return Level.loshok_0
-        elif self.followers_count <= 1:
-            return Level.loshok_1
-        else:
-            return Level.loshok_1
+        if self.followers_count <= 1:
+            return Level.newcomer
+        if self.followers_count <= 3:
+            return Level.regular
+        if self.followers_count <= 5:
+            return Level.cool
+        return Level.star
+
+
 class FollowsModel(Base):
     __tablename__ = "follows"
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)

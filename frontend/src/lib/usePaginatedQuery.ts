@@ -8,15 +8,17 @@ interface Options<T> {
   path: string;
   params?: Record<string, unknown>;
   enabled?: boolean;
+  gcTime?: number;
   mock?: () => Promise<T[]>;
 }
 
 export const usePaginatedQuery = <T extends { id: string }>({
-  queryKey, path, params, enabled = true, mock,
+  queryKey, path, params, enabled = true, mock, gcTime,
 }: Options<T>) => {
   const query = useInfiniteQuery({
     queryKey: [...queryKey, "infinite"],
     enabled,
+    gcTime,
     initialPageParam: 0,
     queryFn: async ({ pageParam, signal }): Promise<Page<T>> => {
       if (mock) {

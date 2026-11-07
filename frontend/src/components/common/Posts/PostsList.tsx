@@ -14,8 +14,8 @@ const PostsList = ({ posts, count }: PostListProps) => {
         <PostItem
           key={post.id}
           post={post}
-          onClick={() => navigate(`/posts/${post.id}`)}
-          onCommentsClick={() => navigate(`/posts/${post.id}#comments`)}
+          onClick={() => navigate(`/posts/${post.id}`, { state: { fromPostList: true } })}
+          onCommentsClick={() => navigate(`/posts/${post.id}#comments`, { state: { fromPostList: true } })}
         />
       ))}
     </div>

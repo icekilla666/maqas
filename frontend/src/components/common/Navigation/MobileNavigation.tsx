@@ -1,3 +1,4 @@
+import { useNavigationScroll } from "@/hooks/useNavigationScroll";
 import {
   ACCOUNT_PAGE,
   ADD_POSTS_PAGE,
@@ -9,6 +10,7 @@ import { House, MessageCircle, Plus, Settings, UserRound } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const MobileNavigation = ({ hasUnread = false }: { hasUnread?: boolean }) => {
+  const handleNavigationClick = useNavigationScroll();
   const navs = [
     {
       label: "Главная",
@@ -44,6 +46,7 @@ const MobileNavigation = ({ hasUnread = false }: { hasUnread?: boolean }) => {
           <NavLink
             key={nav.label}
             to={nav.to}
+            onClick={(event) => handleNavigationClick(event, nav.to)}
             aria-label={nav.to === CHATS_PAGE && hasUnread ? `${nav.label}: есть непрочитанные сообщения` : nav.label}
             className={({ isActive }) => {
               if (nav.isAddPost) {

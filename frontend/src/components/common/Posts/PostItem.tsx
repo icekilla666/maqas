@@ -99,7 +99,7 @@ const PostItem = ({
       >
         <header className="flex justify-between items-center mb-1.5">
           <div className="post-item__author">
-            {variant === "detail" && <BackLink to={HOME_PAGE} label="Вернуться в ленту" />}
+            {variant === "detail" && <BackLink returnToPostList to={HOME_PAGE} label="Вернуться в ленту" />}
             <UserItem user={post.user} showName={false} />
           </div>
           <DateTime date={post.created_at} className="post-item__datetime" />
@@ -113,7 +113,7 @@ const PostItem = ({
           {(hasTitle || hasContent) && (
             <div className="post-item__text flex flex-col gap-1.5">
               {hasTitle && <h2>{post.title}</h2>}
-              {hasContent && <p className="post-item__content break-all">{postContent}</p>}
+              {hasContent && <p className="post-item__content">{postContent}</p>}
             </div>
           )}
           {Boolean(post.tags?.length) && (

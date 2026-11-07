@@ -1,3 +1,4 @@
+import { useNavigationScroll } from "@/hooks/useNavigationScroll";
 import { House, MessageCircle, Plus, Settings, UserRound } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { ACCOUNT_PAGE, ADD_POSTS_PAGE, CHATS_PAGE, HOME_PAGE, SETTINGS_PAGE } from "@/utils/constants";
@@ -10,14 +11,16 @@ const items = [
   { to: SETTINGS_PAGE, label: "Настройки", Icon: Settings },
 ];
 
-const DesktopNavigation = ({ hasUnread = false }: { hasUnread?: boolean }) => (
+const DesktopNavigation = ({ hasUnread = false }: { hasUnread?: boolean }) => {
+  const handleNavigationClick = useNavigationScroll();
+  return (
   <aside className="desktop-sidebar">
-    <Link to={HOME_PAGE} className="desktop-sidebar__brand" aria-label="Maqas — главная">
+    <Link to={HOME_PAGE} onClick={(event) => handleNavigationClick(event, HOME_PAGE)} className="desktop-sidebar__brand" aria-label="Maqas — главная">
       <Logo />
     </Link>
     <nav className="desktop-sidebar__nav" aria-label="Основная навигация">
       {items.map(({ to, label, Icon }) => (
-        <NavLink key={to} to={to} end={to === HOME_PAGE} title={label} aria-label={to === CHATS_PAGE && hasUnread ? `${label}: есть непрочитанные сообщения` : label}
+        <NavLink key={to} to={to} onClick={(event) => handleNavigationClick(event, to)} end={to === HOME_PAGE} title={label} aria-label={to === CHATS_PAGE && hasUnread ? `${label}: есть непрочитанные сообщения` : label}
           className={({ isActive }) => `desktop-sidebar__link${isActive ? " is-active" : ""}`}>
           <span className="navigation-icon">
             <Icon size={24} aria-hidden="true" />
@@ -31,6 +34,7 @@ const DesktopNavigation = ({ hasUnread = false }: { hasUnread?: boolean }) => (
       </NavLink>
     </nav>
   </aside>
-);
+  );
+};
 
 export default DesktopNavigation;

@@ -8,7 +8,7 @@ import SkeletonView from "@/components/ui/Skeleton/SkeletonView";
 import { usePostQuery } from "@/lib/postsQueries";
 import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PostComments from "./components/PostComments";
 import { useCommentsQuery } from "@/lib/commentsQueries";
 import { useLikersQuery } from "@/lib/likesQueries";
@@ -18,6 +18,7 @@ import { HOME_PAGE } from "@/utils/constants";
 const PostPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: post, isLoading, isError, error } = usePostQuery(id);
   const commentsQuery = useCommentsQuery(id);
   const { data: comments = [], isLoading: isCommentsLoading, error: commentsError } =
@@ -32,7 +33,7 @@ const PostPage = () => {
     return (
       <section className="post-detail-page">
         <div className="post-detail">
-          <BackLink to={HOME_PAGE} label="Вернуться в ленту" />
+          <BackLink returnToPostList to={HOME_PAGE} label="Вернуться в ленту" />
           <SkeletonView label="Загрузка публикации…"><PostSkeleton detail image /></SkeletonView>
           <div className="post-comments"><CommentsSkeleton /></div>
         </div>
@@ -44,7 +45,7 @@ const PostPage = () => {
       {post && !isError ? (
         <div className="post-detail">
           <PostItem
-            onCommentsClick={() => navigate({ hash: "#comments" })}
+            onCommentsClick={() => navigate({ hash: "#comments" }, { replace: true, state: location.state })}
             onLikersClick={() => setIsLikersModalOpen(true)}
             onDeleted={() => navigate(HOME_PAGE, { replace: true })}
             post={post}
@@ -61,7 +62,7 @@ const PostPage = () => {
         </div>
       ) : (
         <>
-        <BackLink to={HOME_PAGE} label="Вернуться в ленту" />
+        <BackLink returnToPostList to={HOME_PAGE} label="Вернуться в ленту" />
         <EmptyState
           icon={<TriangleAlert />}
           text="Не удалось загрузить пост"

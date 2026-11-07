@@ -1,4 +1,4 @@
-import { Outlet, useMatches } from "react-router-dom";
+import { Outlet, ScrollRestoration, useMatches } from "react-router-dom";
 import { Navigation } from "../common/Navigation/Navigation";
 import { useAuthStore } from "@/store/auth.store";
 import InstallAppPrompt from "../common/InstallAppPrompt";
@@ -24,6 +24,7 @@ const Layout = () => {
       </main>
       {showNavigation && <Navigation />}
       {isAuth && <InstallAppPrompt />}
+      <ScrollRestoration />
     </div>
   );
 };

@@ -90,15 +90,14 @@ const PwaPullToRefresh = () => {
     <div
       className="pwa-refresh-indicator"
       role="status"
+      aria-label={refreshing ? "Перезагрузка" : "Потяните вниз и отпустите для обновления"}
       style={{ transform: `translate(-50%, ${Math.min(distance * 0.4, 72)}px)` }}
     >
       <RotateCw
         size={20}
         aria-hidden
-        className={refreshing ? "animate-spin" : undefined}
-        style={refreshing ? undefined : { transform: `rotate(${distance * 1.5}deg)` }}
+        className="animate-spin"
       />
-      <span>{refreshing ? "Перезагрузка…" : distance >= PULL_THRESHOLD ? "Отпустите, чтобы обновить" : "Потяните для обновления"}</span>
     </div>
   );
 };

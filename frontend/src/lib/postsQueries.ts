@@ -11,6 +11,7 @@ import { useDraftStore } from "@/store/draft.store";
 import { isRequestOutcomeUncertain } from "@/utils/requestOutcome";
 
 export const usePostFeedQuery = (filters: PostFeed) => usePaginatedQuery<PostPreview>({
+  gcTime: 30 * 60_000,
   queryKey: postsKeys.postFeed(filters),
   path: "/api/posts/feed",
   params: filters,
@@ -18,12 +19,14 @@ export const usePostFeedQuery = (filters: PostFeed) => usePaginatedQuery<PostPre
 });
 
 export const useMyPostsQuery = () => usePaginatedQuery<PostPreview>({
+  gcTime: 30 * 60_000,
   queryKey: postsKeys.myPosts(),
   path: "/api/posts/me",
   mock: USE_MOCK_POSTS ? postsApi.getMyPosts : undefined,
 });
 
 export const useUserPostsQuery = (id?: string) => usePaginatedQuery<PostPreview>({
+  gcTime: 30 * 60_000,
   queryKey: postsKeys.userPosts(id),
   path: `/api/posts/users/${id}`,
   enabled: Boolean(id),

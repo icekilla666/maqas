@@ -26,6 +26,7 @@ const CommentInput = ({
   submitLabel = "Отправить",
   className = "",
   inputRef,
+  onKeyDown,
   disabled,
   placeholder = "Написать комментарий",
   ...props
@@ -56,6 +57,14 @@ const CommentInput = ({
         rows={1}
         value={value}
         {...props}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented || event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return;
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            event.currentTarget.form?.requestSubmit();
+          }
+        }}
       />
       <button
         aria-label={submitLabel}

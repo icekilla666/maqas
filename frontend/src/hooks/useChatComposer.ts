@@ -1,3 +1,4 @@
+import { getClipboardImage } from "@/utils/clipboardImage";
 import { validateImage } from "@/utils/validateImage";
 import {
   useEffect,
@@ -5,6 +6,7 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type ClipboardEvent,
   type FormEvent,
   type KeyboardEvent,
 } from "react";
@@ -118,13 +120,24 @@ export const useChatComposer = ({
     }
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
+  const attachImage = (file: File) => {
+    if (disabled || isPending || isEditing || submitting.current) return;
     const imageError = validateImage(file);
     if (imageError) { toast.error(imageError); return; }
     setAttachment({ file, url: URL.createObjectURL(file) });
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) attachImage(file);
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLFormElement>) => {
+    const file = getClipboardImage(event.clipboardData);
+    if (!file) return;
+    event.preventDefault();
+    attachImage(file);
   };
 
   return {
@@ -138,6 +151,7 @@ export const useChatComposer = ({
     handleChange,
     handleKeyDown,
     handleFileChange,
+    handlePaste,
     handleSubmit,
     stopTyping,
     openFilePicker: () => fileRef.current?.click(),

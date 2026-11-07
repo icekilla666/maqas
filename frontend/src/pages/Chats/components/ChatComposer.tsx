@@ -25,6 +25,7 @@ const ChatComposer = (props: ChatComposerProps) => {
     handleChange,
     handleKeyDown,
     handleFileChange,
+    handlePaste,
     handleSubmit,
     stopTyping,
     openFilePicker,
@@ -35,6 +36,7 @@ const ChatComposer = (props: ChatComposerProps) => {
     <form
       className="chat-composer"
       onSubmit={handleSubmit}
+      onPaste={handlePaste}
       aria-label={isEditing ? "Редактирование сообщения" : "Новое сообщение"}
     >
       {props.context && (

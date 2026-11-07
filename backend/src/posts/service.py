@@ -141,7 +141,7 @@ class PostsService:
         }
     
     async def delete_post(self, post_id: UUID, current_user: UsersModel, session: AsyncSession):
-        rows = await self.posts_repo.get_by_id(post_id, session)
+        rows = await self.posts_repo.get_by_id(post_id, current_user, session)
         if not rows:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -161,8 +161,10 @@ class PostsService:
                     "error": "NOT_ALLOWED"
                 }
             )
-        await delete_image(post.image_file_id)
+        image_file_id = post.image_file_id
         await self.posts_repo.delete_post(post, current_user.id, session)
+        if image_file_id:
+            await delete_image(image_file_id)
         return {
             "success": True,
             "message": "Пост удален"

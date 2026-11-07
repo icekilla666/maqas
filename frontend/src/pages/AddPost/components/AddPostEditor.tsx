@@ -1,3 +1,4 @@
+import { getClipboardImage } from "@/utils/clipboardImage";
 import { validateImage } from "@/utils/validateImage";
 import MainInput from "@/components/ui/Inputs/MainInput";
 import Textarea from "@/components/ui/Inputs/Textarea";
@@ -6,8 +7,10 @@ import { Check, ImagePlus, Trash2 } from "lucide-react";
 import AddPostEditorHeader from "./AddPostEditorHeader";
 import {
   useRef,
+  useEffect,
   useState,
   type ChangeEvent,
+  type ClipboardEvent,
   type Dispatch,
   type FormEvent,
   type SetStateAction,
@@ -68,26 +71,30 @@ const AddPostEditor = ({
     });
   };
 
-  const addImage = (e: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => () => {
+    if (preview) URL.revokeObjectURL(preview);
+  }, [preview]);
+
+  const attachImage = (file: File) => {
+    if (disabled || submittingRef.current) return;
     setError("");
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
     const imageError = validateImage(file);
     if (imageError) { setError(imageError); return; }
+    setFormData((prev) => ({ ...prev, image: file }));
+    setPreview(URL.createObjectURL(file));
+  };
 
-    setFormData((prev) => ({
-      ...prev,
-      image: file,
-    }));
+  const addImage = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) attachImage(file);
+  };
 
-    setPreview((currentPreview) => {
-      if (currentPreview) {
-        URL.revokeObjectURL(currentPreview);
-      }
-
-      return URL.createObjectURL(file);
-    });
+  const handlePaste = (event: ClipboardEvent<HTMLFormElement>) => {
+    const file = getClipboardImage(event.clipboardData);
+    if (!file) return;
+    event.preventDefault();
+    attachImage(file);
   };
 
   const removeImage = () => {
@@ -125,7 +132,7 @@ const AddPostEditor = ({
     <div className="add-post-editor">
       <AddPostEditorHeader />
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit} onPaste={handlePaste}
         id="add-post-form"
         className="add-post-fields"
       >

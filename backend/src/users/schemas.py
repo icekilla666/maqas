@@ -9,9 +9,10 @@ class UserStatus(str, Enum):
     pending = "pending"
     
 class Level(str, Enum):
-    loshok_0 = "лошок 0"
-    loshok_1 = "лошок 1"
-    loshok_pro = "лошок про"
+    newcomer = "новенький"
+    regular = "простачок"
+    cool = "крутой"
+    star = "звезда"
 
 class UserRole(str, Enum):
     user = "user"

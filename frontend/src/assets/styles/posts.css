@@ -159,6 +159,9 @@
 }
 
 .post-item__content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
   color: color-mix(in oklab, var(--color-second) 76%, transparent);
   font-size: 13px;
   line-height: 1.35;

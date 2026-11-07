@@ -7,15 +7,15 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { usePostFeedQuery } from "@/lib/postsQueries";
 import type { PostFeed, PostTag, HomeSort } from "@/types/posts.types";
 import { SearchX, TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { usePageState } from "@/hooks/usePageState";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import HomeHeader from "./components/HomeHeader";
 
 const HomePage = () => {
-  const [search, setSearch] = useState("");
-  const [selectedTags, setSelectedTags] = useState<PostTag[]>([]);
-  const [followingOnly, setFollowingOnly] = useState(false);
-  const [selectedSort, setSelectedSort] = useState<HomeSort>("new");
+  const [search, setSearch] = usePageState("search", "");
+  const [selectedTags, setSelectedTags] = usePageState<PostTag[]>("tags", []);
+  const [followingOnly, setFollowingOnly] = usePageState("following", false);
+  const [selectedSort, setSelectedSort] = usePageState<HomeSort>("sort", "new");
   const isToolbarHidden = useHideOnScroll();
   const debouncedSearch = useDebounce(search.trim(), 350);
   const requestSort: PostFeed["sort"] =

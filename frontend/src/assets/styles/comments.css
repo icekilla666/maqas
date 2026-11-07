@@ -149,6 +149,7 @@
 }
 
 .comment-item__text {
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
   color: color-mix(in oklab, var(--color-second) 82%, transparent);
   font-size: 13px;
@@ -380,4 +381,15 @@
 
 .comment-input__submit:active:not(:disabled) {
   transform: scale(0.96);
+}
+
+
+.comment-input:focus-within {
+  border-color: var(--color-main);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-main) 18%, transparent);
+}
+
+.comment-input .comment-input__field:focus-visible {
+  outline: none;
+  border-color: transparent;
 }
