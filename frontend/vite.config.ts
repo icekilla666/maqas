@@ -12,9 +12,10 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
       VitePWA({
-        registerType: "autoUpdate",
+        registerType: "prompt",
 
         workbox: {
+          cleanupOutdatedCaches: true,
           runtimeCaching: [
             {
               // Функция сериализуется в sw.js: не использует внешние переменные.
