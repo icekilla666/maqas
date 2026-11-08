@@ -745,3 +745,27 @@
     background: color-mix(in oklab, var(--color-second) 5%, transparent);
   }
 }
+
+/* Векторная маска подкрашивается выбранным акцентом приложения. */
+.chat-page,
+.chat-workspace__welcome {
+  position: relative;
+  isolation: isolate;
+}
+
+.chat-page::before,
+.chat-workspace__welcome::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-main);
+  opacity: 0.13;
+  -webkit-mask-image: url("../images/chat-pattern.svg");
+  mask-image: url("../images/chat-pattern.svg");
+  -webkit-mask-size: 240px 240px;
+  mask-size: 240px 240px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
