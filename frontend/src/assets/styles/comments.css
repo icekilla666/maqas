@@ -393,3 +393,46 @@
   outline: none;
   border-color: transparent;
 }
+
+
+.comment-item__message {
+  min-width: 0;
+}
+
+.comment-text {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Полный текст измеряется той же типографикой и не участвует в раскладке. */
+.comment-text__measure {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  margin: 0;
+}
+
+.comment-text__clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.comment-text > .comment-item__read-more {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.comment-item__edited {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  color: color-mix(in oklab, var(--color-second) 50%, transparent);
+}

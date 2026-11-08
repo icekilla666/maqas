@@ -1,3 +1,4 @@
+import LinkedText from "@/components/common/LinkedText";
 import type { CountType } from "@/types/users.types";
 import CountInfo from "./CountInfo";
 import { useNavigate } from "react-router-dom";
@@ -63,8 +64,8 @@ const AccountHeader = ({
     <header className="account-header">
       <div className="flex gap-3.5">
         <Avatar preview username={username} avatar={avatar_url} />
-        <div className="min-w-0 flex flex-1 flex-col justify-between">
-          <div className="flex justify-between">
+        <div className="min-w-0 flex flex-1 flex-col justify-between gap-2">
+          <div className="flex justify-between gap-4">
             <AccountInfo name={name} username={username} lvl={level} />
             {!isOwnProfile && (
               <AccountMenu
@@ -86,7 +87,7 @@ const AccountHeader = ({
       </div>
       {bio && (
         <div className="w-full">
-          <p className="w-full text-[14px] text-second break-all">{bio}</p>
+          <p className="account-header__bio"><LinkedText>{bio}</LinkedText></p>
         </div>
       )}
     </header>

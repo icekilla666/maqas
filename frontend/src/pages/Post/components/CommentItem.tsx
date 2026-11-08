@@ -1,3 +1,4 @@
+import CommentText from "./CommentText";
 import InfiniteScroll from "@/components/common/InfiniteScroll";
 import Avatar from "@/components/common/Avatar/Avatar";
 import CommentsSkeleton from "@/components/common/Skeletons/CommentsSkeleton";
@@ -28,8 +29,6 @@ interface CommentItemProps {
   onEdit: (comment: CommentData) => void;
 }
 
-const COMMENT_PREVIEW_LENGTH = 40;
-
 const CommentItem = ({
   comment,
   level = 0,
@@ -37,7 +36,6 @@ const CommentItem = ({
   onEdit,
 }: CommentItemProps) => {
   const [isRepliesOpen, setIsRepliesOpen] = useState(false);
-  const [isFullComment, setIsFullComment] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteComment = useCommentDeleteMutation();
   const repliesId = useId();
@@ -49,16 +47,6 @@ const CommentItem = ({
     isLoading: isRepliesLoading,
     refetch: refetchReplies,
   } = repliesQuery;
-  const characters = Array.from(comment.content ?? "");
-  const isTruncated =
-    !comment.is_deleted &&
-    !isFullComment &&
-    characters.length > COMMENT_PREVIEW_LENGTH;
-  const commentText = comment.is_deleted
-    ? "Комментарий удален"
-    : isTruncated
-      ? characters.slice(0, COMMENT_PREVIEW_LENGTH).join("").trimEnd()
-      : comment.content;
 
   const actions: ActionMenuItem[] = [
     {
@@ -122,28 +110,14 @@ const CommentItem = ({
               )}
             </div>
           </div>
-          <div className="flex justify-between gap-1">
-            <p
-              className={`comment-item__text ${
-                comment.is_deleted ? "comment-item__text--deleted" : ""
-              }`.trim()}
-            >
-              {commentText}
-              {isTruncated && (
-                <>
-                  {"… "}
-                  <button
-                    className="comment-item__read-more"
-                    type="button"
-                    onClick={() => setIsFullComment(true)}
-                  >
-                    Читать дальше
-                  </button>
-                </>
-              )}
-            </p>
+          <div className="comment-item__message">
+            <CommentText
+              key={comment.content}
+              content={comment.content ?? ""}
+              deleted={comment.is_deleted}
+            />
             {comment.is_edited && (
-              <span className="text-[10px] text-grey">изменено</span>
+              <span className="comment-item__edited">изменено</span>
             )}
           </div>
           {isReplies && (

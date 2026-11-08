@@ -399,3 +399,12 @@
   background-color: var(--color-primary);
   border-radius: 20px;
 }
+
+
+.account-header__bio {
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

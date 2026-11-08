@@ -1,3 +1,4 @@
+import LinkedText from "../LinkedText";
 import BackLink from "../BackLink";
 import { HOME_PAGE } from "@/utils/constants";
 import type { PostDetails, PostPreview, PostActionProps } from "@/types/posts.types";
@@ -112,8 +113,8 @@ const PostItem = ({
           )}
           {(hasTitle || hasContent) && (
             <div className="post-item__text flex flex-col gap-1.5">
-              {hasTitle && <h2>{post.title}</h2>}
-              {hasContent && <p className="post-item__content">{postContent}</p>}
+              {hasTitle && <h2><LinkedText>{post.title}</LinkedText></h2>}
+              {hasContent && <p className="post-item__content"><LinkedText>{postContent ?? ""}</LinkedText></p>}
             </div>
           )}
           {Boolean(post.tags?.length) && (
