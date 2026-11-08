@@ -1,7 +1,6 @@
 import MainButton from "@/components/ui/Buttons/MainButton";
 import Modal from "@/components/ui/Modals/Modal";
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { toast } from "sonner";
 
 const commonReasons = [
   { value: "spam", label: "Спам или реклама" },
@@ -61,13 +60,17 @@ const ReportModal = ({ open, targetType, onClose }: ReportModalProps) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (!selectedReasons.length) return;
-    toast.info("Отправка жалоб пока недоступна");
+    handleClose();
   };
 
   return (
-    <Modal open={open} onClose={handleClose} className="modal--report" ariaLabel={reportTitles[targetType]}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      className="modal--report"
+      ariaLabel={reportTitles[targetType]}
+    >
       <form className="report-modal" onSubmit={handleSubmit}>
         <div className="report-modal__header">
           <h2 className="report-modal__title">{reportTitles[targetType]}</h2>
@@ -89,7 +92,9 @@ const ReportModal = ({ open, targetType, onClose }: ReportModalProps) => {
                   type="checkbox"
                 />
                 <span className="report-modal__checkmark" aria-hidden />
-                <span className="report-modal__reason-text">{reason.label}</span>
+                <span className="report-modal__reason-text">
+                  {reason.label}
+                </span>
               </label>
             );
           })}
