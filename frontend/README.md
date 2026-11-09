@@ -1,88 +1,250 @@
-# React + TypeScript + Vite
+# Frontend Maqas
 
-## Локальный запуск
+[← Обзор проекта](../README.md) · [Деплой](../deploy/README.md) · [Открыть приложение](https://maqas.ru)
 
-В `frontend/.env` укажи:
+Клиентская часть социальной сети Maqas: лента публикаций, профили, обсуждения и личные чаты. Интерфейс адаптирован для телефона и компьютера; приложение можно установить как PWA
+
+## Стек
+
+| Технология | Для чего используется |
+| --- | --- |
+| React 19 + TypeScript | Компоненты интерфейса и типизация |
+| Vite 8 | Сервер разработки и production-сборка |
+| React Router 7 | Маршруты, вложенные страницы и переходы |
+| TanStack Query 5 | Запросы, мутации, кэш серверных данных и бесконечная прокрутка |
+| Zustand 5 | Общее клиентское состояние |
+| Axios | HTTP-запросы и обработка обновления access-токена |
+| WebSocket API | События чатов в реальном времени |
+| Tailwind CSS 4 + CSS | Стили компонентов, темы и адаптивная раскладка |
+| Zod | Проверка входных данных форм |
+| Lucide React | Иконки |
+| Sonner | Toast-уведомления |
+| Fancybox | Просмотр фотографий |
+| linkify-it | Распознавание ссылок в тексте |
+| vite-plugin-pwa / Workbox | Манифест, service worker и кэширование ресурсов |
+| ESLint + Node.js test runner | Статические проверки и автоматические тесты |
+
+Зависимости и команды перечислены в [package.json](package.json), зафиксированные версии — в [package-lock.json](package-lock.json)
+
+## Фирменный стиль
+
+Основной шрифт — **Montserrat**, базовый акцент — оранжевый `#FFA64C`. Интерфейс использует скруглённые поверхности, тонкие контурные иконки и светлую либо тёмную тему
+
+[Макет и фирменные материалы в Figma](https://www.figma.com/design/PCGOCVS4xjjAQH3AaXg14C/Untitled)
+
+### Цвета
+
+Цвета задаются CSS-переменными в [base.css](src/assets/styles/base.css)
+
+| Переменная | Назначение | Светлая тема | Тёмная тема |
+| --- | --- | --- | --- |
+| `--color-main` | Акцент по умолчанию | `#FFA64C` | `#FFA64C` |
+| `--color-wrapper` | Фон приложения | `#F0F5FD` | `#121416` |
+| `--color-primary` | Поверхности и карточки | `#FFFFFF` | `#1F2125` |
+| `--color-second` | Основной текст | `#282B2A` | `#FBFDFF` |
+| `--color-grey` | Вспомогательные элементы и границы | `#91919133` | `#5B5C5D` |
+| `--color-red` | Ошибки и опасные действия | `#DE2B3F` | `#DE2B3F` |
+
+Пользователь выбирает тему и акцент в настройках. Доступны готовые цвета и собственный цвет. [theme.store.ts](src/store/theme.store.ts) сохраняет выбор в `localStorage`, устанавливает `data-theme` на корневом элементе и обновляет `--color-main`. По умолчанию приложение использует тёмную тему и оранжевый акцент. Системная тема в CSS служит запасным вариантом до применения настроек приложения
+
+Логотипы находятся в [src/assets/images](src/assets/images), favicon и иконки PWA — в [public](public). В новых компонентах используйте переменные темы, чтобы цвета корректно менялись вместе с настройками
+
+### Организация стилей
+
+[global.css](src/assets/styles/global.css) — точка подключения Tailwind и CSS-файлов. Общие правила подключаются первыми, затем стили разделов, а `layout.css` с адаптивными переопределениями — последним. Tailwind используется рядом с CSS-классами компонентов; отдельные стили скелетонов находятся рядом с их UI-компонентами
+
+## Архитектура
+
+Это клиентское SPA с разделением по страницам и общим слоям. Компоненты конкретного экрана находятся рядом со страницей, переиспользуемые — в `components/`
+
+### Запуск и маршруты
+
+1. [main.tsx](src/app/main.tsx) подключает стили, создаёт React root, предоставляет `QueryClient` и регистрирует PWA
+2. [App.tsx](src/app/App.tsx) применяет тему, восстанавливает сессию, подключает realtime-логику и отображает маршрутизатор
+3. [router.tsx](src/routes/router.tsx) описывает страницы. `ProtectedRoute` проверяет доступ к защищённой части интерфейса; сервер отдельно проверяет права на API-запросы
+4. `components/layout/` задаёт общую оболочку приложения
+
+### Работа с данными
+
+```text
+Страница / компонент
+        ↓
+lib/*Queries.ts          запросы, мутации и обновление кэша
+        ↓
+services/*.api.ts        методы API и параметры запросов
+        ↓
+services/api.ts          общий Axios-клиент и авторизация
+        ↓
+Backend
+```
+
+Например, страница ленты использует хуки из `postsQueries.ts`, которые получают данные через API-слой. Компонент отвечает за отображение загрузки, результата и ошибок, а query-хук — за получение и актуальность данных
+
+- **TanStack Query** хранит серверные данные: посты, профили, комментарии, чаты. После мутаций соответствующий кэш обновляется или инвалидируется
+- **Zustand** хранит общее состояние клиента: авторизацию, тему, черновик публикации и realtime-статусы чатов
+- **Локальный React state** используется для состояния конкретного компонента: открытой модалки, выбранного элемента и подобных деталей
+- **Хуки в `hooks/`** объединяют логику сценариев. Например, `useChatConversation` управляет поведением переписки, `useChatComposer` — формой сообщения
+- **`usePaginatedQuery`** построен на `useInfiniteQuery`: загружает страницы и объединяет их в список без повторяющихся идентификаторов
+
+Ключи запросов и константы маршрутов собраны в [constants.ts](src/utils/constants.ts). Типы разделены по предметным областям в `types/`. Алиас `@/` указывает на `src/`
+
+### Авторизация и realtime
+
+В [api.ts](src/services/api.ts) Axios добавляет access-токен к запросам. При подходящей ошибке `401` выполняется refresh и один повтор исходного запроса. Одновременные запросы используют общую операцию refresh. Access-токен хранится в памяти; после перезагрузки сессия восстанавливается через серверную refresh-cookie
+
+[useChatsRealtime.ts](src/hooks/useChatsRealtime.ts) управляет WebSocket-соединением и обработкой событий. Серверные события синхронизируют данные чатов, а временные признаки вроде «печатает…» и онлайн-статуса хранятся в `chatsRealtime.store.ts`. `chatsSocket.ts` предоставляет отправку событий набора текста
+
+### PWA
+
+Настройки манифеста и кэша находятся в [vite.config.ts](vite.config.ts), регистрация и проверка обновлений — в [registerPwa.ts](src/app/registerPwa.ts). При появлении новой версии приложение предлагает обновиться. Service worker кэширует сборку и определённые публичные изображения Cloudinary; это не означает полноценную работу чатов и API без интернета
+
+## Тесты
+
+В [tests/](tests) находятся проверки на встроенном тестовом раннере Node.js: `node:test` и `node:assert/strict`. Файлы имеют расширение `.cjs`, так как тестовая обвязка использует CommonJS. TypeScript-модули преобразуются через `typescript.transpileModule`; сетевые ответы и часть зависимостей подменяются тестовыми реализациями
+
+Это модульные и отдельные интеграционные проверки логики. Они не запускают настоящий браузер или backend и не заменяют ручную проверку интерфейса на телефоне
+
+| Файл | Что проверяет |
+| --- | --- |
+| `auth-refresh.test.cjs` | Обновление токена, параллельные `401`, повтор запроса и смену сессии |
+| `image-cache.test.cjs` | URL оптимизированных изображений, возврат к оригиналу и правило кэша |
+| `message-delivery.test.cjs` | Долгую отправку фото, таймауты и состояние ожидающего сообщения |
+| `post-publication.test.cjs` | Черновик, результат отправки и защиту от повторной публикации |
+| `post-deletion.test.cjs` | Доступность удаления, DELETE-запрос и изменение кэша |
+
+Запуск из `frontend/`, после установки зависимостей:
+
+```sh
+node --test tests/*.test.cjs
+```
+
+Один набор проверок:
+
+```sh
+node --test tests/auth-refresh.test.cjs
+```
+
+Отдельной команды `npm test` пока нет. **На момент подготовки документации полный прогон не проходит:** часть тестовой обвязки не разрешает новые импорты через `@/`, в том числе `@/utils/paginatedCache`. Эти тесты требуют актуализации после изменений приложения; ошибка загрузки тестового модуля сама по себе не доказывает неисправность соответствующего сценария в браузере
+
+## Дерево директорий
+
+```text
+frontend/
+├── public/                      Статические файлы: favicon и иконки PWA
+├── src/
+│   ├── app/                     Точка входа, App и регистрация PWA
+│   ├── assets/
+│   │   ├── images/              Логотипы, иллюстрации и паттерн чата
+│   │   └── styles/              Общие стили, темы, стили разделов и адаптивность
+│   ├── components/
+│   │   ├── common/              Общие компоненты предметной области
+│   │   │   ├── Avatar/          Аватар пользователя
+│   │   │   ├── Navigation/      Мобильная и десктопная навигация
+│   │   │   ├── Posts/           Карточки, меню и пересылка постов
+│   │   │   ├── Skeletons/       Скелетоны содержимого страниц
+│   │   │   └── UsersList/       Общий список пользователей
+│   │   ├── layout/              Оболочка приложения
+│   │   └── ui/                  Переиспользуемые элементы интерфейса
+│   │       ├── ActionMenu/      Меню действий и контекстное меню
+│   │       ├── Buttons/         Кнопки и переключатели
+│   │       ├── Inputs/          Поля ввода
+│   │       ├── Loaders/         Индикаторы загрузки
+│   │       ├── Modals/          Основа модальных окон
+│   │       └── Skeleton/        Базовый компонент скелетона и его стили
+│   ├── hooks/                   Хуки поведения и пользовательских сценариев
+│   ├── lib/                     QueryClient, query/mutation-хуки и пагинация
+│   ├── mocks/                   Демонстрационные данные постов и комментариев
+│   ├── pages/
+│   │   ├── Account/             Собственный и чужой профиль, подписки
+│   │   ├── AddPost/             Создание публикации
+│   │   ├── Auth/                Вход и регистрация
+│   │   ├── Chats/               Список чатов и переписка
+│   │   ├── Home/                Лента, поиск и фильтры
+│   │   ├── Post/                Детали поста и обсуждение
+│   │   ├── Settings/            Настройки, редактирование профиля, ЧС и FAQ
+│   │   └── VerifyEmail/         Подтверждение почты и ожидание подтверждения
+│   ├── routes/                  Маршрутизатор и проверки доступа
+│   ├── services/                HTTP-клиент, методы API, пагинация и WebSocket
+│   ├── store/                   Zustand: сессия, тема, черновик, realtime
+│   ├── types/                   Типы пользователей, постов, комментариев и чатов
+│   └── utils/                   Константы и вспомогательные функции
+│       └── validation/          Схемы проверки данных
+├── tests/                       Автоматические проверки сценариев
+├── dist/                        Результат сборки; создаётся автоматически
+├── node_modules/                Установленные зависимости; не хранятся в Git
+├── .env.example                 Образец переменных окружения
+├── index.html                   HTML-точка входа
+├── package.json                 Зависимости и команды
+├── package-lock.json            Зафиксированные версии зависимостей
+├── vite.config.ts               Vite, алиас @/, прокси и PWA
+├── tsconfig*.json               Настройки TypeScript
+├── eslint.config.js             Настройки ESLint
+├── Dockerfile                   Сборка frontend и запуск через nginx
+└── nginx.conf                   Раздача сборки и правила кэширования
+```
+
+В каждой папке страницы есть `components/` с её внутренними компонентами. Если компонент нужен нескольким страницам, его место — в `components/common/` или `components/ui/`. `dist/` и `node_modules/` не редактируются вручную
+
+## Команды и локальный запуск
+
+### Требования
+
+Для разработки используйте **Node.js 22.12+** и npm. В Docker frontend также собирается на Node.js 22. Backend должен быть доступен отдельно: запуск Vite не запускает сервер приложения или базу данных
+
+Из корня репозитория:
+
+```sh
+cd frontend
+npm ci
+cp .env.example .env
+npm run dev
+```
+
+Если `.env` уже существует, сохраните свои настройки вместо повторного копирования примера
+
+### Окружение
 
 ```dotenv
 VITE_API_URL=/
 API_PROXY_TARGET=https://maqas.ru
 ```
 
-Запусти `npm run dev` и открой адрес localhost из терминала. Браузер обращается к `/api` на локальном адресе, а прокси Vite передаёт запросы на сервер. Поэтому междоменные запросы из браузера не нужны. Это **рабочий backend**: создание и изменение данных из локального интерфейса происходит в серверной базе.
+`VITE_API_URL=/` оставляет запросы на текущем адресе frontend. Vite перенаправляет `/api` и WebSocket-соединения на `API_PROXY_TARGET` — браузеру не нужно напрямую обращаться к другому домену
 
-Для собственного локального backend замени `API_PROXY_TARGET` на `http://127.0.0.1:8000`. После изменения `.env` перезапусти Vite. В production запросы обслуживает nginx, прокси Vite там не используется.
+**По умолчанию используется рабочий(уже нет) сервер Maqas. Создание, изменение и удаление данных из локального интерфейса затрагивает реальную базу.** Для собственного backend замените адрес:
 
-Описание настройки: [server.proxy в документации Vite](https://vite.dev/config/server-options#server-proxy).
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```dotenv
+API_PROXY_TARGET=http://127.0.0.1:8000
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Здесь `127.0.0.1` означает компьютер, на котором работает Vite. После изменения `.env` перезапустите сервер разработки. Переменные `VITE_*` попадают в клиентскую сборку: секреты в них хранить нельзя
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Доступные команды
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Все команды ниже выполняются из `frontend/`
+
+| Команда | Назначение |
+| --- | --- |
+| `npm ci` | Установить зависимости по lock-файлу |
+| `npm run dev` | Запустить Vite с доступом из локальной сети (`--host` уже включён) |
+| `npm run build` | Проверить TypeScript и собрать приложение в `dist/` |
+| `npm run preview` | Посмотреть готовую сборку локально |
+| `npm run lint` | Запустить ESLint |
+| `node --test tests/*.test.cjs` | Запустить существующие тесты |
+
+`npm run preview` не заменяет production-nginx. Для полного развёртывания используйте [инструкцию деплоя](../deploy/README.md)
+
+### Открыть на телефоне
+
+1. Подключите телефон и компьютер к одной локальной сети, например к одному Wi-Fi
+2. На компьютере запустите `npm run dev` и оставьте процесс работающим
+3. Найдите в выводе Vite строку **Network**, например `http://192.168.1.10:5173/`
+4. Откройте именно этот адрес в браузере телефона. `localhost` на телефоне указывает на сам телефон, а не на компьютер
+
+Запросы телефона пойдут через Vite на компьютере к выбранному backend, поэтому `API_PROXY_TARGET` менять на IP телефона не нужно. Изменения исходников будут подхватываться сервером разработки
+
+Если страница не открывается, проверьте адрес и порт из терминала, разрешите входящие подключения для Node.js в файрволе компьютера и убедитесь, что сеть не изолирует устройства друг от друга. VPN и гостевая Wi-Fi-сеть могут мешать соединению
+
+**Ограничения HTTP по локальному IP:** такой адрес не равнозначен защищённому `localhost` на компьютере. PWA/service worker, камера и некоторые операции с буфером обмена требуют безопасного контекста. Refresh-cookie с атрибутом `Secure` также может не работать по HTTP — из-за этого после перезагрузки сессия может не восстановиться
+
+Для проверки этих сценариев используйте HTTPS-стенд или настройте HTTPS для Vite с сертификатом, которому доверяет телефон. Для проверки установленной PWA нужна production-сборка с service worker: по умолчанию он не включён в текущем dev-режиме. Обычный запуск по Network-адресу подходит прежде всего для проверки вёрстки и доступных по HTTP сценариев
