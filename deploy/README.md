@@ -1,6 +1,6 @@
 # Развёртывание Maqas
 
-[← Обзор проекта](../README.md) · [Frontend](../frontend/README.md) · [Backend](../backend/)
+[← Обзор проекта](../README.md) · [Frontend](../frontend/README.md) · [Backend](../backend/README.md)
 
 Приложение запускается через Docker Compose: nginx принимает HTTPS-запросы, frontend отдаёт клиентскую сборку, backend обслуживает API и WebSocket, PostgreSQL хранит данные в томе `postgres_data`
 
